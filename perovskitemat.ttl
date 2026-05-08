@@ -1,0 +1,368 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix matsci: <https://growgraph.dev/ontologies/matsci-ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix perovmat: <https://growgraph.dev/ontologies/perovskitemat#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://growgraph.dev/ontologies/perovskitemat> a owl:Ontology ;
+    rdfs:label "perovskitemat"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Perovskite-specific ontology split from perovOntology. It contains only concepts and individuals that are specific to perovskite materials."@en ;
+    owl:imports <https://growgraph.dev/ontologies/matsci-ontology> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.2.3> ;
+    owl:versionInfo "1.2.3" .
+
+#################################################################
+# PEROVSKITE CORE
+#################################################################
+
+perovmat:Perovskite a owl:Class ;
+    rdfs:label "Perovskite"@en ;
+    rdfs:comment "Perovskite material concept."@en ;
+    rdfs:subClassOf matsci:Material .
+
+
+perovmat:PerovskiteSample a owl:Class ;
+    rdfs:label "Perovskite sample"@en ;
+    rdfs:comment "A concrete sample describing a perovskite material."@en ;
+    rdfs:subClassOf sosa:Sample ,
+        [ a owl:Restriction ;
+            owl:onProperty matsci:describesMaterial ;
+            owl:someValuesFrom perovmat:Perovskite
+        ] ,
+        [ a owl:Restriction ;
+            owl:onProperty matsci:describesMaterial ;
+            owl:allValuesFrom perovmat:Perovskite
+        ] .
+
+#################################################################
+# PEROVSKITE COMPONENT CLASSES
+#################################################################
+
+perovmat:ASiteComponent a owl:Class ;
+    rdfs:label "A-site component"@en ;
+    rdfs:comment "Material component occupying the A-site in a perovskite-related composition model."@en ;
+    rdfs:subClassOf matsci:Material .
+
+perovmat:BSiteComponent a owl:Class ;
+    rdfs:label "B-site component"@en ;
+    rdfs:comment "Material component occupying the B-site in a perovskite-related composition model."@en ;
+    rdfs:subClassOf matsci:Material .
+
+perovmat:XSiteComponent a owl:Class ;
+    rdfs:label "X-site component"@en ;
+    rdfs:comment "Material component occupying the X-site in a perovskite-related composition model."@en ;
+    rdfs:subClassOf matsci:Material .
+
+perovmat:OrganicASiteComponent a owl:Class ;
+    rdfs:label "Organic A-site component"@en ;
+    rdfs:comment "Organic component that occupies the A-site in a perovskite."@en ;
+    rdfs:subClassOf perovmat:ASiteComponent .
+
+perovmat:InorganicASiteComponent a owl:Class ;
+    rdfs:label "Inorganic A-site component"@en ;
+    rdfs:comment "Inorganic component that occupies the A-site in a perovskite."@en ;
+    rdfs:subClassOf perovmat:ASiteComponent .
+
+perovmat:OrganicASiteComponent owl:disjointWith perovmat:InorganicASiteComponent .
+
+perovmat:HalideComponent a owl:Class ;
+    rdfs:label "Halide component"@en ;
+    rdfs:comment "Halide component occupying the X-site in a halide perovskite."@en ;
+    rdfs:subClassOf perovmat:XSiteComponent .
+
+#################################################################
+# PEROVSKITE OBJECT PROPERTIES
+#################################################################
+
+perovmat:hasASiteComponent a owl:ObjectProperty ;
+    rdfs:label "has A-site component"@en ;
+    rdfs:comment "Links a perovskite material to an A-site component."@en ;
+    rdfs:domain perovmat:Perovskite ;
+    rdfs:range perovmat:ASiteComponent .
+
+perovmat:hasBSiteComponent a owl:ObjectProperty ;
+    rdfs:label "has B-site component"@en ;
+    rdfs:comment "Links a perovskite material to a B-site component."@en ;
+    rdfs:domain perovmat:Perovskite ;
+    rdfs:range perovmat:BSiteComponent .
+
+perovmat:hasXSiteComponent a owl:ObjectProperty ;
+    rdfs:label "has X-site component"@en ;
+    rdfs:comment "Links a perovskite material to an X-site component."@en ;
+    rdfs:domain perovmat:Perovskite ;
+    rdfs:range perovmat:XSiteComponent .
+
+perovmat:hasPhase a owl:ObjectProperty ;
+    rdfs:label "has phase"@en ;
+    rdfs:comment "Links a perovskite material to a perovskite phase."@en ;
+    rdfs:domain perovmat:Perovskite ;
+    rdfs:range perovmat:PerovskitePhase .
+
+#################################################################
+# PEROVSKITE FAMILY CLASSES
+# All carry formal owl:equivalentClass definitions.
+# The rdfs:subClassOf perovmat:Perovskite is not stated explicitly
+# where it is already entailed by the equivalentClass intersection.
+#################################################################
+
+perovmat:AllInorganicPerovskite a owl:Class ;
+    rdfs:label "All-inorganic perovskite"@en ;
+    rdfs:comment "Perovskite whose A-site is occupied exclusively by an inorganic component."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasASiteComponent ;
+                owl:someValuesFrom perovmat:InorganicASiteComponent
+            ]
+        )
+    ] .
+
+perovmat:HybridOrganicInorganicPerovskite a owl:Class ;
+    rdfs:label "Hybrid organic-inorganic perovskite"@en ;
+    rdfs:comment "Perovskite containing an organic A-site component together with inorganic framework components."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasASiteComponent ;
+                owl:someValuesFrom perovmat:OrganicASiteComponent
+            ]
+        )
+    ] .
+
+perovmat:AllInorganicPerovskite owl:disjointWith perovmat:HybridOrganicInorganicPerovskite .
+
+perovmat:LeadHalidePerovskite a owl:Class ;
+    rdfs:label "Lead halide perovskite"@en ;
+    rdfs:comment "Perovskite with Pb at the B-site and a halide at the X-site."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasBSiteComponent ;
+                owl:hasValue perovmat:Pb
+            ]
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasXSiteComponent ;
+                owl:someValuesFrom perovmat:HalideComponent
+            ]
+        )
+    ] .
+
+# Defined as the complement of having Pb as a B-site component.
+# A reasoner will classify any perovskite with only non-Pb B-site
+# components as LeadFree and will detect any overlap with LeadHalide.
+perovmat:LeadFreePerovskite a owl:Class ;
+    rdfs:label "Lead-free perovskite"@en ;
+    rdfs:comment "Perovskite that does not use lead as a B-site component."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Class ;
+                owl:complementOf [
+                    a owl:Restriction ;
+                    owl:onProperty perovmat:hasBSiteComponent ;
+                    owl:hasValue perovmat:Pb
+                ]
+            ]
+        )
+    ] .
+
+perovmat:LeadHalidePerovskite owl:disjointWith perovmat:LeadFreePerovskite .
+
+perovmat:MixedHalidePerovskite a owl:Class ;
+    rdfs:label "Mixed-halide perovskite"@en ;
+    rdfs:comment "Perovskite containing two or more halide X-site components."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasXSiteComponent ;
+                owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                owl:onClass perovmat:HalideComponent
+            ]
+        )
+    ] .
+
+perovmat:CesiumPerovskite a owl:Class ;
+    rdfs:label "Cesium perovskite"@en ;
+    rdfs:comment "Perovskite with Cs as an A-site component."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasASiteComponent ;
+                owl:hasValue perovmat:Cs
+            ]
+        )
+    ] .
+
+perovmat:MethylammoniumPerovskite a owl:Class ;
+    rdfs:label "Methylammonium perovskite"@en ;
+    rdfs:comment "Perovskite with methylammonium as an A-site component."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasASiteComponent ;
+                owl:hasValue perovmat:MA
+            ]
+        )
+    ] .
+
+perovmat:FormamidiniumPerovskite a owl:Class ;
+    rdfs:label "Formamidinium perovskite"@en ;
+    rdfs:comment "Perovskite with formamidinium as an A-site component."@en ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            perovmat:Perovskite
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasASiteComponent ;
+                owl:hasValue perovmat:FA
+            ]
+        )
+    ] .
+
+#################################################################
+# DIMENSIONAL PEROVSKITE CLASSES
+# Mutually disjoint: a perovskite cannot simultaneously belong to
+# two different dimensionality classes.
+#################################################################
+
+perovmat:ThreeDimensionalPerovskite a owl:Class ;
+    rdfs:label "Three-dimensional perovskite"@en ;
+    rdfs:comment "Perovskite with a three-dimensional framework connectivity."@en ;
+    rdfs:subClassOf perovmat:Perovskite .
+
+perovmat:TwoDimensionalPerovskite a owl:Class ;
+    rdfs:label "Two-dimensional perovskite"@en ;
+    rdfs:comment "Perovskite with a two-dimensional layered framework."@en ;
+    rdfs:subClassOf perovmat:Perovskite .
+
+perovmat:OneDimensionalPerovskite a owl:Class ;
+    rdfs:label "One-dimensional perovskite"@en ;
+    rdfs:comment "Perovskite with a one-dimensional framework connectivity."@en ;
+    rdfs:subClassOf perovmat:Perovskite .
+
+perovmat:ZeroDimensionalPerovskite a owl:Class ;
+    rdfs:label "Zero-dimensional perovskite"@en ;
+    rdfs:comment "Perovskite with isolated structural units and no extended higher-dimensional framework."@en ;
+    rdfs:subClassOf perovmat:Perovskite .
+
+[] a owl:AllDisjointClasses ;
+    owl:members (
+        perovmat:ThreeDimensionalPerovskite
+        perovmat:TwoDimensionalPerovskite
+        perovmat:OneDimensionalPerovskite
+        perovmat:ZeroDimensionalPerovskite
+    ) .
+
+#################################################################
+# PEROVSKITE PHASES
+#################################################################
+
+perovmat:PerovskitePhase a owl:Class ;
+    rdfs:label "Perovskite phase"@en ;
+    rdfs:comment "Phase vocabulary specific to perovskite materials."@en .
+
+perovmat:AlphaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
+    rdfs:label "alpha phase"@en .
+
+perovmat:BetaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
+    rdfs:label "beta phase"@en .
+
+perovmat:GammaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
+    rdfs:label "gamma phase"@en .
+
+perovmat:DeltaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
+    rdfs:label "delta phase"@en .
+
+#################################################################
+# PEROVSKITE COMPONENT INDIVIDUALS
+#################################################################
+
+perovmat:Cs a owl:NamedIndividual, perovmat:InorganicASiteComponent ;
+    rdfs:label "Cs"@en ;
+    dcterms:alternative "Cesium"@en .
+
+perovmat:FA a owl:NamedIndividual, perovmat:OrganicASiteComponent ;
+    rdfs:label "FA"@en ;
+    dcterms:alternative "Formamidinium"@en .
+
+perovmat:MA a owl:NamedIndividual, perovmat:OrganicASiteComponent ;
+    rdfs:label "MA"@en ;
+    dcterms:alternative "Methylammonium"@en .
+
+perovmat:Pb a owl:NamedIndividual, perovmat:BSiteComponent ;
+    rdfs:label "Pb"@en ;
+    dcterms:alternative "Lead"@en .
+
+perovmat:Sn a owl:NamedIndividual, perovmat:BSiteComponent ;
+    rdfs:label "Sn"@en ;
+    dcterms:alternative "Tin"@en .
+
+perovmat:Br a owl:NamedIndividual, perovmat:HalideComponent ;
+    rdfs:label "Br"@en ;
+    dcterms:alternative "Bromide"@en .
+
+perovmat:I a owl:NamedIndividual, perovmat:HalideComponent ;
+    rdfs:label "I"@en ;
+    dcterms:alternative "Iodide"@en .
+
+perovmat:Cl a owl:NamedIndividual, perovmat:HalideComponent ;
+    rdfs:label "Cl"@en ;
+    dcterms:alternative "Chloride"@en .
+
+[] a owl:AllDifferent ;
+    owl:distinctMembers ( perovmat:Br perovmat:I perovmat:Cl ) .
+
+#################################################################
+# EXAMPLE MATERIAL INDIVIDUALS
+# CsPbBr3, MAPbCl3, and FAPbI3 are typed with their applicable
+# family classes. The reasoner will infer further classifications
+# (e.g. AllInorganic, Hybrid) from the component assertions.
+#################################################################
+
+perovmat:CsPbBr3 a
+        perovmat:AllInorganicPerovskite ,
+        perovmat:CesiumPerovskite ,
+        perovmat:LeadHalidePerovskite ;
+    rdfs:label "CsPbBr3"@en ;
+    dcterms:alternative "Cesium lead bromide"@en ;
+    perovmat:hasASiteComponent perovmat:Cs ;
+    perovmat:hasBSiteComponent perovmat:Pb ;
+    perovmat:hasXSiteComponent perovmat:Br .
+
+perovmat:MAPbCl3 a
+        perovmat:HybridOrganicInorganicPerovskite ,
+        perovmat:MethylammoniumPerovskite ,
+        perovmat:LeadHalidePerovskite ;
+    rdfs:label "MAPbCl3"@en ;
+    dcterms:alternative "Methylammonium lead chloride"@en ;
+    perovmat:hasASiteComponent perovmat:MA ;
+    perovmat:hasBSiteComponent perovmat:Pb ;
+    perovmat:hasXSiteComponent perovmat:Cl .
+
+perovmat:FAPbI3 a
+        perovmat:HybridOrganicInorganicPerovskite ,
+        perovmat:FormamidiniumPerovskite ,
+        perovmat:LeadHalidePerovskite ;
+    rdfs:label "FAPbI3"@en ;
+    dcterms:alternative "Formamidinium lead iodide"@en ;
+    perovmat:hasASiteComponent perovmat:FA ;
+    perovmat:hasBSiteComponent perovmat:Pb ;
+    perovmat:hasXSiteComponent perovmat:I .
+
