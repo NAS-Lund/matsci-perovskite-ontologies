@@ -1,27 +1,35 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix matsci: <https://growgraph.dev/ontologies/matsci-ontology#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix qudt: <http://qudt.org/schema/qudt/> .
-@prefix unit: <http://qudt.org/vocab/unit/> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sosa: <http://www.w3.org/ns/sosa/> .
-@prefix ssn: <http://www.w3.org/ns/ssn/> .
-@prefix obo: <http://purl.obolibrary.org/obo/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci-ontology#> .
+@prefix qval:    <https://growgraph.dev/ontologies/qval-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix ssn:     <http://www.w3.org/ns/ssn/> .
+@prefix obo:     <http://purl.obolibrary.org/obo/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix om:      <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
+
 
 <https://growgraph.dev/ontologies/matsci-ontology> a owl:Ontology ;
     rdfs:label "matsci"@en ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    rdfs:comment "General materials-science ontology split from perovOntology. It contains concepts and relations reusable across materials-science domains, not only for perovskites."@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/1.2.3> ;
+    rdfs:comment
+        """General materials-science ontology split from perovOntology.
+        It contains concepts and relations reusable across materials-science
+        domains"""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/1.3.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
-        <http://qudt.org/2.1/vocab/unit> ;
-    owl:versionInfo "1.2.3" .
+        <http://qudt.org/2.1/vocab/unit> ,
+        <https://growgraph.dev/ontologies/qval-ontology> ;
+    owl:versionInfo "1.3.0" .
 
 #################################################################
 # Core classes
@@ -41,22 +49,29 @@ matsci:LuminescentImpurity a owl:Class ;
 
 matsci:MaterialRole a owl:Class ;
     rdfs:label "Material role"@en ;
-    rdfs:comment "A functional role that a material plays within a specific process context. Inheres in the material bearer and is realized during the process in which that material is used. Grounded in BFO Role (obo:BFO_0000023)."@en ;
+    rdfs:comment
+        """A functional role that a material plays within a specific process
+        context.  Inheres in the material bearer and is realized during the
+        process in which that material is used.
+        Grounded in BFO Role (obo:BFO_0000023)."""@en ;
     rdfs:subClassOf obo:BFO_0000023 .
 
 matsci:SolventRole a owl:Class ;
     rdfs:label "Solvent role"@en ;
-    rdfs:comment "Role realized when a material dissolves or disperses another substance in a synthesis process."@en ;
+    rdfs:comment
+        "Role realized when a material dissolves or disperses another substance in a synthesis process."@en ;
     rdfs:subClassOf matsci:MaterialRole .
 
 matsci:AntisolventRole a owl:Class ;
     rdfs:label "Antisolvent role"@en ;
-    rdfs:comment "Role realized when a material triggers precipitation by reducing solubility of a target species."@en ;
+    rdfs:comment
+        "Role realized when a material triggers precipitation by reducing solubility of a target species."@en ;
     rdfs:subClassOf matsci:MaterialRole .
 
 matsci:LigandRole a owl:Class ;
     rdfs:label "Ligand role"@en ;
-    rdfs:comment "Role realized when a material coordinates to a surface or metal centre in a synthesis process."@en ;
+    rdfs:comment
+        "Role realized when a material coordinates to a surface or metal centre in a synthesis process."@en ;
     rdfs:subClassOf matsci:MaterialRole .
 
 matsci:Application a owl:Class ;
@@ -68,11 +83,19 @@ matsci:OptoelectronicApplication a owl:Class ;
 
 matsci:PhysicalPhenomenon a owl:Class ;
     rdfs:label "Physical phenomenon"@en ;
-    rdfs:comment "Superclass for physical phenomena exhibited by samples. Note: subclasses are semantically heterogeneous (disposition, quality, process) and should be anchored individually in BFO rather than anchoring this superclass."@en .
+    rdfs:comment
+        """Superclass for physical phenomena exhibited by samples.
+        Note: subclasses are semantically heterogeneous (disposition, quality,
+        process) and should be anchored individually in BFO rather than
+        anchoring this superclass."""@en .
 
 matsci:QuantumConfinement a owl:Class ;
     rdfs:label "Quantum confinement"@en ;
-    rdfs:comment "A disposition of a nanocrystal whereby quantum mechanical boundary conditions restrict charge-carrier wavefunctions. Realised during optical characterization. Grounded in BFO Disposition (obo:BFO_0000016)."@en ;
+    rdfs:comment
+        """A disposition of a nanocrystal whereby quantum mechanical boundary
+        conditions restrict charge-carrier wavefunctions.  Realised during
+        optical characterization.
+        Grounded in BFO Disposition (obo:BFO_0000016)."""@en ;
     rdfs:subClassOf matsci:PhysicalPhenomenon ,
                     obo:BFO_0000016 .
 
@@ -86,7 +109,8 @@ matsci:PhotonPropagationEffect a owl:Class ;
 
 matsci:Equipment a owl:Class ;
     rdfs:label "Equipment"@en ;
-    rdfs:comment "Generic scientific equipment used in synthesis, sampling, processing, or characterization workflows."@en ;
+    rdfs:comment
+        "Generic scientific equipment used in synthesis, sampling, processing, or characterization workflows."@en ;
     rdfs:subClassOf ssn:System .
 
 matsci:ProcessingEquipment a owl:Class ;
@@ -144,7 +168,8 @@ matsci:SelfAssemblyTechnique a owl:Class ;
 
 matsci:ChemicalTransformationType a owl:Class ;
     rdfs:label "Chemical transformation type"@en ;
-    rdfs:comment "A transformation procedure type, such as anion exchange, cation exchange, doping, or ligand exchange."@en ;
+    rdfs:comment
+        "A transformation procedure type, such as anion exchange, cation exchange, doping, or ligand exchange."@en ;
     rdfs:subClassOf sosa:Procedure .
 
 #################################################################
@@ -168,12 +193,14 @@ matsci:AssemblyProcess a owl:Class ;
 
 matsci:CharacterizationProcess a owl:Class ;
     rdfs:label "Characterization process"@en ;
-    rdfs:comment "A concrete execution of a characterization method that generates one or more observations."@en ;
+    rdfs:comment
+        "A concrete execution of a characterization method that generates one or more observations."@en ;
     rdfs:subClassOf matsci:Process .
 
 matsci:ChemicalTransformation a owl:Class ;
     rdfs:label "Chemical transformation"@en ;
-    rdfs:comment "A concrete transformation step occurring during a synthesis or post-synthetic process."@en ;
+    rdfs:comment
+        "A concrete transformation step occurring during a synthesis or post-synthetic process."@en ;
     rdfs:subClassOf matsci:Process .
 
 #################################################################
@@ -199,12 +226,16 @@ matsci:SuperlatticeSample a owl:Class ;
 
 matsci:NanocrystalSuperlatticeSample a owl:Class ;
     rdfs:label "Nanocrystal superlattice sample"@en ;
-    rdfs:comment "A structured arrangement of nanocrystal samples that exhibits collective properties."@en ;
+    rdfs:comment
+        "A structured arrangement of nanocrystal samples that exhibits collective properties."@en ;
     rdfs:subClassOf matsci:SuperlatticeSample .
 
 matsci:MorphologyState a owl:Class ;
     rdfs:label "Morphology state"@en ;
-    rdfs:comment "An intrinsic quality of a sample describing its morphological characteristics. Inheres in the sample bearer. Grounded in BFO Quality (obo:BFO_0000019)."@en ;
+    rdfs:comment
+        """An intrinsic quality of a sample describing its morphological
+        characteristics.  Inheres in the sample bearer.
+        Grounded in BFO Quality (obo:BFO_0000019)."""@en ;
     rdfs:subClassOf obo:BFO_0000019 .
 
 matsci:NanocrystalMorphologyState a owl:Class ;
@@ -243,21 +274,6 @@ matsci:ShapeValue a owl:Class ;
     rdfs:label "Shape value"@en ;
     rdfs:subClassOf matsci:QualitativeResult .
 
-matsci:QuantityRange a owl:Class ;
-    rdfs:label "Quantity range"@en ;
-    rdfs:comment "A quantitative interval defined by lower and/or upper bounds."@en ;
-    rdfs:subClassOf
-        [ a owl:Restriction ;
-            owl:onProperty matsci:hasLowerBound ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass qudt:QuantityValue
-        ] ,
-        [ a owl:Restriction ;
-            owl:onProperty matsci:hasUpperBound ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass qudt:QuantityValue
-        ] .
-
 #################################################################
 # Observation model
 #################################################################
@@ -271,6 +287,7 @@ matsci:QuantitativeObservation a owl:Class ;
     rdfs:label "Quantitative observation"@en ;
     rdfs:subClassOf
         matsci:Observation ,
+        # Results are qudt:QuantityValue (includes qval:ApproximateQuantityValue as subclass)
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
             owl:someValuesFrom qudt:QuantityValue
@@ -278,6 +295,11 @@ matsci:QuantitativeObservation a owl:Class ;
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
             owl:allValuesFrom qudt:QuantityValue
+        ] ,
+        # Preferred result type: ApproximateQuantityValue carries epistemic qualifier
+        [ a owl:Restriction ;
+            owl:onProperty sosa:hasResult ;
+            owl:someValuesFrom qval:ApproximateQuantityValue
         ] .
 
 matsci:QualitativeObservation a owl:Class ;
@@ -311,7 +333,8 @@ matsci:ObservableMaterialProperty owl:disjointWith matsci:ObservableMorphologyPr
 
 matsci:ConditionValue a owl:Class ;
     rdfs:label "Condition value"@en ;
-    rdfs:comment "Superclass for values used in environment conditions, including quantitative and qualitative values."@en .
+    rdfs:comment
+        "Superclass for values used in environment conditions, including quantitative and qualitative values."@en .
 
 matsci:QualitativeConditionValue a owl:Class ;
     rdfs:label "Qualitative condition value"@en ;
@@ -340,7 +363,8 @@ matsci:EnvironmentCondition a owl:Class ;
 
 matsci:EnvironmentFactor a owl:Class ;
     rdfs:label "Environment factor"@en ;
-    rdfs:comment "A dimension or aspect of the environment being specified, such as atmosphere, humidity, temperature, or time."@en .
+    rdfs:comment
+        "A dimension or aspect of the environment being specified, such as atmosphere, humidity, temperature, or time."@en .
 
 #################################################################
 # Object properties
@@ -418,29 +442,27 @@ matsci:hasSuperlatticeSymmetryValue a owl:ObjectProperty ;
 
 matsci:hasEdgeLength a owl:ObjectProperty ;
     rdfs:label "has edge length"@en ;
+    rdfs:comment
+        "Links a nanocrystal morphology state to a quantity value for edge length.  The value may be a qval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
     rdfs:domain matsci:NanocrystalMorphologyState ;
     rdfs:range qudt:QuantityValue .
 
 matsci:hasThickness a owl:ObjectProperty ;
     rdfs:label "has thickness"@en ;
+    rdfs:comment
+        "Links a nanocrystal morphology state to a quantity value for thickness.  The value may be a qval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
     rdfs:domain matsci:NanocrystalMorphologyState ;
     rdfs:range qudt:QuantityValue .
 
 matsci:hasValueRange a owl:ObjectProperty ;
     rdfs:label "has value range"@en ;
-    rdfs:comment "Links a morphology state to a quantitative interval."@en ;
+    rdfs:comment
+        """Links a morphology state to a quantitative interval represented as
+        a qval:QuantityRange node (bounds are independent qudt:QuantityValue
+        nodes).  For compact same-unit ranges, prefer an observation result
+        typed as qval:ApproximateQuantityValue with qval:Range qualifier."""@en ;
     rdfs:domain matsci:MorphologyState ;
-    rdfs:range matsci:QuantityRange .
-
-matsci:hasLowerBound a owl:ObjectProperty ;
-    rdfs:label "has lower bound"@en ;
-    rdfs:domain matsci:QuantityRange ;
-    rdfs:range qudt:QuantityValue .
-
-matsci:hasUpperBound a owl:ObjectProperty ;
-    rdfs:label "has upper bound"@en ;
-    rdfs:domain matsci:QuantityRange ;
-    rdfs:range qudt:QuantityValue .
+    rdfs:range qval:QuantityRange .
 
 matsci:derivedFromObservation a owl:ObjectProperty ;
     rdfs:label "derived from observation"@en ;
@@ -450,7 +472,8 @@ matsci:derivedFromObservation a owl:ObjectProperty ;
 
 matsci:hasObservation a owl:ObjectProperty ;
     rdfs:label "has observation"@en ;
-    rdfs:comment "Links a sample to an observation about it. Use sosa:hasFeatureOfInterest in the opposite direction."@en ;
+    rdfs:comment
+        "Links a sample to an observation about it.  Use sosa:hasFeatureOfInterest in the opposite direction."@en ;
     rdfs:domain sosa:Sample ;
     rdfs:range matsci:Observation ;
     rdfs:subPropertyOf sosa:isFeatureOfInterestOf ;
@@ -458,7 +481,10 @@ matsci:hasObservation a owl:ObjectProperty ;
 
 matsci:hasQuantityResult a owl:ObjectProperty ;
     rdfs:label "has quantity result"@en ;
-    rdfs:comment "Links an observation to a quantitative QUDT result."@en ;
+    rdfs:comment
+        """Links a quantitative observation to a QUDT quantity result.
+        The range is qudt:QuantityValue; prefer qval:ApproximateQuantityValue
+        as the concrete type so that epistemic qualifiers are preserved."""@en ;
     rdfs:domain matsci:QuantitativeObservation ;
     rdfs:range qudt:QuantityValue ;
     rdfs:subPropertyOf sosa:hasResult .
@@ -485,13 +511,15 @@ matsci:usesMethod a owl:ObjectProperty ;
 
 matsci:hasInputSample a owl:ObjectProperty ;
     rdfs:label "has input sample"@en ;
-    rdfs:comment "Links a process to a concrete sample used as input. For the abstract material kind see matsci:hasInputMaterial."@en ;
+    rdfs:comment
+        "Links a process to a concrete sample used as input.  For the abstract material kind see matsci:hasInputMaterial."@en ;
     rdfs:domain matsci:Process ;
     rdfs:range sosa:Sample .
 
 matsci:hasOutputSample a owl:ObjectProperty ;
     rdfs:label "has output sample"@en ;
-    rdfs:comment "Links a process to the concrete sample it produced. For the target material kind see matsci:hasOutputMaterial."@en ;
+    rdfs:comment
+        "Links a process to the concrete sample it produced.  For the target material kind see matsci:hasOutputMaterial."@en ;
     rdfs:domain matsci:Process ;
     rdfs:range sosa:Sample .
 
@@ -503,13 +531,15 @@ matsci:producedByProcess a owl:ObjectProperty ;
 
 matsci:hasInputMaterial a owl:ObjectProperty ;
     rdfs:label "has input material"@en ;
-    rdfs:comment "Links a process to the abstract material kind it consumes, for recipe or provenance tracking. For concrete sample-level traceability use matsci:hasInputSample."@en ;
+    rdfs:comment
+        "Links a process to the abstract material kind it consumes, for recipe or provenance tracking.  For concrete sample-level traceability use matsci:hasInputSample."@en ;
     rdfs:domain matsci:Process ;
     rdfs:range matsci:Material .
 
 matsci:hasOutputMaterial a owl:ObjectProperty ;
     rdfs:label "has output material"@en ;
-    rdfs:comment "Links a process to the abstract material kind it targets as output. For the concrete produced sample use matsci:hasOutputSample."@en ;
+    rdfs:comment
+        "Links a process to the abstract material kind it targets as output.  For the concrete produced sample use matsci:hasOutputSample."@en ;
     rdfs:domain matsci:Process ;
     rdfs:range matsci:Material .
 
@@ -547,25 +577,31 @@ matsci:generatedObservation a owl:ObjectProperty ;
 
 matsci:usedSolvent a owl:ObjectProperty ;
     rdfs:label "used solvent"@en ;
-    rdfs:comment "Links a synthesis process to the material playing the solvent role in that process."@en ;
+    rdfs:comment
+        "Links a synthesis process to the material playing the solvent role in that process."@en ;
     rdfs:domain matsci:SynthesisProcess ;
     rdfs:range matsci:Material .
 
 matsci:usedAntisolvent a owl:ObjectProperty ;
     rdfs:label "used antisolvent"@en ;
-    rdfs:comment "Links a synthesis process to the material playing the antisolvent role in that process."@en ;
+    rdfs:comment
+        "Links a synthesis process to the material playing the antisolvent role in that process."@en ;
     rdfs:domain matsci:SynthesisProcess ;
     rdfs:range matsci:Material .
 
 matsci:usedLigand a owl:ObjectProperty ;
     rdfs:label "used ligand"@en ;
-    rdfs:comment "Links a synthesis process to the material playing the ligand role in that process."@en ;
+    rdfs:comment
+        "Links a synthesis process to the material playing the ligand role in that process."@en ;
     rdfs:domain matsci:SynthesisProcess ;
     rdfs:range matsci:Material .
 
 matsci:hasRole a owl:ObjectProperty ;
     rdfs:label "has role"@en ;
-    rdfs:comment "Asserts that a material has a capacity to play a given functional role. For context-specific role assignments, prefer the process-level shortcut properties (usedSolvent, usedAntisolvent, usedLigand)."@en ;
+    rdfs:comment
+        """Asserts that a material has a capacity to play a given functional
+        role.  For context-specific role assignments, prefer the process-level
+        shortcut properties (usedSolvent, usedAntisolvent, usedLigand)."""@en ;
     rdfs:domain matsci:Material ;
     rdfs:range matsci:MaterialRole .
 
@@ -577,7 +613,8 @@ matsci:hasTransformationStep a owl:ObjectProperty ;
 
 matsci:hasTransformationType a owl:ObjectProperty ;
     rdfs:label "has transformation type"@en ;
-    rdfs:comment "Links a concrete chemical transformation to the transformation procedure type it instantiates."@en ;
+    rdfs:comment
+        "Links a concrete chemical transformation to the transformation procedure type it instantiates."@en ;
     rdfs:domain matsci:ChemicalTransformation ;
     rdfs:range matsci:ChemicalTransformationType .
 
@@ -604,13 +641,15 @@ matsci:hasConstituentNanocrystalSample a owl:ObjectProperty ;
 
 matsci:isCompatibleWithSolvent a owl:ObjectProperty ;
     rdfs:label "is compatible with solvent"@en ;
-    rdfs:comment "Links a nanocrystal superlattice sample to a material that acts as a compatible solvent. Range is matsci:Material following the role-based redesign."@en ;
+    rdfs:comment
+        "Links a nanocrystal superlattice sample to a material that acts as a compatible solvent.  Range is matsci:Material following the role-based redesign."@en ;
     rdfs:domain matsci:NanocrystalSuperlatticeSample ;
     rdfs:range matsci:Material .
 
 matsci:hasImpurity a owl:ObjectProperty ;
     rdfs:label "has impurity"@en ;
-    rdfs:comment "Links a superlattice sample to a material that occurs as an impurity in that context."@en ;
+    rdfs:comment
+        "Links a superlattice sample to a material that occurs as an impurity in that context."@en ;
     rdfs:domain matsci:NanocrystalSuperlatticeSample ;
     rdfs:range matsci:Impurity .
 
@@ -859,7 +898,8 @@ matsci:dimensionalityProperty a owl:NamedIndividual, matsci:ObservableMorphology
 
 matsci:edgeLengthProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
     rdfs:label "edge length"@en ;
-    rdfs:comment "Observable property for edge length. Corresponds to the matsci:hasEdgeLength shortcut on NanocrystalMorphologyState."@en .
+    rdfs:comment
+        "Observable property for edge length.  Corresponds to the matsci:hasEdgeLength shortcut on NanocrystalMorphologyState."@en .
 
 matsci:facetExposureProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
     rdfs:label "facet exposure"@en .
@@ -875,4 +915,5 @@ matsci:superlatticeSymmetryProperty a owl:NamedIndividual, matsci:ObservableMorp
 
 matsci:thicknessProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
     rdfs:label "thickness"@en ;
-    rdfs:comment "Observable property for thickness. Corresponds to the matsci:hasThickness shortcut on NanocrystalMorphologyState."@en .
+    rdfs:comment
+        "Observable property for thickness.  Corresponds to the matsci:hasThickness shortcut on NanocrystalMorphologyState."@en .
