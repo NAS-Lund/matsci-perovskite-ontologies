@@ -1,6 +1,6 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix matsci:  <https://growgraph.dev/ontologies/matsci-ontology#> .
-@prefix qval:    <https://growgraph.dev/ontologies/qval-ontology#> .
+@prefix qqval:    <https://growgraph.dev/ontologies/qqval-ontology#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix unit:    <http://qudt.org/vocab/unit/> .
@@ -28,7 +28,7 @@
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <http://qudt.org/2.1/vocab/unit> ,
-        <https://growgraph.dev/ontologies/qval-ontology> ;
+        <https://growgraph.dev/ontologies/qqval-ontology> ;
     owl:versionInfo "1.3.0" .
 
 #################################################################
@@ -287,7 +287,7 @@ matsci:QuantitativeObservation a owl:Class ;
     rdfs:label "Quantitative observation"@en ;
     rdfs:subClassOf
         matsci:Observation ,
-        # Results are qudt:QuantityValue (includes qval:ApproximateQuantityValue as subclass)
+        # Results are qudt:QuantityValue (includes qqval:ApproximateQuantityValue as subclass)
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
             owl:someValuesFrom qudt:QuantityValue
@@ -299,7 +299,7 @@ matsci:QuantitativeObservation a owl:Class ;
         # Preferred result type: ApproximateQuantityValue carries epistemic qualifier
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
-            owl:someValuesFrom qval:ApproximateQuantityValue
+            owl:someValuesFrom qqval:ApproximateQuantityValue
         ] .
 
 matsci:QualitativeObservation a owl:Class ;
@@ -443,14 +443,14 @@ matsci:hasSuperlatticeSymmetryValue a owl:ObjectProperty ;
 matsci:hasEdgeLength a owl:ObjectProperty ;
     rdfs:label "has edge length"@en ;
     rdfs:comment
-        "Links a nanocrystal morphology state to a quantity value for edge length.  The value may be a qval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
+        "Links a nanocrystal morphology state to a quantity value for edge length.  The value may be a qqval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
     rdfs:domain matsci:NanocrystalMorphologyState ;
     rdfs:range qudt:QuantityValue .
 
 matsci:hasThickness a owl:ObjectProperty ;
     rdfs:label "has thickness"@en ;
     rdfs:comment
-        "Links a nanocrystal morphology state to a quantity value for thickness.  The value may be a qval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
+        "Links a nanocrystal morphology state to a quantity value for thickness.  The value may be a qqval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
     rdfs:domain matsci:NanocrystalMorphologyState ;
     rdfs:range qudt:QuantityValue .
 
@@ -458,11 +458,11 @@ matsci:hasValueRange a owl:ObjectProperty ;
     rdfs:label "has value range"@en ;
     rdfs:comment
         """Links a morphology state to a quantitative interval represented as
-        a qval:QuantityRange node (bounds are independent qudt:QuantityValue
+        a qqval:QuantityRange node (bounds are independent qudt:QuantityValue
         nodes).  For compact same-unit ranges, prefer an observation result
-        typed as qval:ApproximateQuantityValue with qval:Range qualifier."""@en ;
+        typed as qqval:ApproximateQuantityValue with qqval:Range qualifier."""@en ;
     rdfs:domain matsci:MorphologyState ;
-    rdfs:range qval:QuantityRange .
+    rdfs:range qqval:QuantityRange .
 
 matsci:derivedFromObservation a owl:ObjectProperty ;
     rdfs:label "derived from observation"@en ;
@@ -483,7 +483,7 @@ matsci:hasQuantityResult a owl:ObjectProperty ;
     rdfs:label "has quantity result"@en ;
     rdfs:comment
         """Links a quantitative observation to a QUDT quantity result.
-        The range is qudt:QuantityValue; prefer qval:ApproximateQuantityValue
+        The range is qudt:QuantityValue; prefer qqval:ApproximateQuantityValue
         as the concrete type so that epistemic qualifiers are preserved."""@en ;
     rdfs:domain matsci:QuantitativeObservation ;
     rdfs:range qudt:QuantityValue ;
