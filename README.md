@@ -1,4 +1,18 @@
-# matsci-perovskite-ontologies
-The repository includes two connected ontologies. The first ontology is a general materials-science ontology. It contains concepts and relations reusable across materials-science domains. The other ontology is perovskite-specific. It contains only concepts and individuals that are specific to perovskite materials.
+# Domain Ontologies
 
-These ontologies are represented in Turtle (TTL) files. The matsci-ontology is the main ontology, and the perovskitemat ontology is linked to the matsci-ontology. It is important to change the version number of each ontology. Please also update the version number of matsci-ontology in the link in the perovskitemat ontology file.
+## Material Science Ontology
+
+- current version: 1.3.0
+
+## Perovskite Ontology
+
+- current version: 1.2.3
+
+## Qualified Quantity Value Ontology
+
+- current version: 1.0.0
+
+
+## Contributing
+
+Don't forget to update ontology versions in case of changes.
