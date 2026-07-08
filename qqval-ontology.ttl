@@ -1,6 +1,6 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-@prefix qqval:    <https://growgraph.dev/ontologies/qqval#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
@@ -11,20 +11,36 @@
 # Ontology header
 #################################################################
 
-<https://growgraph.dev/ontologies/qqval> a owl:Ontology ;
-    rdfs:label "qqval — Qualified Quantity Value Ontology"@en ;
+<https://growgraph.dev/ontologies/qqval-ontology> a owl:Ontology ;
+    rdfs:label "qqval"@en ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
         """Reusable ontology for expressing quantitative values whose
         reported numeric component carries an epistemic qualifier: it may
         be approximate, a range, a one-sided bound, or a value given with
-        an explicit uncertainty."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval/1.0.0> ;
-    owl:versionInfo "1.0.0" ;
+        an explicit uncertainty.
+
+        1.1.0: fixed a namespace/IRI mismatch. This ontology's own IRI and
+        namespace hash previously read '.../qqval' and '.../qqval#', while
+        every consumer (matsci-ontology, temporal-ontology) already
+        imported and prefixed it as '.../qqval-ontology' and
+        '.../qqval-ontology#'. That meant owl:imports and qqval: terms in
+        consuming ontologies resolved to an IRI this file never actually
+        declared. Standardized on '-ontology' to match the consumers and
+        the naming convention used by matsci-ontology/temporal-ontology/
+        core-ontology, rather than editing every consumer.
+
+        1.1.1: cosmetic consistency pass -- aligned the @prefix block,
+        reordered the ontology header (versionIRI before owl:imports, to
+        match core-ontology/temporal-ontology/matsci-ontology), and
+        shortened rdfs:label to a bare name like the other ontologies in
+        this collection."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/1.1.1> ;
     owl:imports
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://qudt.org/2.1/vocab/unit> ;
+    owl:versionInfo "1.1.1" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
@@ -45,7 +61,7 @@ qqval:ApproximationQualifier a owl:Class ;
         "numeric qualifier"@en ,
         "value qualifier"@en ,
         "epistemic qualifier"@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 
 #################################################################
@@ -70,7 +86,7 @@ qqval:Exact a owl:NamedIndividual , qqval:ApproximationQualifier ;
     skos:altLabel
         "nominal"@en , "precise"@en , "exact value"@en ,
         "nominal value"@en , "definite"@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:Approximate a owl:NamedIndividual , qqval:ApproximationQualifier ;
     rdfs:label "approximately"@en ;
@@ -84,7 +100,7 @@ qqval:Approximate a owl:NamedIndividual , qqval:ApproximationQualifier ;
         "nominally"@en , "around"@en , "near"@en ,
         "approximate value"@en , "order of magnitude"@en ;
     skos:narrower qqval:Range , qqval:AtLeast , qqval:AtMost , qqval:WithUncertainty ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:Range a owl:NamedIndividual , qqval:ApproximationQualifier ;
     rdfs:label "range"@en ;
@@ -100,7 +116,7 @@ qqval:Range a owl:NamedIndividual , qqval:ApproximationQualifier ;
         "numeric range"@en , "value range"@en ,
         "range of values"@en ;
     skos:broader qqval:Approximate ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:AtMost a owl:NamedIndividual , qqval:ApproximationQualifier ;
     rdfs:label "at most"@en ;
@@ -116,7 +132,7 @@ qqval:AtMost a owl:NamedIndividual , qqval:ApproximationQualifier ;
         "maximum"@en , "upper bound only"@en ,
         "smaller than"@en ;
     skos:broader qqval:Approximate ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:AtLeast a owl:NamedIndividual , qqval:ApproximationQualifier ;
     rdfs:label "at least"@en ;
@@ -132,7 +148,7 @@ qqval:AtLeast a owl:NamedIndividual , qqval:ApproximationQualifier ;
         "minimum"@en , "lower bound only"@en ,
         "larger than"@en ;
     skos:broader qqval:Approximate ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:WithUncertainty a owl:NamedIndividual , qqval:ApproximationQualifier ;
     rdfs:label "with uncertainty"@en ;
@@ -148,7 +164,7 @@ qqval:WithUncertainty a owl:NamedIndividual , qqval:ApproximationQualifier ;
         "absolute uncertainty"@en , "uncertainty"@en ,
         "experimental error"@en , "margin of error"@en ;
     skos:broader qqval:Approximate ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 # All qualifier individuals are mutually distinct
 [] a owl:AllDifferent ;
@@ -212,7 +228,7 @@ qqval:ApproximateQuantityValue a owl:Class ;
         om:Measure ,
         qudt:QuantityValue ,
         qqval:QuantityRange ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> ;
     # At least one approximation qualifier is required
     rdfs:subClassOf
         [ a owl:Restriction ;
@@ -272,7 +288,7 @@ qqval:QuantityRange a owl:Class ;
         qualifier), which stores bounds as plain decimals on a single node
         sharing one unit — preferable for compact, unit-homogeneous ranges."""@en ;
     rdfs:seeAlso qqval:ApproximateQuantityValue ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> ;
     # At most one lower bound node
     rdfs:subClassOf
         [ a owl:Restriction ;
@@ -323,7 +339,7 @@ qqval:approximationQualifier a owl:ObjectProperty ;
         "approximation type"@en ;
     rdfs:domain qqval:ApproximateQuantityValue ;
     rdfs:range  qqval:ApproximationQualifier ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:hasLowerBound a owl:ObjectProperty ;
     rdfs:label "has lower bound"@en ;
@@ -334,7 +350,7 @@ qqval:hasLowerBound a owl:ObjectProperty ;
     rdfs:domain qqval:QuantityRange ;
     rdfs:range  qudt:QuantityValue ;
     rdfs:seeAlso qqval:numericLowerBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:hasUpperBound a owl:ObjectProperty ;
     rdfs:label "has upper bound"@en ;
@@ -345,7 +361,7 @@ qqval:hasUpperBound a owl:ObjectProperty ;
     rdfs:domain qqval:QuantityRange ;
     rdfs:range  qudt:QuantityValue ;
     rdfs:seeAlso qqval:numericUpperBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 
 #################################################################
@@ -371,7 +387,7 @@ qqval:numericLowerBound a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:ApproximateQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:hasLowerBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:numericUpperBound a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "numeric upper bound"@en ;
@@ -392,7 +408,7 @@ qqval:numericUpperBound a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:ApproximateQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:hasUpperBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:numericUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "numeric uncertainty"@en ;
@@ -417,7 +433,7 @@ qqval:numericUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:ApproximateQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso om:hasUncertainty ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
 qqval:numericRelativeUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "numeric relative uncertainty"@en ;
@@ -441,4 +457,4 @@ qqval:numericRelativeUncertainty a owl:DatatypeProperty , owl:FunctionalProperty
     rdfs:domain qqval:ApproximateQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:numericUncertainty ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
