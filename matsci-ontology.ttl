@@ -81,14 +81,6 @@ matsci:OptoelectronicApplication a owl:Class ;
     rdfs:label "Optoelectronic application"@en ;
     rdfs:subClassOf matsci:Application .
 
-matsci:PhysicalPhenomenon a owl:Class ;
-    rdfs:label "Physical phenomenon"@en ;
-    rdfs:comment
-        """Superclass for physical phenomena exhibited by samples.
-        Note: subclasses are semantically heterogeneous (disposition, quality,
-        process) and should be anchored individually in BFO rather than
-        anchoring this superclass."""@en .
-
 matsci:QuantumConfinement a owl:Class ;
     rdfs:label "Quantum confinement"@en ;
     rdfs:comment
@@ -807,8 +799,7 @@ matsci:temperature a owl:NamedIndividual, matsci:EnvironmentFactor ;
 
 matsci:time a owl:NamedIndividual, matsci:EnvironmentFactor ;
     rdfs:label "time"@en ;
-    rdfs:comment "Exposure or storage time."@en .
-
+    rdfs:comment "A temporal factor, including duration, elapsed time, delay time, sample age, storage time, aging time, exposure time, or process time."@en .
 matsci:air a owl:NamedIndividual, matsci:QualitativeConditionValue ;
     rdfs:label "air"@en .
 
@@ -865,9 +856,11 @@ matsci:fwhmProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
 matsci:gFactorProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "exciton g-factor"@en .
 
-matsci:lifetimeProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "lifetime"@en .
-
+matsci:lifetimeProperty a owl:NamedIndividual,
+        matsci:ObservableMaterialProperty,
+        matsci:ObservableTemporalProperty ;
+    rdfs:label "lifetime"@en ;
+    dcterms:alternative "PL lifetime", "photoluminescence lifetime" .
 matsci:oscillatorStrengthProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "oscillator strength"@en .
 
@@ -917,3 +910,415 @@ matsci:thicknessProperty a owl:NamedIndividual, matsci:ObservableMorphologyPrope
     rdfs:label "thickness"@en ;
     rdfs:comment
         "Observable property for thickness.  Corresponds to the matsci:hasThickness shortcut on NanocrystalMorphologyState."@en .
+
+#################################################################
+# Temporal extension: process duration, sample aging, storage,
+# and time-resolved characterization
+#################################################################
+
+matsci:TemporalProcess a owl:Class ;
+    rdfs:label "Temporal process"@en ;
+    rdfs:comment "A materials-science process for which duration, elapsed time, temporal order, or time-dependent evolution is explicitly relevant."@en ;
+    rdfs:subClassOf matsci:Process .
+
+matsci:PostSynthesisProcess a owl:Class ;
+    rdfs:label "Post-synthesis process"@en ;
+    rdfs:comment "A process performed on a sample after its synthesis or fabrication, including storage, exposure, aging, and post-synthetic treatment."@en ;
+    rdfs:subClassOf matsci:TemporalProcess .
+
+matsci:StorageProcess a owl:Class ;
+    rdfs:label "Storage process"@en ;
+    rdfs:comment "A post-synthesis process in which a sample is kept under specified conditions for a specified duration."@en ;
+    rdfs:subClassOf matsci:PostSynthesisProcess .
+
+matsci:ExposureProcess a owl:Class ;
+    rdfs:label "Exposure process"@en ;
+    rdfs:comment "A process in which a sample is subjected to an environmental, optical, thermal, chemical, or mechanical factor for a specified duration."@en ;
+    rdfs:subClassOf matsci:TemporalProcess .
+
+matsci:AgingProcess a owl:Class ;
+    rdfs:label "Aging process"@en ;
+    rdfs:comment "A time-dependent post-synthesis process in which a sample evolves during storage, exposure, or operation, potentially changing its composition, morphology, structure, or optical properties."@en ;
+    rdfs:subClassOf matsci:PostSynthesisProcess .
+
+matsci:StorageAgingProcess a owl:Class ;
+    rdfs:label "Storage aging process"@en ;
+    rdfs:comment "An aging process in which a sample evolves over time while being stored under specified environmental conditions, such as atmosphere, humidity, temperature, pressure, or storage duration."@en ;
+    rdfs:subClassOf matsci:AgingProcess,
+                    matsci:StorageProcess .
+
+matsci:ExposureAgingProcess a owl:Class ;
+    rdfs:label "Exposure aging process"@en ;
+    rdfs:comment "An aging process in which a sample evolves over time while being exposed to an external environmental, optical, thermal, chemical, or mechanical factor."@en ;
+    rdfs:subClassOf matsci:AgingProcess,
+                    matsci:ExposureProcess .
+
+matsci:OperationProcess a owl:Class ;
+    rdfs:label "Operation process"@en ;
+    rdfs:comment "A process in which a material, sample, or device is used under functional working conditions, such as illumination, biasing, cycling, charging, discharging, or device operation."@en ;
+    rdfs:subClassOf matsci:TemporalProcess .
+
+matsci:OperationalAgingProcess a owl:Class ;
+    rdfs:label "Operational aging process"@en ;
+    rdfs:comment "An aging process in which a sample or device evolves over time during operation, use, cycling, illumination, biasing, or another functional working condition."@en ;
+    rdfs:subClassOf matsci:AgingProcess,
+                    matsci:OperationProcess .
+
+matsci:TimeQuantityValue a owl:Class ;
+    rdfs:label "Time quantity value"@en ;
+    rdfs:comment "A qualified quantity value representing a time, duration, elapsed time, delay, lifetime, time scale, or sample age. It reuses qqval:ApproximateQuantityValue so that exact values, approximate values, ranges, one-sided bounds, and uncertainties can be represented consistently."@en ;
+    rdfs:subClassOf qqval:ApproximateQuantityValue .
+
+matsci:TimeDependentEffect a owl:Class ;
+    rdfs:label "Time-dependent effect"@en ;
+    rdfs:comment "A material, morphological, structural, chemical, or optical effect associated with elapsed time during synthesis, storage, aging, exposure, or characterization."@en ;
+    rdfs:subClassOf matsci:PhysicalPhenomenon .
+
+matsci:AgingEffect a owl:Class ;
+    rdfs:label "Aging effect"@en ;
+    rdfs:comment "A time-dependent effect produced or observed after sample aging."@en ;
+    rdfs:subClassOf matsci:TimeDependentEffect .
+
+matsci:StorageEffect a owl:Class ;
+    rdfs:label "Storage effect"@en ;
+    rdfs:comment "A time-dependent effect associated with keeping a sample under specified storage conditions."@en ;
+    rdfs:subClassOf matsci:TimeDependentEffect .
+
+matsci:ObservableTemporalProperty a owl:Class ;
+    rdfs:label "Observable temporal property"@en ;
+    rdfs:comment "An observable property whose value is a time, duration, elapsed time, delay, lifetime, rate-related time scale, or sample age."@en ;
+    rdfs:subClassOf sosa:ObservableProperty .
+
+matsci:TemporalObservation a owl:Class ;
+    rdfs:label "Temporal observation"@en ;
+    rdfs:comment "A quantitative observation whose observed property is temporal and whose result is represented as a time quantity value."@en ;
+    rdfs:subClassOf matsci:QuantitativeObservation ,
+        [
+            a owl:Restriction ;
+            owl:onProperty sosa:observedProperty ;
+            owl:someValuesFrom matsci:ObservableTemporalProperty
+        ] ,
+        [
+            a owl:Restriction ;
+            owl:onProperty matsci:hasTemporalQuantityResult ;
+            owl:someValuesFrom matsci:TimeQuantityValue
+        ] .
+
+matsci:SampleTemporalState a owl:Class ;
+    rdfs:label "Sample temporal state"@en ;
+    rdfs:comment "A qualitative result describing the temporal status of a sample, such as fresh, aged, stored, air-aged, or vacuum-aged."@en ;
+    rdfs:subClassOf matsci:QualitativeResult .
+
+#################################################################
+# Temporal object properties
+#################################################################
+
+matsci:hasDuration a owl:ObjectProperty ;
+    rdfs:label "has duration"@en ;
+    rdfs:comment "Links a process to a time quantity value representing its duration."@en ;
+    rdfs:domain matsci:Process ;
+    rdfs:range matsci:TimeQuantityValue .
+
+matsci:hasElapsedTime a owl:ObjectProperty ;
+    rdfs:label "has elapsed time"@en ;
+    rdfs:comment "Links an entity to a time quantity value representing elapsed time since a relevant reference event."@en ;
+    rdfs:range matsci:TimeQuantityValue .
+
+matsci:hasSampleAge a owl:ObjectProperty ;
+    rdfs:label "has sample age"@en ;
+    rdfs:comment "Links a concrete sample to a time quantity value representing the time elapsed since its synthesis, fabrication, deposition, or another stated reference event."@en ;
+    rdfs:domain sosa:Sample ;
+    rdfs:range matsci:TimeQuantityValue ;
+    rdfs:subPropertyOf matsci:hasElapsedTime .
+
+matsci:hasTemporalQuantityResult a owl:ObjectProperty ;
+    rdfs:label "has temporal quantity result"@en ;
+    rdfs:comment "Links a temporal observation to a time quantity value."@en ;
+    rdfs:domain matsci:TemporalObservation ;
+    rdfs:range matsci:TimeQuantityValue ;
+    rdfs:subPropertyOf matsci:hasQuantityResult .
+
+matsci:hasObservationTimePoint a owl:ObjectProperty ;
+    rdfs:label "has observation time point"@en ;
+    rdfs:comment "Links an observation to a time quantity value representing the time point or delay at which the observation result was recorded."@en ;
+    rdfs:domain matsci:Observation ;
+    rdfs:range matsci:TimeQuantityValue ;
+    rdfs:subPropertyOf matsci:hasElapsedTime .
+
+matsci:hasTemporalReferenceProcess a owl:ObjectProperty ;
+    rdfs:label "has temporal reference process"@en ;
+    rdfs:comment "Links a temporal value, observation, sample, or process to the process used as the reference point for elapsed time, such as synthesis, deposition, storage start, aging start, excitation, or measurement start."@en ;
+    rdfs:range matsci:Process .
+
+matsci:hasStorageCondition a owl:ObjectProperty ;
+    rdfs:label "has storage condition"@en ;
+    rdfs:comment "Links a storage or aging process to a reified condition, such as atmosphere, pressure, humidity, temperature, or storage duration."@en ;
+    rdfs:domain matsci:StorageProcess ;
+    rdfs:range matsci:EnvironmentCondition ;
+    rdfs:subPropertyOf matsci:hasProcessCondition .
+
+matsci:hasTimeDependentEffect a owl:ObjectProperty ;
+    rdfs:label "has time-dependent effect"@en ;
+    rdfs:comment "Links a temporal process to a material, structural, morphological, chemical, or optical effect associated with elapsed time."@en ;
+    rdfs:domain matsci:TemporalProcess ;
+    rdfs:range matsci:TimeDependentEffect .
+
+matsci:affectsObservableProperty a owl:ObjectProperty ;
+    rdfs:label "affects observable property"@en ;
+    rdfs:comment "Links a time-dependent effect to the observable property whose value or qualitative state changes."@en ;
+    rdfs:domain matsci:TimeDependentEffect ;
+    rdfs:range sosa:ObservableProperty .
+
+matsci:broaderEnvironmentFactor a owl:ObjectProperty ;
+    rdfs:label "broader environment factor"@en ;
+    rdfs:comment "Links a specific environment or temporal factor to a broader environment factor."@en ;
+    rdfs:domain matsci:EnvironmentFactor ;
+    rdfs:range matsci:EnvironmentFactor .
+
+#################################################################
+# Temporal environment factors
+#################################################################
+
+matsci:duration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "duration"@en ;
+    rdfs:comment "General temporal extent of a process or interval."@en ;
+    matsci:broaderEnvironmentFactor matsci:time .
+
+matsci:processDuration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "process duration"@en ;
+    rdfs:comment "Duration of a materials-science process."@en ;
+    matsci:broaderEnvironmentFactor matsci:duration .
+
+matsci:synthesisDuration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "synthesis duration"@en ;
+    rdfs:comment "Duration of a synthesis process or synthesis step."@en ;
+    matsci:broaderEnvironmentFactor matsci:processDuration .
+
+matsci:assemblyDuration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "assembly duration"@en ;
+    rdfs:comment "Duration of an assembly or self-assembly process."@en ;
+    matsci:broaderEnvironmentFactor matsci:processDuration .
+
+matsci:storageDuration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "storage duration"@en ;
+    rdfs:comment "Duration for which a sample is stored under specified conditions."@en ;
+    matsci:broaderEnvironmentFactor matsci:duration .
+
+matsci:agingTime a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "aging time"@en ;
+    rdfs:comment "Elapsed time during which a sample ages under storage, exposure, operational, or other time-dependent conditions."@en ;
+    matsci:broaderEnvironmentFactor matsci:duration .
+
+matsci:exposureDuration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "exposure duration"@en ;
+    rdfs:comment "Duration for which a sample is exposed to an environmental, optical, thermal, chemical, or mechanical factor."@en ;
+    matsci:broaderEnvironmentFactor matsci:duration .
+
+matsci:sampleAge a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "sample age"@en ;
+    rdfs:comment "Elapsed time between sample synthesis or fabrication and a later process or observation."@en ;
+    matsci:broaderEnvironmentFactor matsci:time .
+
+matsci:measurementDelayTime a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "measurement delay time"@en ;
+    rdfs:comment "Delay time between a reference event and a measurement, commonly used in time-resolved characterization."@en ;
+    matsci:broaderEnvironmentFactor matsci:time .
+
+matsci:pulseDuration a owl:NamedIndividual, matsci:EnvironmentFactor ;
+    rdfs:label "pulse duration"@en ;
+    rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
+    matsci:broaderEnvironmentFactor matsci:duration .
+
+#################################################################
+# Temporal observable property vocabulary
+#################################################################
+
+matsci:processDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "process duration"@en .
+
+matsci:synthesisDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "synthesis duration"@en .
+
+matsci:assemblyDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "assembly duration"@en .
+
+matsci:storageDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "storage duration"@en .
+
+matsci:agingTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "aging time"@en .
+
+matsci:sampleAgeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "sample age"@en .
+
+matsci:exposureDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "exposure duration"@en .
+
+matsci:measurementDelayTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "measurement delay time"@en .
+
+matsci:pumpProbeDelayTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "pump-probe delay time"@en ;
+    dcterms:alternative "pump-probe delay", "delay time", "Δt" .
+
+matsci:pulseDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "pulse duration"@en .
+
+matsci:radiativeDurationProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "radiative duration"@en ;
+    dcterms:alternative "radiative time" .
+
+matsci:decayTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "decay time"@en ;
+    dcterms:alternative "decay lifetime", "decay component" .
+
+matsci:relaxationTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "relaxation time"@en .
+
+matsci:coherenceTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "coherence time"@en ;
+    dcterms:alternative "temporal coherence time" .
+
+matsci:energyTransferTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "energy transfer time"@en ;
+    dcterms:alternative "FRET time", "FRET lifetime" .
+
+matsci:carrierCoolingTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "carrier cooling time"@en .
+
+matsci:reactionTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "reaction time"@en .
+
+matsci:solventEvaporationTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "solvent evaporation time"@en .
+
+matsci:dryingTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "drying time"@en .
+
+matsci:centrifugationTimeProperty a owl:NamedIndividual, matsci:ObservableTemporalProperty ;
+    rdfs:label "centrifugation time"@en .
+
+#################################################################
+# Sample temporal state controlled vocabulary
+#################################################################
+
+matsci:freshSampleState a owl:NamedIndividual, matsci:SampleTemporalState ;
+    rdfs:label "fresh sample"@en ;
+    dcterms:alternative "day 0", "pristine sample" .
+
+matsci:agedSampleState a owl:NamedIndividual, matsci:SampleTemporalState ;
+    rdfs:label "aged sample"@en .
+
+matsci:storedSampleState a owl:NamedIndividual, matsci:SampleTemporalState ;
+    rdfs:label "stored sample"@en .
+
+matsci:airAgedSampleState a owl:NamedIndividual, matsci:SampleTemporalState ;
+    rdfs:label "air-aged sample"@en .
+
+matsci:vacuumAgedSampleState a owl:NamedIndividual, matsci:SampleTemporalState ;
+    rdfs:label "vacuum-aged sample"@en .
+
+matsci:sampleTemporalStateProperty a owl:NamedIndividual, matsci:ObservableSampleTemporalProperty ;
+    rdfs:label "sample temporal state"@en .
+
+matsci:ObservableProcessTemporalProperty a owl:Class ;
+    rdfs:label "Observable process temporal property"@en ;
+    rdfs:comment "A temporal property describing the duration or elapsed time of a process or process step."@en ;
+    rdfs:subClassOf matsci:ObservableTemporalProperty .
+
+matsci:ObservableSampleTemporalProperty a owl:Class ;
+    rdfs:label "Observable sample temporal property"@en ;
+    rdfs:comment "A temporal property describing the age, temporal status, or time-dependent condition of a sample."@en ;
+    rdfs:subClassOf matsci:ObservableTemporalProperty .
+
+matsci:ObservableSpectroscopicTemporalProperty a owl:Class ;
+    rdfs:label "Observable spectroscopic temporal property"@en ;
+    rdfs:comment "A temporal property relevant to time-resolved characterization, such as delay time, pulse duration, decay time, relaxation time, coherence time, or energy transfer time."@en ;
+    rdfs:subClassOf matsci:ObservableTemporalProperty .
+
+matsci:TimeConditionValue a owl:Class ;
+    rdfs:label "Time condition value"@en ;
+    rdfs:comment "A quantitative condition value representing a temporal condition, such as synthesis duration, storage duration, aging time, exposure duration, pulse duration, delay time, or sample age. It is also a time quantity value and therefore reuses qqval qualifiers for exact, approximate, range, bound, or uncertainty expressions."@en ;
+    rdfs:subClassOf matsci:QuantitativeConditionValue,
+                    matsci:TimeQuantityValue .
+
+
+#################################################################
+# Collective optical phenomena
+#################################################################
+
+matsci:PhysicalPhenomenon a owl:Class ;
+    rdfs:label "Physical phenomenon"@en ;
+    rdfs:comment
+        """Superclass for physical phenomena exhibited by samples.
+        Note: subclasses are semantically heterogeneous (disposition, quality,
+        process) and should be anchored individually in BFO rather than
+        anchoring this superclass."""@en .
+
+matsci:CollectiveEmissionPhenomenon a owl:Class ;
+    rdfs:label "Collective emission phenomenon"@en ;
+    rdfs:comment "A physical phenomenon involving collective light emission from an ensemble of emitters, such as superfluorescence or superradiance."@en ;
+    rdfs:subClassOf matsci:PhysicalPhenomenon .
+
+matsci:Superfluorescence a owl:Class ;
+    rdfs:label "Superfluorescence"@en ;
+    dcterms:alternative "SF", "superfluorescent emission" ;
+    rdfs:comment "A collective emission phenomenon characterized by delayed, correlated, burst-like emission from an ensemble of excited emitters."@en ;
+    rdfs:subClassOf matsci:CollectiveEmissionPhenomenon .
+
+matsci:Superradiance a owl:Class ;
+    rdfs:label "Superradiance"@en ;
+    dcterms:alternative "SR", "superradiant emission" ;
+    rdfs:comment "A collective emission phenomenon characterized by enhanced radiative emission caused by coherent or cooperative coupling between emitters."@en ;
+    rdfs:subClassOf matsci:CollectiveEmissionPhenomenon .
+
+matsci:associatedWithPhenomenon a owl:ObjectProperty ;
+    rdfs:label "associated with phenomenon"@en ;
+    rdfs:comment "Links an observation, time-dependent effect, or observable property to the physical phenomenon it characterizes or affects."@en ;
+    rdfs:range matsci:PhysicalPhenomenon .
+
+matsci:ObservableCollectiveEmissionProperty a owl:Class ;
+    rdfs:label "Observable collective emission property"@en ;
+    rdfs:comment "An observable property used to characterize collective emission phenomena such as superfluorescence or superradiance."@en ;
+    rdfs:subClassOf matsci:ObservableMaterialProperty .
+
+matsci:superfluorescenceIntensityProperty a owl:NamedIndividual, matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superfluorescence intensity"@en ;
+    dcterms:alternative "SF intensity" ;
+    matsci:associatedWithPhenomenon matsci:Superfluorescence .
+
+matsci:superfluorescenceDelayTimeProperty a owl:NamedIndividual,
+        matsci:ObservableCollectiveEmissionProperty,
+        matsci:ObservableTemporalProperty ;
+    rdfs:label "superfluorescence delay time"@en ;
+    dcterms:alternative "SF delay time", "burst delay time" ;
+    matsci:associatedWithPhenomenon matsci:Superfluorescence .
+
+matsci:superfluorescenceLifetimeProperty a owl:NamedIndividual,
+        matsci:ObservableCollectiveEmissionProperty,
+        matsci:ObservableTemporalProperty ;
+    rdfs:label "superfluorescence lifetime"@en ;
+    dcterms:alternative "SF lifetime" ;
+    matsci:associatedWithPhenomenon matsci:Superfluorescence .
+
+matsci:superradianceIntensityProperty a owl:NamedIndividual, matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superradiance intensity"@en ;
+    dcterms:alternative "SR intensity" ;
+    matsci:associatedWithPhenomenon matsci:Superradiance .
+
+matsci:superradianceLifetimeProperty a owl:NamedIndividual,
+        matsci:ObservableCollectiveEmissionProperty,
+        matsci:ObservableTemporalProperty ;
+    rdfs:label "superradiance lifetime"@en ;
+    dcterms:alternative "SR lifetime" ;
+    matsci:associatedWithPhenomenon matsci:Superradiance .
+
+matsci:AgingInfluenceOnSuperfluorescence a owl:Class ;
+    rdfs:label "Aging influence on superfluorescence"@en ;
+    rdfs:comment "A time-dependent effect in which sample aging affects superfluorescence-related observable properties, such as intensity, delay time, lifetime, threshold, or emission dynamics."@en ;
+    rdfs:subClassOf matsci:AgingEffect .
+
+matsci:AgingInfluenceOnSuperradiance a owl:Class ;
+    rdfs:label "Aging influence on superradiance"@en ;
+    rdfs:comment "A time-dependent effect in which sample aging affects superradiance-related observable properties, such as intensity, lifetime, emission rate, or cooperative emission behavior."@en ;
+    rdfs:subClassOf matsci:AgingEffect .
