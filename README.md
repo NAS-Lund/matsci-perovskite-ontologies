@@ -15,7 +15,7 @@ vocabularies) are omitted.
 graph BT
     perov["perovskitemat<br/>1.3.0"]
     matsci["matsci-ontology<br/>3.1.0"]
-    tempo["temporal-ontology<br/>4.0.1"]
+    tempo["temporal-ontology<br/>4.1.0"]
     obs["observation-ontology<br/>4.0.1"]
     qqval["qqval-ontology<br/>1.2.1"]
 
@@ -70,8 +70,7 @@ persisted.
 | **Version** | 4.0.1 |
 
 Domain-independent scaffolding for processes, observations, phenomena, and
-conditions. Grounded in SOSA/BFO. Nucleated out of `matsci-ontology`; formerly
-named `experiment-ontology` (`exp:`), before that `core-ontology` (`core:`).
+conditions. Grounded in SOSA/BFO. Nucleated out of `matsci-ontology`.
 The process/observation-input properties (`hasInputEntity`, `hasOutputEntity`,
 `hasObservation`, `producedByProcess`) target `sosa:FeatureOfInterest`, not
 `sosa:Sample`, so this scaffolding is reusable outside physical/experimental
@@ -85,15 +84,19 @@ subproperties.
 | **File** | [`temporal-ontology.ttl`](temporal-ontology.ttl) |
 | **Shapes** | [`temporal-shapes.ttl`](temporal-shapes.ttl) |
 | **Prefix** | `tempo:` → `https://growgraph.dev/ontologies/temporal-ontology#` |
-| **Version** | 4.0.1 |
+| **Version** | 4.1.0 |
 
 Domain-independent vocabulary for process duration, entity aging, storage,
 exposure, and time-resolved characterization. Specializes
-`observation-ontology`; does not import `matsci-ontology`.
+`observation-ontology`.
 Matsci/spectroscopy-specific temporal terms live in `matsci-ontology`.
 Includes `tempo:precedes`/`tempo:follows` for temporal ordering between
-processes, and `tempo:EntityTemporalObservation` as the qualitative
-counterpart to `tempo:TemporalObservation`.
+processes. Observed-property scope (process- vs. entity-scoped) and result
+kind (quantitative vs. qualitative) are independent axes: `tempo:TemporalObservation`
+covers quantitative results at any scope (including numeric entity age),
+while `tempo:QualitativeEntityTemporalObservation` is specifically the
+entity-scoped, qualitative case (result is a `tempo:EntityTemporalState`
+such as fresh/aged/stored).
 
 ### Material Science (`matsci-ontology`)
 
@@ -145,7 +148,7 @@ pyshacl -s qqval-shapes.ttl -s observation-shapes.ttl \
 (the `-d <ontology>.ttl` inputs give the validator the named-individual
 typing -- e.g. `qqval:Exact a qqval:ApproximationQualifier` -- that
 `sh:class` constraints rely on. `-i rdfs` is required: `temporal-ontology`'s
-`tempo:hasTemporalQuantityResult`/`hasEntityTemporalResult` are
+`tempo:hasTemporalQuantityResult`/`hasEntityTemporalStateResult` are
 `rdfs:subPropertyOf` `observation-ontology`'s `hasQuantityResult`/
 `hasQualitativeResult`, and only asserting the more specific `tempo:` triple
 -- the extraction-pipeline-expected behavior -- otherwise fails

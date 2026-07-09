@@ -96,13 +96,37 @@
 
         4.0.1: documentation-only layering hygiene -- removed downstream
         ontology name-drops from the extension-contract paragraph, live
-        class comments, and section banners; no vocabulary changes."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/4.0.1> ;
+        class comments, and section banners; no vocabulary changes.
+
+        4.1.0 (breaking): renamed tempo:EntityTemporalObservation ->
+        QualitativeEntityTemporalObservation and
+        tempo:hasEntityTemporalResult -> hasEntityTemporalStateResult.
+        The class rename follows observation-ontology's existing
+        Qualitative-/Quantitative-prefix convention
+        (QualitativeObservation/QuantitativeObservation,
+        QualitativeConditionValue/QuantitativeConditionValue) instead of
+        leaving "qualitative" only implicit in the rdfs:comment --
+        entity-vs-process observed-property scope and
+        quantitative-vs-qualitative result are independent axes, and the
+        old name only surfaced the former. The property rename instead
+        follows the hasXResult-names-after-its-range convention
+        (hasTemporalQuantityResult/TimeQuantityValue,
+        hasQualitativeResult/QualitativeResult) since its range is
+        tempo:EntityTemporalState. Reworded the class's comment (dropped
+        the "qualitative counterpart to TemporalObservation" framing,
+        which understated that the two classes also differ in
+        observed-property scope) and clarified
+        tempo:ObservableEntityTemporalProperty's comment to note it covers
+        both axes' entity-scoped branch. Corrected tempo:hasElapsedTime's
+        comment, which claimed to link "an entity" even though no
+        rdfs:domain is (or safely can be, given hasObservationTimePoint's
+        domain-propagating subPropertyOf link) asserted on it."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/4.1.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ;
-    owl:versionInfo "4.0.1" .
+    owl:versionInfo "4.1.0" .
 
 #################################################################
 # Process taxonomy
@@ -182,6 +206,12 @@ tempo:AgingEffect a owl:Class ;
     rdfs:comment "A time-dependent effect produced or observed after entity aging."@en ;
     rdfs:subClassOf tempo:TimeDependentEffect .
 
+# StorageEffect is the only dedicated sibling narrowing AgingEffect by
+# process kind; exposure/operational aging effects are covered generically
+# by AgingEffect itself rather than by dedicated ExposureEffect/
+# OperationalEffect siblings. Intentional (storage conditions warrant their
+# own class; exposure/operational don't yet), not a gap to fill in by
+# pattern-matching the process taxonomy below.
 tempo:StorageEffect a owl:Class ;
     rdfs:label "Storage effect"@en ;
     rdfs:comment "A time-dependent effect associated with keeping an entity under specified storage conditions."@en ;
@@ -213,9 +243,9 @@ tempo:EntityTemporalState a owl:Class ;
     skos:example "fresh"@en , "aged"@en , "stored"@en , "condition-specific aged"@en ;
     rdfs:subClassOf obs:QualitativeResult .
 
-tempo:EntityTemporalObservation a owl:Class ;
-    rdfs:label "Entity temporal observation"@en ;
-    rdfs:comment "A qualitative observation whose observed property is temporal and whose result is represented as an entity temporal state. Qualitative counterpart to tempo:TemporalObservation."@en ;
+tempo:QualitativeEntityTemporalObservation a owl:Class ;
+    rdfs:label "Qualitative entity temporal observation"@en ;
+    rdfs:comment "A qualitative observation (see obs:QualitativeObservation) whose observed property is entity-scoped and temporal (tempo:ObservableEntityTemporalProperty) and whose result is a categorical entity temporal state (tempo:EntityTemporalState), e.g. fresh/aged/stored. Quantitative entity-scoped temporal observations (e.g. numeric entity age) are typed tempo:TemporalObservation instead: entity-vs-process observed-property scope and quantitative-vs-qualitative result are independent axes, not a single quantitative/qualitative pair."@en ;
     rdfs:subClassOf obs:QualitativeObservation ,
         [
             a owl:Restriction ;
@@ -224,7 +254,7 @@ tempo:EntityTemporalObservation a owl:Class ;
         ] ,
         [
             a owl:Restriction ;
-            owl:onProperty tempo:hasEntityTemporalResult ;
+            owl:onProperty tempo:hasEntityTemporalStateResult ;
             owl:someValuesFrom tempo:EntityTemporalState
         ] .
 
@@ -235,7 +265,7 @@ tempo:ObservableProcessTemporalProperty a owl:Class ;
 
 tempo:ObservableEntityTemporalProperty a owl:Class ;
     rdfs:label "Observable entity temporal property"@en ;
-    rdfs:comment "A temporal property describing the age, temporal status, or time-dependent condition of an entity."@en ;
+    rdfs:comment "A temporal property describing the age, temporal status, or time-dependent condition of an entity. Covers both quantitative individuals observed via tempo:TemporalObservation (e.g. entityAgeProperty, agingTimeProperty) and the qualitative entityTemporalStateProperty observed via tempo:QualitativeEntityTemporalObservation: entity-scoping and quantitative-vs-qualitative result are independent axes."@en ;
     rdfs:subClassOf tempo:ObservableTemporalProperty .
 
 tempo:ObservableTransientTemporalProperty a owl:Class ;
@@ -261,7 +291,7 @@ tempo:hasDuration a owl:ObjectProperty ;
 
 tempo:hasElapsedTime a owl:ObjectProperty ;
     rdfs:label "has elapsed time"@en ;
-    rdfs:comment "Links an entity to a time quantity value representing elapsed time since a relevant reference event."@en ;
+    rdfs:comment "Links an entity, process, or observation to a time quantity value representing elapsed time since a relevant reference event. Deliberately left without rdfs:domain: tempo:hasObservationTimePoint, a subproperty with domain obs:Observation, would conflict with a narrower domain (e.g. sosa:FeatureOfInterest) asserted here, since rdfs:domain propagates through rdfs:subPropertyOf."@en ;
     rdfs:range tempo:TimeQuantityValue .
 
 tempo:hasEntityAge a owl:ObjectProperty ;
@@ -278,10 +308,10 @@ tempo:hasTemporalQuantityResult a owl:ObjectProperty ;
     rdfs:range tempo:TimeQuantityValue ;
     rdfs:subPropertyOf obs:hasQuantityResult .
 
-tempo:hasEntityTemporalResult a owl:ObjectProperty ;
-    rdfs:label "has entity temporal result"@en ;
-    rdfs:comment "Links an entity temporal observation to an entity temporal state result."@en ;
-    rdfs:domain tempo:EntityTemporalObservation ;
+tempo:hasEntityTemporalStateResult a owl:ObjectProperty ;
+    rdfs:label "has entity temporal state result"@en ;
+    rdfs:comment "Links an entity temporal state observation to its entity temporal state result."@en ;
+    rdfs:domain tempo:QualitativeEntityTemporalObservation ;
     rdfs:range tempo:EntityTemporalState ;
     rdfs:subPropertyOf obs:hasQualitativeResult .
 

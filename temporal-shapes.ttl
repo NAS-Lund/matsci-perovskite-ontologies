@@ -11,7 +11,7 @@
 #
 # Closed-world validation companion to temporal-ontology. Mirrors the
 # someValuesFrom restrictions declared on tempo:TemporalObservation and
-# tempo:EntityTemporalObservation, the same way qqval-shapes/
+# tempo:QualitativeEntityTemporalObservation, the same way qqval-shapes/
 # observation-shapes mirror their respective ontologies' OWL
 # restrictions. Unlike those two, most of temporal-ontology's other
 # classes (TemporalProcess, TimeDependentEffect, ...) carry no qualified
@@ -19,13 +19,13 @@
 # points, not closed structural shapes -- so this file stays small.
 #
 # Apply against the data graph together with observation-shapes and
-# qqval-shapes in scope, since TemporalObservation/EntityTemporalObservation
-# instances are also validated against obs:QuantitativeObservationShape /
-# obs:QualitativeObservationShape via SHACL's subclass-aware sh:targetClass
-# matching.
+# qqval-shapes in scope, since TemporalObservation/
+# QualitativeEntityTemporalObservation instances are also validated against
+# obs:QuantitativeObservationShape / obs:QualitativeObservationShape via
+# SHACL's subclass-aware sh:targetClass matching.
 #
 # Requires RDFS inference (pyshacl -i rdfs) on the data graph:
-# tempo:hasTemporalQuantityResult / tempo:hasEntityTemporalResult are
+# tempo:hasTemporalQuantityResult / tempo:hasEntityTemporalStateResult are
 # rdfs:subPropertyOf obs:hasQuantityResult / obs:hasQualitativeResult.
 # Without an inference pass, asserting only the more specific tempo:
 # property (the extraction-pipeline-expected behavior) fails
@@ -40,11 +40,18 @@
     rdfs:comment
         """SHACL shapes mirroring the OWL someValuesFrom restrictions
         declared on tempo:TemporalObservation and
-        tempo:EntityTemporalObservation in temporal-ontology (>= 4.0.0).
+        tempo:QualitativeEntityTemporalObservation in temporal-ontology
+        (>= 4.0.0).
 
-        1.0.0: initial version."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/temporal-shapes/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+        1.0.0: initial version.
+
+        1.1.0: renamed tempo:EntityTemporalObservationShape ->
+        QualitativeEntityTemporalObservationShape, following
+        temporal-ontology 4.1.0's tempo:EntityTemporalObservation ->
+        QualitativeEntityTemporalObservation / hasEntityTemporalResult ->
+        hasEntityTemporalStateResult rename."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/temporal-shapes/1.1.0> ;
+    owl:versionInfo "1.1.0" .
 
 #################################################################
 # TemporalObservation — observed property and result must be temporal
@@ -65,19 +72,19 @@ tempo:TemporalObservationShape a sh:NodeShape ;
         ] .
 
 #################################################################
-# EntityTemporalObservation — qualitative counterpart
+# QualitativeEntityTemporalObservation — entity-scoped qualitative observation
 #################################################################
 
-tempo:EntityTemporalObservationShape a sh:NodeShape ;
-    sh:targetClass tempo:EntityTemporalObservation ;
+tempo:QualitativeEntityTemporalObservationShape a sh:NodeShape ;
+    sh:targetClass tempo:QualitativeEntityTemporalObservation ;
     sh:property
         [ sh:path sosa:observedProperty ;
             sh:minCount 1 ;
             sh:class tempo:ObservableEntityTemporalProperty ;
-            sh:message "EntityTemporalObservation requires at least one sosa:observedProperty of type tempo:ObservableEntityTemporalProperty."@en
+            sh:message "QualitativeEntityTemporalObservation requires at least one sosa:observedProperty of type tempo:ObservableEntityTemporalProperty."@en
         ] ,
-        [ sh:path tempo:hasEntityTemporalResult ;
+        [ sh:path tempo:hasEntityTemporalStateResult ;
             sh:minCount 1 ;
             sh:class tempo:EntityTemporalState ;
-            sh:message "EntityTemporalObservation requires at least one tempo:hasEntityTemporalResult whose value is a tempo:EntityTemporalState."@en
+            sh:message "QualitativeEntityTemporalObservation requires at least one tempo:hasEntityTemporalStateResult whose value is a tempo:EntityTemporalState."@en
         ] .
