@@ -25,32 +25,36 @@
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
         """SHACL shapes mirroring the OWL cardinality/qualifier
-        restrictions declared on obs:EnvironmentCondition,
-        obs:QuantitativeObservation, and obs:QualitativeObservation in
-        observation-ontology (>= 3.1.0).
+        restrictions declared on obs:Condition, obs:QuantitativeObservation,
+        and obs:QualitativeObservation in observation-ontology (>= 4.0.0).
 
-        1.0.0: initial version."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+        1.0.0: initial version.
+
+        2.0.0 (breaking): renamed obs:EnvironmentConditionShape to
+        obs:ConditionShape and retargeted it at obs:Condition /
+        obs:ConditionFactor, following observation-ontology 4.0.0's
+        rename of those classes."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.0.0> ;
+    owl:versionInfo "2.0.0" .
 
 #################################################################
-# EnvironmentCondition — exactly one factor, exactly one value
+# Condition — exactly one factor, exactly one value
 #################################################################
 
-obs:EnvironmentConditionShape a sh:NodeShape ;
-    sh:targetClass obs:EnvironmentCondition ;
+obs:ConditionShape a sh:NodeShape ;
+    sh:targetClass obs:Condition ;
     sh:property
         [ sh:path obs:conditionFactor ;
             sh:minCount 1 ;
             sh:maxCount 1 ;
-            sh:class obs:EnvironmentFactor ;
-            sh:message "EnvironmentCondition requires exactly one obs:conditionFactor of type obs:EnvironmentFactor."@en
+            sh:class obs:ConditionFactor ;
+            sh:message "Condition requires exactly one obs:conditionFactor of type obs:ConditionFactor."@en
         ] ,
         [ sh:path obs:conditionValue ;
             sh:minCount 1 ;
             sh:maxCount 1 ;
             sh:class obs:ConditionValue ;
-            sh:message "EnvironmentCondition requires exactly one obs:conditionValue of type obs:ConditionValue."@en
+            sh:message "Condition requires exactly one obs:conditionValue of type obs:ConditionValue."@en
         ] .
 
 #################################################################

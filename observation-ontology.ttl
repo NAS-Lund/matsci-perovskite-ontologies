@@ -19,8 +19,8 @@
         processes: a SOSA/SSN-grounded Process/Observation model, a generic
         Phenomenon superclass (with PhysicalPhenomenon as one specialization),
         a QualitativeResult superclass for categorical observation results,
-        and a reified EnvironmentCondition/EnvironmentFactor/ConditionValue
-        triad for expressing process and observation conditions.
+        and a reified Condition/ConditionFactor/ConditionValue triad for
+        expressing process and observation conditions.
 
         Nucleated out of matsci-ontology (1.4.0): this vocabulary carries
         no domain-specific meaning of its own -- any ontology that needs to
@@ -55,14 +55,47 @@
         obs:hasQuantityResult / obs:hasQualitativeResult triple entirely,
         not by asserting a placeholder value. See qqval-ontology's header
         for the full rationale (this vocabulary intentionally has no
-        "not reported" or "unknown" individual)."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/3.1.0> ;
+        "not reported" or "unknown" individual).
+
+        4.0.0 (breaking): renamed obs:EnvironmentCondition -> obs:Condition
+        and obs:EnvironmentFactor -> obs:ConditionFactor -- "environment"
+        implied physical/atmospheric conditions specifically, which this
+        reified factor+value pattern never actually required (it works
+        equally well for, e.g., an econometric or clinical context factor).
+        Retired obs:broaderEnvironmentFactor in favor of skos:broader,
+        consistent with how qqval:ApproximationQualifier individuals
+        already use skos:broader/skos:narrower. Generalized
+        obs:hasObservation and obs:producedByProcess from domain/range
+        sosa:Sample to sosa:FeatureOfInterest (sosa:Sample is itself a
+        specialization of sosa:FeatureOfInterest for physical sampling and
+        does not fit, e.g., a document corpus or a software build
+        artifact); renamed obs:hasInputSample/hasOutputSample to
+        obs:hasInputEntity/hasOutputEntity to match, and added
+        matsci:hasInputSample/hasOutputSample as sosa:Sample-narrowed
+        convenience subproperties in matsci-ontology. "Entity" was chosen
+        over the more literal "FeatureOfInterest" for readability, and
+        over "Feature" because a bare "Feature" reads as software/product/
+        ML jargon to most readers -- a worse wrong-domain signal than
+        "Sample" was.
+
+        Extension contract: obs:Process and obs:Phenomenon are the primary
+        extension points -- domain ontologies subclass them rather than
+        adding siblings to this ontology. obs:ConditionFactor and
+        obs:QualitativeConditionValue are open controlled vocabularies:
+        domain ontologies mint new individuals as needed (matsci-ontology's
+        matsci:atmosphere/matsci:air are examples). obs:hasInputEntity/
+        hasOutputEntity/hasObservation/producedByProcess/hasQuantityResult/
+        hasQualitativeResult are meant to be subpropertied (not
+        subclassed) by domain ontologies that want a narrower, ergonomic,
+        domain-flavored property name -- see matsci:hasInputSample for the
+        pattern."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/4.0.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "3.1.0" .
+    owl:versionInfo "4.0.0" .
 
 #################################################################
 # Process execution layer
@@ -145,32 +178,32 @@ obs:QualitativeObservation a owl:Class ;
 obs:QuantitativeObservation owl:disjointWith obs:QualitativeObservation .
 
 #################################################################
-# Environment conditions
+# Conditions
 #################################################################
 
 obs:ConditionValue a owl:Class ;
     rdfs:label "Condition value"@en ;
     rdfs:comment
-        "Superclass for values used in environment conditions, including quantitative and qualitative values."@en .
+        "Superclass for values used in conditions, including quantitative and qualitative values."@en .
 
 obs:QualitativeConditionValue a owl:Class ;
     rdfs:label "Qualitative condition value"@en ;
-    rdfs:comment "A non-numeric categorical value used in an environment condition."@en ;
+    rdfs:comment "A non-numeric categorical value used in a condition."@en ;
     rdfs:subClassOf obs:ConditionValue .
 
 obs:QuantitativeConditionValue a owl:Class ;
     rdfs:label "Quantitative condition value"@en ;
-    rdfs:comment "A quantitative value used in an environment condition."@en ;
+    rdfs:comment "A quantitative value used in a condition."@en ;
     rdfs:subClassOf obs:ConditionValue, qudt:QuantityValue .
 
-obs:EnvironmentCondition a owl:Class ;
-    rdfs:label "Environment condition"@en ;
-    rdfs:comment "Reified condition linking an environmental factor to a value."@en ;
+obs:Condition a owl:Class ;
+    rdfs:label "Condition"@en ;
+    rdfs:comment "Reified condition linking a condition factor to a value."@en ;
     rdfs:subClassOf
         [ a owl:Restriction ;
             owl:onProperty obs:conditionFactor ;
             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass obs:EnvironmentFactor
+            owl:onClass obs:ConditionFactor
         ] ,
         [ a owl:Restriction ;
             owl:onProperty obs:conditionValue ;
@@ -178,10 +211,10 @@ obs:EnvironmentCondition a owl:Class ;
             owl:onClass obs:ConditionValue
         ] .
 
-obs:EnvironmentFactor a owl:Class ;
-    rdfs:label "Environment factor"@en ;
+obs:ConditionFactor a owl:Class ;
+    rdfs:label "Condition factor"@en ;
     rdfs:comment
-        "A dimension or aspect of a process's or observation's environment being specified."@en ;
+        "A dimension or aspect of a process's or observation's context being specified. Open vocabulary: domain ontologies mint further individuals as siblings; use skos:broader to relate a narrower factor to a broader one."@en ;
     skos:example
         "atmosphere"@en , "humidity"@en , "temperature"@en , "time"@en .
 
@@ -192,8 +225,8 @@ obs:EnvironmentFactor a owl:Class ;
 obs:hasObservation a owl:ObjectProperty ;
     rdfs:label "has observation"@en ;
     rdfs:comment
-        "Links a sample to an observation about it.  Use sosa:hasFeatureOfInterest in the opposite direction."@en ;
-    rdfs:domain sosa:Sample ;
+        "Links a feature of interest to an observation about it.  Use sosa:hasFeatureOfInterest in the opposite direction."@en ;
+    rdfs:domain sosa:FeatureOfInterest ;
     rdfs:range obs:Observation ;
     rdfs:subPropertyOf sosa:isFeatureOfInterestOf ;
     owl:inverseOf sosa:hasFeatureOfInterest .
@@ -223,29 +256,23 @@ obs:hasObservationCondition a owl:ObjectProperty ;
     rdfs:label "has observation condition"@en ;
     rdfs:comment "Links an observation to a reified condition instance."@en ;
     rdfs:domain obs:Observation ;
-    rdfs:range obs:EnvironmentCondition .
+    rdfs:range obs:Condition .
 
 obs:hasProcessCondition a owl:ObjectProperty ;
     rdfs:label "has process condition"@en ;
     rdfs:comment "Links a concrete process to a reified condition instance."@en ;
     rdfs:domain obs:Process ;
-    rdfs:range obs:EnvironmentCondition .
+    rdfs:range obs:Condition .
 
 obs:conditionFactor a owl:ObjectProperty ;
     rdfs:label "condition factor"@en ;
-    rdfs:domain obs:EnvironmentCondition ;
-    rdfs:range obs:EnvironmentFactor .
+    rdfs:domain obs:Condition ;
+    rdfs:range obs:ConditionFactor .
 
 obs:conditionValue a owl:ObjectProperty ;
     rdfs:label "condition value"@en ;
-    rdfs:domain obs:EnvironmentCondition ;
+    rdfs:domain obs:Condition ;
     rdfs:range obs:ConditionValue .
-
-obs:broaderEnvironmentFactor a owl:ObjectProperty ;
-    rdfs:label "broader environment factor"@en ;
-    rdfs:comment "Links a specific environment or temporal factor to a broader environment factor."@en ;
-    rdfs:domain obs:EnvironmentFactor ;
-    rdfs:range obs:EnvironmentFactor .
 
 obs:usesMethod a owl:ObjectProperty ;
     rdfs:label "uses method"@en ;
@@ -254,25 +281,33 @@ obs:usesMethod a owl:ObjectProperty ;
     rdfs:subPropertyOf sosa:usedProcedure ;
     rdfs:range sosa:Procedure .
 
-obs:hasInputSample a owl:ObjectProperty ;
-    rdfs:label "has input sample"@en ;
+obs:hasInputEntity a owl:ObjectProperty ;
+    rdfs:label "has input entity"@en ;
     rdfs:comment
-        "Links a process to a concrete sample used as input.  Domain-specific ontologies may add a parallel property for the abstract material/entity kind consumed."@en ;
+        """Links a process to a concrete feature of interest (sosa:FeatureOfInterest)
+        used as input. Domain-specific ontologies may narrow the range (e.g.
+        matsci:hasInputSample narrows it to sosa:Sample) and/or add a
+        parallel property for the abstract material/entity kind
+        consumed."""@en ;
     rdfs:domain obs:Process ;
-    rdfs:range sosa:Sample .
+    rdfs:range sosa:FeatureOfInterest .
 
-obs:hasOutputSample a owl:ObjectProperty ;
-    rdfs:label "has output sample"@en ;
+obs:hasOutputEntity a owl:ObjectProperty ;
+    rdfs:label "has output entity"@en ;
     rdfs:comment
-        "Links a process to the concrete sample it produced.  Domain-specific ontologies may add a parallel property for the abstract material/entity kind targeted."@en ;
+        """Links a process to the concrete feature of interest (sosa:FeatureOfInterest)
+        it produced. Domain-specific ontologies may narrow the range (e.g.
+        matsci:hasOutputSample narrows it to sosa:Sample) and/or add a
+        parallel property for the abstract material/entity kind
+        targeted."""@en ;
     rdfs:domain obs:Process ;
-    rdfs:range sosa:Sample .
+    rdfs:range sosa:FeatureOfInterest .
 
 obs:producedByProcess a owl:ObjectProperty ;
     rdfs:label "produced by process"@en ;
-    rdfs:domain sosa:Sample ;
+    rdfs:domain sosa:FeatureOfInterest ;
     rdfs:range obs:Process ;
-    owl:inverseOf obs:hasOutputSample .
+    owl:inverseOf obs:hasOutputEntity .
 
 #################################################################
 # Datatype properties
@@ -285,15 +320,15 @@ obs:observationSource a owl:DatatypeProperty ;
     rdfs:range xsd:anyURI .
 
 #################################################################
-# Generic environment-factor vocabulary
+# Generic condition-factor vocabulary
 #
 # "time" is kept here (rather than in matsci) because it is the one
-# concrete EnvironmentFactor individual that a domain-independent
+# concrete ConditionFactor individual that a domain-independent
 # consumer (temporal-ontology) needs to reference directly as a
-# broaderEnvironmentFactor target. Domain-specific factors such as
-# atmosphere, humidity, and temperature remain minted in matsci-ontology.
+# skos:broader target. Domain-specific factors such as atmosphere,
+# humidity, and temperature remain minted in matsci-ontology.
 #################################################################
 
-obs:time a owl:NamedIndividual, obs:EnvironmentFactor ;
+obs:time a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "time"@en ;
-    rdfs:comment "A temporal factor, including duration, elapsed time, delay time, sample age, storage time, aging time, exposure time, or process time."@en .
+    rdfs:comment "A temporal factor, including duration, elapsed time, delay time, entity age, storage time, aging time, exposure time, or process time."@en .

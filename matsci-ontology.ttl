@@ -27,13 +27,13 @@
         As of 2.0.0, the domain-independent Process/Observation/condition
         scaffolding (Process, Observation, QuantitativeObservation,
         QualitativeObservation, PhysicalPhenomenon, QualitativeResult, the
-        ConditionValue/EnvironmentCondition/EnvironmentFactor triad, and
+        ConditionValue/Condition/ConditionFactor triad, and
         the object/datatype properties gluing them together) has been
         nucleated out into core-ontology, which this ontology imports.
         matsci-ontology now supplies only the materials-science-specific
         vocabulary layered on top of that scaffolding.
 
-        Temporal/aging vocabulary (process duration, sample aging,
+        Temporal/aging vocabulary (process duration, entity aging,
         storage, time-resolved characterization) remains factored out into
         temporal-ontology. Unlike in 1.4.0, this ontology now imports
         temporal-ontology (temporal-ontology itself depends only on
@@ -58,8 +58,35 @@
         matsci:vacuumAgedSampleState, moved out of temporal-ontology 3.1.0
         -- these are materials-science storage conditions, not universal
         sample states, and had been missed in the 3.0.0 pass that moved
-        the rest of the matsci-specific temporal vocabulary here."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/2.3.0> ;
+        the rest of the matsci-specific temporal vocabulary here.
+
+        3.0.0 (breaking): follows observation-ontology 4.0.0's and
+        temporal-ontology 4.0.0's renames. obs:EnvironmentFactor/
+        EnvironmentCondition are now obs:ConditionFactor/Condition;
+        retyped matsci:atmosphere/humidity/temperature/processDuration/
+        synthesisDuration/assemblyDuration/pulseDuration accordingly and
+        switched their obs:broaderEnvironmentFactor links to skos:broader.
+        tempo:SampleTemporalState is now tempo:EntityTemporalState; renamed
+        matsci:airAgedSampleState/vacuumAgedSampleState to
+        matsci:airAgedEntityState/vacuumAgedEntityState to match. Added
+        matsci:hasInputSample/hasOutputSample as sosa:Sample-narrowed
+        convenience subproperties of obs:hasInputEntity/hasOutputEntity
+        (which replaced obs:hasInputSample/hasOutputSample at the
+        domain-neutral layer), so existing matsci-flavored usage keeps its
+        familiar name; updated matsci:hasInputMaterial/hasOutputMaterial's
+        rdfs:comment cross-references accordingly.
+
+        Extension contract: matsci-ontology is itself the extension layer
+        for observation-ontology/temporal-ontology -- it subclasses
+        obs:Process/obs:Phenomenon/tempo:TemporalProcess/
+        tempo:ObservableTemporalProperty and subproperties the generic
+        Entity-of-Interest properties, exactly the pattern a new domain
+        ontology (economics, clinical, etc.) would follow at the same
+        layer. matsci:Material, matsci:MaterialRole, and the various
+        *Method/*Process/*Value controlled vocabularies here are open:
+        further materials-science-specific individuals and siblings are
+        expected."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/3.0.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/temporal-ontology> ,
@@ -69,7 +96,7 @@
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <http://qudt.org/2.1/vocab/unit> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "2.3.0" .
+    owl:versionInfo "3.0.0" .
 
 #################################################################
 # Core classes
@@ -441,16 +468,32 @@ matsci:usesSelfAssemblyTechnique a owl:ObjectProperty ;
 matsci:hasInputMaterial a owl:ObjectProperty ;
     rdfs:label "has input material"@en ;
     rdfs:comment
-        "Links a process to the abstract material kind it consumes, for recipe or provenance tracking.  For concrete sample-level traceability use obs:hasInputSample."@en ;
+        "Links a process to the abstract material kind it consumes, for recipe or provenance tracking.  For concrete sample-level traceability use matsci:hasInputSample."@en ;
     rdfs:domain obs:Process ;
     rdfs:range matsci:Material .
 
 matsci:hasOutputMaterial a owl:ObjectProperty ;
     rdfs:label "has output material"@en ;
     rdfs:comment
-        "Links a process to the abstract material kind it targets as output.  For the concrete produced sample use obs:hasOutputSample."@en ;
+        "Links a process to the abstract material kind it targets as output.  For the concrete produced sample use matsci:hasOutputSample."@en ;
     rdfs:domain obs:Process ;
     rdfs:range matsci:Material .
+
+matsci:hasInputSample a owl:ObjectProperty ;
+    rdfs:label "has input sample"@en ;
+    rdfs:comment
+        "Sample-flavored convenience subproperty of obs:hasInputEntity, narrowed to sosa:Sample.  Use this at the matsci layer instead of obs:hasInputEntity directly."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range sosa:Sample ;
+    rdfs:subPropertyOf obs:hasInputEntity .
+
+matsci:hasOutputSample a owl:ObjectProperty ;
+    rdfs:label "has output sample"@en ;
+    rdfs:comment
+        "Sample-flavored convenience subproperty of obs:hasOutputEntity, narrowed to sosa:Sample.  Use this at the matsci layer instead of obs:hasOutputEntity directly."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range sosa:Sample ;
+    rdfs:subPropertyOf obs:hasOutputEntity .
 
 matsci:usedProcessingEquipment a owl:ObjectProperty ;
     rdfs:label "used processing equipment"@en ;
@@ -675,24 +718,24 @@ matsci:oleylammoniumBromide a owl:NamedIndividual, matsci:Material ;
     dcterms:alternative "C18H38BrN" .
 
 #################################################################
-# Environment factor and condition-value individuals
+# Condition factor and condition-value individuals
 #
-# matsci:EnvironmentFactor / matsci:QualitativeConditionValue classes now
-# live in observation-ontology (obs:EnvironmentFactor / obs:QualitativeConditionValue).
+# matsci:ConditionFactor / matsci:QualitativeConditionValue classes now
+# live in observation-ontology (obs:ConditionFactor / obs:QualitativeConditionValue).
 # These concrete controlled-vocabulary individuals stay minted in the
 # matsci namespace since they are domain vocabulary choices, not generic
 # infrastructure. (The one exception, "time", moved to observation-ontology as
 # obs:time, since temporal-ontology -- which must not import matsci --
-# needs to reference it directly as a broaderEnvironmentFactor target.)
+# needs to reference it directly as a skos:broader target.)
 #################################################################
 
-matsci:atmosphere a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:atmosphere a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "atmosphere"@en .
 
-matsci:humidity a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:humidity a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "humidity"@en .
 
-matsci:temperature a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:temperature a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "temperature"@en .
 
 matsci:air a owl:NamedIndividual, obs:QualitativeConditionValue ;
@@ -705,18 +748,18 @@ matsci:nitrogenAtmosphere a owl:NamedIndividual, obs:QualitativeConditionValue ;
     rdfs:label "nitrogen atmosphere"@en .
 
 #################################################################
-# Sample temporal state individuals (matsci-specific)
+# Entity temporal state individuals (matsci-specific)
 #
 # Domain-specific storage/aging states, moved out of temporal-ontology
 # 3.1.0. Siblings of the universal fresh/aged/stored trio defined on
-# tempo:SampleTemporalState.
+# tempo:EntityTemporalState.
 #################################################################
 
-matsci:airAgedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
-    rdfs:label "air-aged sample"@en .
+matsci:airAgedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "air-aged"@en .
 
-matsci:vacuumAgedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
-    rdfs:label "vacuum-aged sample"@en .
+matsci:vacuumAgedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "vacuum-aged"@en .
 
 matsci:plate a owl:NamedIndividual, matsci:ShapeValue ;
     rdfs:label "plate"@en .
@@ -890,31 +933,31 @@ matsci:AgingInfluenceOnSuperradiance a owl:Class ;
     rdfs:comment "A time-dependent effect in which sample aging affects superradiance-related observable properties, such as intensity, lifetime, emission rate, or cooperative emission behavior."@en .
 
 #################################################################
-# Temporal environment factors (matsci-specific)
+# Temporal condition factors (matsci-specific)
 #
 # Domain-specific temporal factors moved out of temporal-ontology 3.0.0.
-# They chain up to tempo:duration or obs:time via obs:broaderEnvironmentFactor.
+# They chain up to tempo:duration or obs:time via skos:broader.
 #################################################################
 
-matsci:processDuration a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:processDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "process duration"@en ;
     rdfs:comment "Duration of a materials-science process."@en ;
-    obs:broaderEnvironmentFactor tempo:duration .
+    skos:broader tempo:duration .
 
-matsci:synthesisDuration a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:synthesisDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "synthesis duration"@en ;
     rdfs:comment "Duration of a synthesis process or synthesis step."@en ;
-    obs:broaderEnvironmentFactor matsci:processDuration .
+    skos:broader matsci:processDuration .
 
-matsci:assemblyDuration a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:assemblyDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "assembly duration"@en ;
     rdfs:comment "Duration of an assembly or self-assembly process."@en ;
-    obs:broaderEnvironmentFactor matsci:processDuration .
+    skos:broader matsci:processDuration .
 
-matsci:pulseDuration a owl:NamedIndividual, obs:EnvironmentFactor ;
+matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "pulse duration"@en ;
     rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
-    obs:broaderEnvironmentFactor tempo:duration .
+    skos:broader tempo:duration .
 
 #################################################################
 # Temporal observable properties (matsci-specific)

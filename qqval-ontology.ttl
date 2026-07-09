@@ -53,12 +53,26 @@
         qqval consumer treat absent data as a reported (if vague) number.
         Reserve the qqval:ApproximationQualifier individuals for values
         that were actually present in the source, however loosely
-        stated."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/1.2.0> ;
+        stated.
+
+        1.2.1: added an explicit extension-contract note (documentation
+        only, no vocabulary change). qqval:ApproximationQualifier is a
+        closed controlled vocabulary (owl:AllDifferent over exactly the
+        six individuals defined below: Exact, Approximate, Range, AtLeast,
+        AtMost, WithUncertainty) -- do not add siblings; extend the
+        SHACL-SPARQL constraints in qqval-shapes instead if new qualifier
+        semantics are ever needed. qqval:DistributionAssumption is open:
+        Gaussian/Unspecified are provided, consumers may mint further
+        individuals. qqval:ApproximateQuantityValue and qqval:QuantityRange
+        are the extension points: domain ontologies subclass them to add
+        domain-typed quantity values (temporal-ontology's
+        tempo:TimeQuantityValue is the existing example) rather than
+        reimplementing the qualifier machinery."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/1.2.1> ;
     owl:imports
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://qudt.org/2.1/vocab/unit> ;
-    owl:versionInfo "1.2.0" ;
+    owl:versionInfo "1.2.1" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
