@@ -4,6 +4,7 @@
 @prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
@@ -40,13 +41,24 @@
         factors to matsci-ontology. Updated to follow experiment-ontology's
         rename to observation-ontology (prefix exp: -> obs:). Relinked
         TimeDependentEffect to obs:Phenomenon instead of
-        obs:PhysicalPhenomenon."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/3.0.0> ;
+        obs:PhysicalPhenomenon.
+
+        3.1.0: moved tempo:airAgedSampleState and tempo:vacuumAgedSampleState
+        to matsci-ontology -- "air" and "vacuum" are materials-science
+        storage conditions that had been missed in the 3.0.0 pass that
+        moved the rest of the matsci-specific vocabulary out of this
+        ontology. The universal SampleTemporalState trio (fresh/aged/
+        stored) stays here; domain-specific states are added as siblings
+        downstream. Moved materials-science illustrations out of
+        rdfs:comment prose and into skos:example on OperationProcess,
+        StorageAgingProcess, and ExposureAgingProcess so they read as
+        examples rather than scope boundaries."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/3.1.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ;
-    owl:versionInfo "3.0.0" .
+    owl:versionInfo "3.1.0" .
 
 #################################################################
 # Process taxonomy
@@ -79,24 +91,28 @@ tempo:AgingProcess a owl:Class ;
 
 tempo:StorageAgingProcess a owl:Class ;
     rdfs:label "Storage aging process"@en ;
-    rdfs:comment "An aging process in which a sample evolves over time while being stored under specified environmental conditions, such as atmosphere, humidity, temperature, pressure, or storage duration."@en ;
+    rdfs:comment "An aging process in which a sample evolves over time while being stored under specified environmental conditions."@en ;
+    skos:example "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en , "storage duration"@en ;
     rdfs:subClassOf tempo:AgingProcess,
                     tempo:StorageProcess .
 
 tempo:ExposureAgingProcess a owl:Class ;
     rdfs:label "Exposure aging process"@en ;
-    rdfs:comment "An aging process in which a sample evolves over time while being exposed to an external environmental, optical, thermal, chemical, or mechanical factor."@en ;
+    rdfs:comment "An aging process in which a sample evolves over time while being exposed to an external factor."@en ;
+    skos:example "environmental exposure"@en , "optical exposure"@en , "thermal exposure"@en , "chemical exposure"@en , "mechanical exposure"@en ;
     rdfs:subClassOf tempo:AgingProcess,
                     tempo:ExposureProcess .
 
 tempo:OperationProcess a owl:Class ;
     rdfs:label "Operation process"@en ;
-    rdfs:comment "A process in which a material, sample, or device is used under functional working conditions, such as illumination, biasing, cycling, charging, discharging, or device operation."@en ;
+    rdfs:comment "A process in which a material, sample, or device is used under functional working conditions."@en ;
+    skos:example "illumination"@en , "biasing"@en , "cycling"@en , "charging"@en , "discharging"@en , "device operation"@en ;
     rdfs:subClassOf tempo:TemporalProcess .
 
 tempo:OperationalAgingProcess a owl:Class ;
     rdfs:label "Operational aging process"@en ;
-    rdfs:comment "An aging process in which a sample or device evolves over time during operation, use, cycling, illumination, biasing, or another functional working condition."@en ;
+    rdfs:comment "An aging process in which a sample or device evolves over time during operation or use."@en ;
+    skos:example "cycling"@en , "illumination"@en , "biasing"@en ;
     rdfs:subClassOf tempo:AgingProcess,
                     tempo:OperationProcess .
 
@@ -146,7 +162,8 @@ tempo:TemporalObservation a owl:Class ;
 
 tempo:SampleTemporalState a owl:Class ;
     rdfs:label "Sample temporal state"@en ;
-    rdfs:comment "A qualitative result describing the temporal status of a sample, such as fresh, aged, stored, air-aged, or vacuum-aged."@en ;
+    rdfs:comment "A qualitative result describing the temporal status of a sample. Open vocabulary: domain ontologies add domain-specific states as siblings of the universal fresh/aged/stored trio defined here."@en ;
+    skos:example "fresh"@en , "aged"@en , "stored"@en , "air-aged"@en , "vacuum-aged"@en ;
     rdfs:subClassOf obs:QualitativeResult .
 
 tempo:ObservableProcessTemporalProperty a owl:Class ;
@@ -291,6 +308,11 @@ tempo:exposureDurationProperty a owl:NamedIndividual, tempo:ObservableProcessTem
 
 #################################################################
 # Sample temporal state controlled vocabulary
+#
+# Universal trio only. Domain-specific storage/aging states (e.g.
+# matsci-ontology's air-aged / vacuum-aged) are minted as siblings of
+# this class downstream -- see matsci-ontology's "Environment factor and
+# condition-value individuals" section.
 #################################################################
 
 tempo:freshSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
@@ -302,12 +324,6 @@ tempo:agedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
 
 tempo:storedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
     rdfs:label "stored sample"@en .
-
-tempo:airAgedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
-    rdfs:label "air-aged sample"@en .
-
-tempo:vacuumAgedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
-    rdfs:label "vacuum-aged sample"@en .
 
 tempo:sampleTemporalStateProperty a owl:NamedIndividual, tempo:ObservableSampleTemporalProperty ;
     rdfs:label "sample temporal state"@en .

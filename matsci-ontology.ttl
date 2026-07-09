@@ -52,8 +52,14 @@
         observation-ontology (prefix exp: -> obs:). Absorbed
         matsci/spectroscopy-specific temporal vocabulary moved out of
         temporal-ontology 3.0.0 (environment factors, process/transient
-        temporal observable properties). Expanded temporal typing section."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/2.2.0> ;
+        temporal observable properties). Expanded temporal typing section.
+
+        2.3.0: absorbed matsci:airAgedSampleState and
+        matsci:vacuumAgedSampleState, moved out of temporal-ontology 3.1.0
+        -- these are materials-science storage conditions, not universal
+        sample states, and had been missed in the 3.0.0 pass that moved
+        the rest of the matsci-specific temporal vocabulary here."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/2.3.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/temporal-ontology> ,
@@ -63,7 +69,7 @@
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <http://qudt.org/2.1/vocab/unit> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "2.2.0" .
+    owl:versionInfo "2.3.0" .
 
 #################################################################
 # Core classes
@@ -697,6 +703,20 @@ matsci:vacuum a owl:NamedIndividual, obs:QualitativeConditionValue ;
 
 matsci:nitrogenAtmosphere a owl:NamedIndividual, obs:QualitativeConditionValue ;
     rdfs:label "nitrogen atmosphere"@en .
+
+#################################################################
+# Sample temporal state individuals (matsci-specific)
+#
+# Domain-specific storage/aging states, moved out of temporal-ontology
+# 3.1.0. Siblings of the universal fresh/aged/stored trio defined on
+# tempo:SampleTemporalState.
+#################################################################
+
+matsci:airAgedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
+    rdfs:label "air-aged sample"@en .
+
+matsci:vacuumAgedSampleState a owl:NamedIndividual, tempo:SampleTemporalState ;
+    rdfs:label "vacuum-aged sample"@en .
 
 matsci:plate a owl:NamedIndividual, matsci:ShapeValue ;
     rdfs:label "plate"@en .

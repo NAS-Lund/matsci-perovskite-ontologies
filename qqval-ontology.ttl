@@ -35,12 +35,30 @@
         reordered the ontology header (versionIRI before owl:imports, to
         match core-ontology/temporal-ontology/matsci-ontology), and
         shortened rdfs:label to a bare name like the other ontologies in
-        this collection."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/1.1.1> ;
+        this collection.
+
+        1.2.0: added optional qqval:confidenceLevel and
+        qqval:distributionAssumption so that consumers of
+        qqval:WithUncertainty are never left to silently assume a 1-sigma
+        Gaussian -- see the two properties below. Documented the
+        "extraction absence" convention: this vocabulary intentionally has
+        no individual for "not reported" or "unknown"; see the note under
+        qqval:ApproximationQualifier.
+
+        Extraction convention -- absence, not a value: "not extracted from
+        source" is expressed by omitting the relevant result triple
+        entirely (e.g. no obs:hasQuantityResult), never by asserting a
+        qqval:ApproximateQuantityValue with a placeholder qualifier.
+        Conflating "no data" with "a qualified value" would make every
+        qqval consumer treat absent data as a reported (if vague) number.
+        Reserve the qqval:ApproximationQualifier individuals for values
+        that were actually present in the source, however loosely
+        stated."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/1.2.0> ;
     owl:imports
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://qudt.org/2.1/vocab/unit> ;
-    owl:versionInfo "1.1.1" ;
+    owl:versionInfo "1.2.0" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
@@ -55,7 +73,12 @@ qqval:ApproximationQualifier a owl:Class ;
         """A controlled-vocabulary individual that encodes the epistemic
         status of a reported numeric value: whether it is exact, approximate,
         a one-sided bound, a range, or carries an explicit uncertainty.
-        Instances of this class are the named individuals defined below."""@en ;
+        Instances of this class are the named individuals defined below.
+
+        No individual of this class means "not reported" or "unknown" --
+        that is expressed by omitting the result triple entirely, not by
+        asserting a qualifier. See the ontology header's "Extraction
+        convention" note."""@en ;
     skos:altLabel
         "measurement qualifier"@en ,
         "numeric qualifier"@en ,
@@ -179,6 +202,41 @@ qqval:WithUncertainty a owl:NamedIndividual , qqval:ApproximationQualifier ;
 
 
 #################################################################
+# DistributionAssumption — class and named individuals
+#
+# Open vocabulary (unlike ApproximationQualifier, deliberately not
+# owl:AllDifferent-closed): consumers may add further distributions as
+# siblings. Exists so that qqval:WithUncertainty is never silently read
+# as "symmetric 1-sigma Gaussian" by default.
+#################################################################
+
+qqval:DistributionAssumption a owl:Class ;
+    rdfs:label "Distribution assumption"@en ;
+    rdfs:comment
+        """An assumption about the statistical distribution underlying a
+        reported uncertainty (qqval:numericUncertainty /
+        qqval:numericRelativeUncertainty). Linking a value to one of these
+        individuals via qqval:distributionAssumption is optional; absence
+        means the distribution is not stated, not that it is Gaussian."""@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:Gaussian a owl:NamedIndividual, qqval:DistributionAssumption ;
+    rdfs:label "Gaussian"@en ;
+    skos:altLabel "normal distribution"@en , "1-sigma Gaussian"@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:Unspecified a owl:NamedIndividual, qqval:DistributionAssumption ;
+    rdfs:label "unspecified"@en ;
+    rdfs:comment
+        """The source does not state, or the extractor could not determine,
+        the distribution underlying a reported uncertainty. Prefer omitting
+        qqval:distributionAssumption entirely over asserting this
+        individual, unless a pipeline needs an explicit marker that the
+        question was actively considered and left unresolved."""@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+
+#################################################################
 # ApproximateQuantityValue — class
 #
 # Pattern: compact flat representation of a qualified scalar or
@@ -214,7 +272,18 @@ qqval:ApproximateQuantityValue a owl:Class ;
 
         Contrast with qqval:QuantityRange, which models bounds as *object*
         properties to separate qudt:QuantityValue nodes and is appropriate
-        when bounds have independent units or independent provenance."""@en ;
+        when bounds have independent units or independent provenance.
+
+        Default rule for extraction: prefer qqval:ApproximateQuantityValue
+        unless the bounds carry independently-tracked provenance or units,
+        in which case use qqval:QuantityRange instead.
+
+        Uncertainty distribution: qqval:numericUncertainty /
+        qqval:numericRelativeUncertainty do not imply any particular
+        distribution (e.g. a symmetric 1-sigma Gaussian) unless
+        qqval:distributionAssumption states one explicitly. Use
+        qqval:confidenceLevel to record the confidence level the source
+        associates with the uncertainty, if stated."""@en ;
     rdfs:subClassOf qudt:QuantityValue ;
     skos:altLabel
         "bounded quantity value"@en ,
@@ -363,6 +432,19 @@ qqval:hasUpperBound a owl:ObjectProperty ;
     rdfs:seeAlso qqval:numericUpperBound ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
 
+qqval:distributionAssumption a owl:ObjectProperty ;
+    rdfs:label "distribution assumption"@en ;
+    rdfs:comment
+        """Optionally links an ApproximateQuantityValue to the statistical
+        distribution assumption underlying its reported uncertainty (e.g.
+        qqval:Gaussian). Absence of this property means the distribution is
+        unstated -- it must never be read as an implicit Gaussian
+        assumption. Most naturally used together with qqval:WithUncertainty,
+        but not restricted to it."""@en ;
+    rdfs:domain qqval:ApproximateQuantityValue ;
+    rdfs:range  qqval:DistributionAssumption ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
 
 #################################################################
 # Datatype properties
@@ -457,4 +539,23 @@ qqval:numericRelativeUncertainty a owl:DatatypeProperty , owl:FunctionalProperty
     rdfs:domain qqval:ApproximateQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:numericUncertainty ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:confidenceLevel a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "confidence level"@en ;
+    rdfs:comment
+        """The confidence level, in percent, that the source explicitly
+        associates with a reported uncertainty (e.g. 68.0 for a 1-sigma
+        interval, 95.0 for a 2-sigma interval). Optional and independent of
+        qqval:distributionAssumption: a confidence level may be stated
+        without naming a distribution, or vice versa. Absence of this
+        property must not be read as any particular confidence level.
+        Declared owl:FunctionalProperty: each node carries at most one."""@en ;
+    skos:altLabel
+        "confidence interval"@en ,
+        "coverage probability"@en ,
+        "sigma level"@en ;
+    rdfs:domain qqval:ApproximateQuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:seeAlso qqval:distributionAssumption ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .

@@ -14,10 +14,10 @@ vocabularies) are omitted.
 ```mermaid
 graph BT
     perov["perovskitemat<br/>1.2.4"]
-    matsci["matsci-ontology<br/>2.2.0"]
-    tempo["temporal-ontology<br/>3.0.0"]
-    obs["observation-ontology<br/>3.0.0"]
-    qqval["qqval-ontology<br/>1.1.1"]
+    matsci["matsci-ontology<br/>2.3.0"]
+    tempo["temporal-ontology<br/>3.1.0"]
+    obs["observation-ontology<br/>3.1.0"]
+    qqval["qqval-ontology<br/>1.2.0"]
 
     perov --> matsci
     matsci --> tempo
@@ -46,20 +46,28 @@ observation (and qqval), not on matsci, so the graph stays acyclic.
 | | |
 |---|---|
 | **File** | [`qqval-ontology.ttl`](qqval-ontology.ttl) |
+| **Shapes** | [`qqval-shapes.ttl`](qqval-shapes.ttl) |
 | **Prefix** | `qqval:` → `https://growgraph.dev/ontologies/qqval-ontology#` |
-| **Version** | 1.1.1 |
+| **Version** | 1.2.0 |
 
 Reusable vocabulary for quantitative values whose numeric component carries an
 epistemic qualifier (exact, approximate, range, one-sided bound, uncertainty).
 Imported by every other ontology in this collection that reports quantities.
+`qqval:confidenceLevel` / `qqval:distributionAssumption` optionally record the
+confidence level and distribution behind a reported uncertainty, so it is
+never silently assumed to be a 1-sigma Gaussian. `qqval-shapes.ttl` provides
+SHACL shapes that mirror the OWL cardinality/qualifier restrictions in a
+closed-world-checkable form, for validating extracted data before it is
+persisted.
 
 ### Observation (`observation-ontology`)
 
 | | |
 |---|---|
 | **File** | [`observation-ontology.ttl`](observation-ontology.ttl) |
+| **Shapes** | [`observation-shapes.ttl`](observation-shapes.ttl) |
 | **Prefix** | `obs:` → `https://growgraph.dev/ontologies/observation-ontology#` |
-| **Version** | 3.0.0 |
+| **Version** | 3.1.0 |
 
 Domain-independent scaffolding for processes, observations, phenomena, and
 environment conditions. Grounded in SOSA/BFO. Nucleated out of
@@ -72,7 +80,7 @@ environment conditions. Grounded in SOSA/BFO. Nucleated out of
 |---|---|
 | **File** | [`temporal-ontology.ttl`](temporal-ontology.ttl) |
 | **Prefix** | `tempo:` → `https://growgraph.dev/ontologies/temporal-ontology#` |
-| **Version** | 3.0.0 |
+| **Version** | 3.1.0 |
 
 Domain-independent vocabulary for process duration, sample aging, storage,
 exposure, and time-resolved characterization. Specializes
@@ -85,7 +93,7 @@ Matsci/spectroscopy-specific temporal terms live in `matsci-ontology`.
 |---|---|
 | **File** | [`matsci-ontology.ttl`](matsci-ontology.ttl) |
 | **Prefix** | `matsci:` → `https://growgraph.dev/ontologies/matsci-ontology#` |
-| **Version** | 2.2.0 |
+| **Version** | 2.3.0 |
 
 General materials-science vocabulary (materials, samples, synthesis,
 characterization, morphology, properties). Split from the original perovskite
@@ -102,6 +110,25 @@ ontology; layers on top of `observation-ontology` and imports
 
 Perovskite-specific classes and individuals (composition sites, halide
 perovskites, named compounds). Imports `matsci-ontology` only.
+
+## Validation
+
+`qqval-shapes.ttl` and `observation-shapes.ttl` are SHACL shapes graphs that
+mirror the OWL cardinality/qualifier restrictions declared in
+`qqval-ontology.ttl` and `observation-ontology.ttl`, for closed-world
+validation of extracted data (OWL restrictions are open-world and cannot, by
+themselves, reject missing or malformed data). Validate a data graph with,
+e.g., [`pyshacl`](https://github.com/RDFLib/pySHACL):
+
+```bash
+pyshacl -s qqval-shapes.ttl -s observation-shapes.ttl \
+        -d qqval-ontology.ttl -d observation-ontology.ttl -d <data.ttl> \
+        -a
+```
+
+(the `-d qqval-ontology.ttl -d observation-ontology.ttl` inputs give the
+validator the named-individual typing -- e.g. `qqval:Exact a
+qqval:ApproximationQualifier` -- that `sh:class` constraints rely on.)
 
 ## Contributing
 

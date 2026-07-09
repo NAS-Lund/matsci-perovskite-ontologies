@@ -4,6 +4,7 @@
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
 @prefix obo:     <http://purl.obolibrary.org/obo/> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
@@ -39,14 +40,29 @@
         as a domain-neutral superclass of obs:PhysicalPhenomenon so that
         time-dependent effects and other phenomena need not be physical.
         SOSA/BFO grounding is retained for compatibility with the physical
-        sciences this vocabulary originated in."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/3.0.0> ;
+        sciences this vocabulary originated in.
+
+        3.1.0: tightened obs:hasQuantityResult's range to
+        qqval:ApproximateQuantityValue to match the mandatory restriction
+        already present on obs:QuantitativeObservation (the comment
+        previously described it as merely "preferred", which understated
+        an actual OWL requirement). Moved materials-science examples out of
+        rdfs:comment prose and into skos:example on obs:EnvironmentFactor
+        so illustrations no longer read as scope boundaries.
+
+        Extraction convention -- absence, not a value: a result that was
+        not extracted from source should be expressed by omitting the
+        obs:hasQuantityResult / obs:hasQualitativeResult triple entirely,
+        not by asserting a placeholder value. See qqval-ontology's header
+        for the full rationale (this vocabulary intentionally has no
+        "not reported" or "unknown" individual)."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/3.1.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "3.0.0" .
+    owl:versionInfo "3.1.0" .
 
 #################################################################
 # Process execution layer
@@ -107,7 +123,7 @@ obs:QuantitativeObservation a owl:Class ;
             owl:onProperty sosa:hasResult ;
             owl:allValuesFrom qudt:QuantityValue
         ] ,
-        # Preferred result type: ApproximateQuantityValue carries epistemic qualifier
+        # Required result type: at least one result must carry an epistemic qualifier
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
             owl:someValuesFrom qqval:ApproximateQuantityValue
@@ -165,7 +181,9 @@ obs:EnvironmentCondition a owl:Class ;
 obs:EnvironmentFactor a owl:Class ;
     rdfs:label "Environment factor"@en ;
     rdfs:comment
-        "A dimension or aspect of the environment being specified, such as atmosphere, humidity, temperature, or time."@en .
+        "A dimension or aspect of a process's or observation's environment being specified."@en ;
+    skos:example
+        "atmosphere"@en , "humidity"@en , "temperature"@en , "time"@en .
 
 #################################################################
 # Object properties
@@ -183,11 +201,15 @@ obs:hasObservation a owl:ObjectProperty ;
 obs:hasQuantityResult a owl:ObjectProperty ;
     rdfs:label "has quantity result"@en ;
     rdfs:comment
-        """Links a quantitative observation to a QUDT quantity result.
-        The range is qudt:QuantityValue; prefer qqval:ApproximateQuantityValue
-        as the concrete type so that epistemic qualifiers are preserved."""@en ;
+        """Links a quantitative observation to a qualified quantity result.
+        The range is qqval:ApproximateQuantityValue (required, not merely
+        preferred): obs:QuantitativeObservation already carries a mandatory
+        someValuesFrom qqval:ApproximateQuantityValue restriction on
+        sosa:hasResult, so every result reached via this property must
+        carry an epistemic qualifier (use qqval:Exact when the source
+        value is exact)."""@en ;
     rdfs:domain obs:QuantitativeObservation ;
-    rdfs:range qudt:QuantityValue ;
+    rdfs:range qqval:ApproximateQuantityValue ;
     rdfs:subPropertyOf sosa:hasResult .
 
 obs:hasQualitativeResult a owl:ObjectProperty ;
