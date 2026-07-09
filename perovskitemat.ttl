@@ -2,6 +2,7 @@
 @prefix matsci:   <https://growgraph.dev/ontologies/matsci-ontology#> .
 @prefix owl:      <http://www.w3.org/2002/07/owl#> .
 @prefix perovmat: <https://growgraph.dev/ontologies/perovskitemat#> .
+@prefix qqval:    <https://growgraph.dev/ontologies/qqval-ontology#> .
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sosa:     <http://www.w3.org/ns/sosa/> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
@@ -20,10 +21,14 @@
         match the other ontologies in this collection), switched section
         banners from ALL CAPS to Title Case, and dropped @en tags from
         dcterms:alternative literals to match matsci-ontology/
-        temporal-ontology."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.2.4> ;
+        temporal-ontology.
+
+        1.3.0: added perovmat:SiteOccupancy vocabulary for fractional
+        site-occupancy and mixed-composition stoichiometry (e.g. mixed
+        halide fractions, doping levels) using qqval-qualified fractions."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.3.0> ;
     owl:imports <https://growgraph.dev/ontologies/matsci-ontology> ;
-    owl:versionInfo "1.2.4" .
+    owl:versionInfo "1.3.0" .
 
 #################################################################
 # Perovskite core
@@ -84,6 +89,14 @@ perovmat:HalideComponent a owl:Class ;
     rdfs:comment "Halide component occupying the X-site in a halide perovskite."@en ;
     rdfs:subClassOf perovmat:XSiteComponent .
 
+perovmat:SiteOccupancy a owl:Class ;
+    rdfs:label "Site occupancy"@en ;
+    rdfs:comment
+        """Reified assignment of a fractional occupancy to a perovskite
+        site component. Use for mixed-halide compositions, partial A/B/X-site
+        substitution, and other stoichiometry series where the fraction is
+        reported as an exact value, range, or approximate quantity."""@en .
+
 #################################################################
 # Perovskite object properties
 #################################################################
@@ -111,6 +124,30 @@ perovmat:hasPhase a owl:ObjectProperty ;
     rdfs:comment "Links a perovskite material to a perovskite phase."@en ;
     rdfs:domain perovmat:Perovskite ;
     rdfs:range perovmat:PerovskitePhase .
+
+perovmat:hasSiteOccupancy a owl:ObjectProperty ;
+    rdfs:label "has site occupancy"@en ;
+    rdfs:comment
+        "Links a perovskite material to a reified site-occupancy assignment."@en ;
+    rdfs:domain perovmat:Perovskite ;
+    rdfs:range perovmat:SiteOccupancy .
+
+perovmat:occupancyComponent a owl:ObjectProperty ;
+    rdfs:label "occupancy component"@en ;
+    rdfs:comment "Links a site occupancy to the occupied site component."@en ;
+    rdfs:domain perovmat:SiteOccupancy ;
+    rdfs:range matsci:Material .
+
+perovmat:occupancyFraction a owl:ObjectProperty ;
+    rdfs:label "occupancy fraction"@en ;
+    rdfs:comment
+        """Links a site occupancy to a qqval-qualified fraction of the site
+        occupied by the component (dimensionless value in [0, 1], or a
+        reported range/approximation thereof). Express the fraction with
+        qqval:ApproximateQuantityValue and qqval:Exact (or another
+        qqval:ApproximationQualifier) when the source states it."""@en ;
+    rdfs:domain perovmat:SiteOccupancy ;
+    rdfs:range qqval:ApproximateQuantityValue .
 
 #################################################################
 # Perovskite family classes

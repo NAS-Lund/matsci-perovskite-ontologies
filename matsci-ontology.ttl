@@ -76,6 +76,9 @@
         familiar name; updated matsci:hasInputMaterial/hasOutputMaterial's
         rdfs:comment cross-references accordingly.
 
+        3.1.0: added matsci:derivedFromSample for sample lineage and
+        provenance tracking across processes and time points.
+
         Extension contract: matsci-ontology is itself the extension layer
         for observation-ontology/temporal-ontology -- it subclasses
         obs:Process/obs:Phenomenon/tempo:TemporalProcess/
@@ -86,7 +89,7 @@
         *Method/*Process/*Value controlled vocabularies here are open:
         further materials-science-specific individuals and siblings are
         expected."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/3.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/3.1.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/temporal-ontology> ,
@@ -96,7 +99,7 @@
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <http://qudt.org/2.1/vocab/unit> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "3.0.0" .
+    owl:versionInfo "3.1.0" .
 
 #################################################################
 # Core classes
@@ -558,6 +561,18 @@ matsci:transformsSample a owl:ObjectProperty ;
     rdfs:label "transforms sample"@en ;
     rdfs:comment "Links a chemical transformation step to the concrete sample it operates on."@en ;
     rdfs:domain matsci:ChemicalTransformation ;
+    rdfs:range sosa:Sample .
+
+matsci:derivedFromSample a owl:ObjectProperty ;
+    rdfs:label "derived from sample"@en ;
+    rdfs:comment
+        """Links a sample to an earlier sample from which it was physically
+        derived, such as an aliquot, aged specimen, post-treatment product,
+        or other lineage continuation of the same experimental material.
+        Use this to connect observations on different time points or
+        processing stages to a shared physical specimen rather than minting
+        unrelated sample instances."""@en ;
+    rdfs:domain sosa:Sample ;
     rdfs:range sosa:Sample .
 
 matsci:producesAssemblyStructure a owl:ObjectProperty ;

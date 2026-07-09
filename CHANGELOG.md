@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## 2026-07
 
+### Added (layering hygiene and extraction readiness)
+- Added domain-agnostic **specificity rule** to ontocast extraction prompts (`facts_guidelines.py`, `criticise_facts.py`) and a smoke test (`ontocast/test/test_facts_guidelines.py`): when ancestor and descendant terms co-appear in ontology context, prefer the most specific applicable descendant.
+- Added `matsci:derivedFromSample` to `matsci-ontology` for sample lineage/provenance across processing stages and time points. `matsci-ontology` bumped 3.0.0 -> 3.1.0.
+- Added `perovmat:SiteOccupancy` (+ `hasSiteOccupancy`, `occupancyComponent`, `occupancyFraction`) to `perovskitemat` for qqval-qualified fractional site occupancy (mixed halides, doping levels). `perovskitemat` bumped 1.2.4 -> 1.3.0.
+
+### Changed (layering hygiene -- documentation only)
+- Removed downstream ontology name-drops from live guidance in upstream layers: `observation-ontology` extension-contract paragraph, `obs:hasInputEntity`/`hasOutputEntity` comments, and the `obs:time` section banner; `temporal-ontology` extension-contract paragraph, `tempo:EntityTemporalState` `skos:example`, and section banners. No vocabulary changes. `observation-ontology` bumped 4.0.0 -> 4.0.1; `temporal-ontology` bumped 4.0.0 -> 4.0.1.
+
+### Investigated (Phase 3 -- audit only, no ontology changes)
+- BFO/QUDT "lite" import audit: grepped every `obo:`/`qudt:`/`unit:`/`om:` term actually used across all five ontology files. Only 4 BFO classes (`BFO_0000015/0000016/0000019/0000023`) and 3 QUDT schema terms (`qudt:QuantityValue`/`unit`/`numericValue`) are used anywhere; the full QUDT unit vocabulary (`http://qudt.org/2.1/vocab/unit`, imported by `qqval-ontology` and `matsci-ontology`) has zero uses in any ontology axiom (`matsci-ontology` even declares an unused `@prefix unit:`), and `om:Measure` is used as a superclass without `om-2` ever being formally `owl:imports`-ed. Decision: document only for now -- no lite stub files created, no `owl:imports` changed.
+- Asymmetric-uncertainty / combined-bound-plus-uncertainty extension: checked the three real extraction outputs in `aux/results/` for evidence of need. Every uncertainty found is a plain symmetric `±` value; the two `hasLowerBound`/`hasUpperBound` occurrences found both pointed at the same node (an extraction artifact, not a genuine asymmetric bound). No signal yet -- staying deferred per the original data-gated recommendation.
+
 ### Added (Phase 2 -- structural genericization)
 - Added `temporal-shapes.ttl` and `matsci-shapes.ttl` SHACL shapes graphs, mirroring `temporal-ontology`'s `TemporalObservation`/`EntityTemporalObservation` restrictions and `matsci-ontology`'s one real OWL disjointness axiom plus a curated closed-world type-sanity net for `MorphologyState`'s value properties and the new `hasInputSample`/`hasOutputSample` convenience subproperties. Smoke-tested with `pyshacl` against hand-written pass/fail fixtures; found and documented that validating `tempo:TemporalObservation`/`EntityTemporalObservation` instances requires `pyshacl -i rdfs` (RDFS inference), since `tempo:hasTemporalQuantityResult`/`hasEntityTemporalResult` are `rdfs:subPropertyOf` `observation-shapes.ttl`'s checked properties and SHACL Core does not follow `rdfs:subPropertyOf` on its own -- updated the README's validation example accordingly.
 - Added `tempo:precedes`/`tempo:follows` (native, mutually inverse, transitive object properties on `obs:Process`, with `rdfs:seeAlso` hooks to OWL-Time's `time:before`/`time:after`) so `tempo:TemporalProcess`'s "temporal order... is explicitly relevant" claim is backed by vocabulary.

@@ -13,10 +13,10 @@ vocabularies) are omitted.
 
 ```mermaid
 graph BT
-    perov["perovskitemat<br/>1.2.4"]
-    matsci["matsci-ontology<br/>3.0.0"]
-    tempo["temporal-ontology<br/>4.0.0"]
-    obs["observation-ontology<br/>4.0.0"]
+    perov["perovskitemat<br/>1.3.0"]
+    matsci["matsci-ontology<br/>3.1.0"]
+    tempo["temporal-ontology<br/>4.0.1"]
+    obs["observation-ontology<br/>4.0.1"]
     qqval["qqval-ontology<br/>1.2.1"]
 
     perov --> matsci
@@ -67,7 +67,7 @@ persisted.
 | **File** | [`observation-ontology.ttl`](observation-ontology.ttl) |
 | **Shapes** | [`observation-shapes.ttl`](observation-shapes.ttl) |
 | **Prefix** | `obs:` → `https://growgraph.dev/ontologies/observation-ontology#` |
-| **Version** | 4.0.0 |
+| **Version** | 4.0.1 |
 
 Domain-independent scaffolding for processes, observations, phenomena, and
 conditions. Grounded in SOSA/BFO. Nucleated out of `matsci-ontology`; formerly
@@ -85,7 +85,7 @@ subproperties.
 | **File** | [`temporal-ontology.ttl`](temporal-ontology.ttl) |
 | **Shapes** | [`temporal-shapes.ttl`](temporal-shapes.ttl) |
 | **Prefix** | `tempo:` → `https://growgraph.dev/ontologies/temporal-ontology#` |
-| **Version** | 4.0.0 |
+| **Version** | 4.0.1 |
 
 Domain-independent vocabulary for process duration, entity aging, storage,
 exposure, and time-resolved characterization. Specializes
@@ -102,7 +102,7 @@ counterpart to `tempo:TemporalObservation`.
 | **File** | [`matsci-ontology.ttl`](matsci-ontology.ttl) |
 | **Shapes** | [`matsci-shapes.ttl`](matsci-shapes.ttl) |
 | **Prefix** | `matsci:` → `https://growgraph.dev/ontologies/matsci-ontology#` |
-| **Version** | 3.0.0 |
+| **Version** | 3.1.0 |
 
 General materials-science vocabulary (materials, samples, synthesis,
 characterization, morphology, properties). Split from the original perovskite
@@ -118,7 +118,7 @@ convenience subproperties of `observation-ontology`'s
 |---|---|
 | **File** | [`perovskitemat.ttl`](perovskitemat.ttl) |
 | **Prefix** | `perovmat:` → `https://growgraph.dev/ontologies/perovskitemat#` |
-| **Version** | 1.2.4 |
+| **Version** | 1.3.0 |
 
 Perovskite-specific classes and individuals (composition sites, halide
 perovskites, named compounds). Imports `matsci-ontology` only.

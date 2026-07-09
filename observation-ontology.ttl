@@ -82,20 +82,22 @@
         extension points -- domain ontologies subclass them rather than
         adding siblings to this ontology. obs:ConditionFactor and
         obs:QualitativeConditionValue are open controlled vocabularies:
-        domain ontologies mint new individuals as needed (matsci-ontology's
-        matsci:atmosphere/matsci:air are examples). obs:hasInputEntity/
+        domain ontologies mint new individuals as needed. obs:hasInputEntity/
         hasOutputEntity/hasObservation/producedByProcess/hasQuantityResult/
         hasQualitativeResult are meant to be subpropertied (not
         subclassed) by domain ontologies that want a narrower, ergonomic,
-        domain-flavored property name -- see matsci:hasInputSample for the
-        pattern."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/4.0.0> ;
+        domain-flavored property name with a tighter domain or range.
+
+        4.0.1: documentation-only layering hygiene -- removed downstream
+        ontology name-drops from the extension-contract paragraph and from
+        live property/section comments; no vocabulary changes."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/4.0.1> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "4.0.0" .
+    owl:versionInfo "4.0.1" .
 
 #################################################################
 # Process execution layer
@@ -285,10 +287,9 @@ obs:hasInputEntity a owl:ObjectProperty ;
     rdfs:label "has input entity"@en ;
     rdfs:comment
         """Links a process to a concrete feature of interest (sosa:FeatureOfInterest)
-        used as input. Domain-specific ontologies may narrow the range (e.g.
-        matsci:hasInputSample narrows it to sosa:Sample) and/or add a
-        parallel property for the abstract material/entity kind
-        consumed."""@en ;
+        used as input. Domain-specific ontologies may declare rdfs:subPropertyOf
+        descendants with a narrower range and/or a parallel property for the
+        abstract kind consumed."""@en ;
     rdfs:domain obs:Process ;
     rdfs:range sosa:FeatureOfInterest .
 
@@ -296,10 +297,9 @@ obs:hasOutputEntity a owl:ObjectProperty ;
     rdfs:label "has output entity"@en ;
     rdfs:comment
         """Links a process to the concrete feature of interest (sosa:FeatureOfInterest)
-        it produced. Domain-specific ontologies may narrow the range (e.g.
-        matsci:hasOutputSample narrows it to sosa:Sample) and/or add a
-        parallel property for the abstract material/entity kind
-        targeted."""@en ;
+        it produced. Domain-specific ontologies may declare rdfs:subPropertyOf
+        descendants with a narrower range and/or a parallel property for the
+        abstract kind targeted."""@en ;
     rdfs:domain obs:Process ;
     rdfs:range sosa:FeatureOfInterest .
 
@@ -322,11 +322,11 @@ obs:observationSource a owl:DatatypeProperty ;
 #################################################################
 # Generic condition-factor vocabulary
 #
-# "time" is kept here (rather than in matsci) because it is the one
-# concrete ConditionFactor individual that a domain-independent
+# "time" is kept here (rather than in a downstream domain ontology) because
+# it is the one concrete ConditionFactor individual that a domain-independent
 # consumer (temporal-ontology) needs to reference directly as a
-# skos:broader target. Domain-specific factors such as atmosphere,
-# humidity, and temperature remain minted in matsci-ontology.
+# skos:broader target. Domain-specific factors remain minted in downstream
+# domain ontologies.
 #################################################################
 
 obs:time a owl:NamedIndividual, obs:ConditionFactor ;

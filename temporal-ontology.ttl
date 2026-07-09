@@ -87,19 +87,22 @@
         Extension contract: tempo:TemporalProcess, tempo:TimeDependentEffect,
         and tempo:ObservableTemporalProperty are the primary extension
         points -- domain ontologies subclass them for domain-specific
-        process/effect/property taxonomies (matsci-ontology's spectroscopic
-        transient properties are an example). tempo:EntityTemporalState is
+        process/effect/property taxonomies. tempo:EntityTemporalState is
         an open controlled vocabulary: the fresh/aged/stored trio defined
-        here is universal, domain ontologies add further states as
-        siblings (matsci-ontology's air-aged/vacuum-aged). The temporal
-        condition-factor individuals (tempo:duration, tempo:agingTime, ...)
-        are likewise open for further skos:broader-linked siblings."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/4.0.0> ;
+        here is universal; domain ontologies add further states as
+        siblings. The temporal condition-factor individuals
+        (tempo:duration, tempo:agingTime, ...) are likewise open for
+        further skos:broader-linked siblings.
+
+        4.0.1: documentation-only layering hygiene -- removed downstream
+        ontology name-drops from the extension-contract paragraph, live
+        class comments, and section banners; no vocabulary changes."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/4.0.1> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/qqval-ontology> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ;
-    owl:versionInfo "4.0.0" .
+    owl:versionInfo "4.0.1" .
 
 #################################################################
 # Process taxonomy
@@ -207,7 +210,7 @@ tempo:TemporalObservation a owl:Class ;
 tempo:EntityTemporalState a owl:Class ;
     rdfs:label "Entity temporal state"@en ;
     rdfs:comment "A qualitative result describing the temporal status of an entity. Open vocabulary: domain ontologies add domain-specific states as siblings of the universal fresh/aged/stored trio defined here."@en ;
-    skos:example "fresh"@en , "aged"@en , "stored"@en , "air-aged"@en , "vacuum-aged"@en ;
+    skos:example "fresh"@en , "aged"@en , "stored"@en , "condition-specific aged"@en ;
     rdfs:subClassOf obs:QualitativeResult .
 
 tempo:EntityTemporalObservation a owl:Class ;
@@ -374,9 +377,8 @@ tempo:measurementDelayTime a owl:NamedIndividual, obs:ConditionFactor ;
 #################################################################
 # Temporal observable property vocabulary
 #
-# Domain-neutral individuals only. Matsci/spectroscopy-specific
-# vocabulary is minted in matsci-ontology and typed against these
-# classes in matsci's 'Temporal typing of matsci-native terms' section.
+# Domain-neutral individuals only. Domain-specific vocabulary is minted in
+# downstream domain ontologies and typed against these classes there.
 #################################################################
 
 tempo:storageDurationProperty a owl:NamedIndividual, tempo:ObservableProcessTemporalProperty ;
@@ -394,10 +396,8 @@ tempo:exposureDurationProperty a owl:NamedIndividual, tempo:ObservableProcessTem
 #################################################################
 # Entity temporal state controlled vocabulary
 #
-# Universal trio only. Domain-specific storage/aging states (e.g.
-# matsci-ontology's air-aged / vacuum-aged) are minted as siblings of
-# this class downstream -- see matsci-ontology's "Condition factor and
-# condition-value individuals" section.
+# Universal trio only. Domain-specific storage/aging states are minted as
+# siblings of this class in downstream domain ontologies.
 #################################################################
 
 tempo:freshEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
