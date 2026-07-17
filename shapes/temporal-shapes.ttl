@@ -19,7 +19,8 @@
 # points, not closed structural shapes -- so this file stays small.
 #
 # Apply against the data graph together with observation-shapes and
-# qqval-shapes in scope, since TemporalObservation/
+# qqval-shapes in scope (and pergres-shapes when qqval-qualification
+# policy is in force), since TemporalObservation /
 # QualitativeEntityTemporalObservation instances are also validated against
 # obs:QuantitativeObservationShape / obs:QualitativeObservationShape via
 # SHACL's subclass-aware sh:targetClass matching.

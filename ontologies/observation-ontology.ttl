@@ -1,6 +1,5 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
@@ -15,89 +14,37 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """Domain-independent scaffolding for observing and characterizing
-        processes: a SOSA/SSN-grounded Process/Observation model, a generic
-        Phenomenon superclass (with PhysicalPhenomenon as one specialization),
-        a QualitativeResult superclass for categorical observation results,
-        and a reified Condition/ConditionFactor/ConditionValue triad for
-        expressing process and observation conditions.
+        """Domain-independent scaffolding for processes, observations,
+        phenomena, and conditions. Grounded in SOSA/BFO. Quantitative
+        observation results are qudt:QuantityValue; optional tightening to
+        qqval-qualified values is asserted by pergres-ontology, not here.
 
-        Nucleated out of matsci-ontology (1.4.0): this vocabulary carries
-        no domain-specific meaning of its own -- any ontology that needs to
-        model processes, observations, phenomena, and conditions can reuse
-        this scaffolding. Both matsci-ontology and temporal-ontology import
-        this ontology as siblings; observation-ontology imports neither.
+        Extraction convention: a result that was not extracted from source
+        is expressed by omitting the hasQuantityResult /
+        hasQualitativeResult triple entirely, not by asserting a
+        placeholder value.
 
-        2.0.0: renamed from core-ontology (prefix core:) to
-        experiment-ontology (prefix exp:). The old name was too generic
-        and didn't convey that this vocabulary specifically scaffolds
-        experimental-science processes and observations; no class,
-        property, or individual definitions changed.
-
-        3.0.0: renamed from experiment-ontology (prefix exp:) to
-        observation-ontology (prefix obs:), anchored on the Observation
-        spine that threads through all sub-concerns. Added obs:Phenomenon
-        as a domain-neutral superclass of obs:PhysicalPhenomenon so that
-        time-dependent effects and other phenomena need not be physical.
-        SOSA/BFO grounding is retained for compatibility with the physical
-        sciences this vocabulary originated in.
-
-        3.1.0: tightened obs:hasQuantityResult's range to
-        qqval:ApproximateQuantityValue to match the mandatory restriction
-        already present on obs:QuantitativeObservation (the comment
-        previously described it as merely "preferred", which understated
-        an actual OWL requirement). Moved materials-science examples out of
-        rdfs:comment prose and into skos:example on obs:EnvironmentFactor
-        so illustrations no longer read as scope boundaries.
-
-        Extraction convention -- absence, not a value: a result that was
-        not extracted from source should be expressed by omitting the
-        obs:hasQuantityResult / obs:hasQualitativeResult triple entirely,
-        not by asserting a placeholder value. See qqval-ontology's header
-        for the full rationale (this vocabulary intentionally has no
-        "not reported" or "unknown" individual).
-
-        4.0.0 (breaking): renamed obs:EnvironmentCondition -> obs:Condition
-        and obs:EnvironmentFactor -> obs:ConditionFactor -- "environment"
-        implied physical/atmospheric conditions specifically, which this
-        reified factor+value pattern never actually required (it works
-        equally well for, e.g., an econometric or clinical context factor).
-        Retired obs:broaderEnvironmentFactor in favor of skos:broader,
-        consistent with how qqval:ApproximationQualifier individuals
-        already use skos:broader/skos:narrower. Generalized
-        obs:hasObservation and obs:producedByProcess from domain/range
-        sosa:Sample to sosa:FeatureOfInterest (sosa:Sample is itself a
-        specialization of sosa:FeatureOfInterest for physical sampling and
-        does not fit, e.g., a document corpus or a software build
-        artifact); renamed obs:hasInputSample/hasOutputSample to
-        obs:hasInputEntity/hasOutputEntity to match, and added
-        matsci:hasInputSample/hasOutputSample as sosa:Sample-narrowed
-        convenience subproperties in matsci-ontology. "Entity" was chosen
-        over the more literal "FeatureOfInterest" for readability, and
-        over "Feature" because a bare "Feature" reads as software/product/
-        ML jargon to most readers -- a worse wrong-domain signal than
-        "Sample" was.
+        Provenance: link an observation to its source document via
+        dcterms:source (object property to an RDF resource). Compatible
+        full-PROV consumers may additionally use prov:wasDerivedFrom
+        (see rdfs:seeAlso on this ontology).
 
         Extension contract: obs:Process and obs:Phenomenon are the primary
-        extension points -- domain ontologies subclass them rather than
-        adding siblings to this ontology. obs:ConditionFactor and
-        obs:QualitativeConditionValue are open controlled vocabularies:
-        domain ontologies mint new individuals as needed. obs:hasInputEntity/
-        hasOutputEntity/hasObservation/producedByProcess/hasQuantityResult/
-        hasQualitativeResult are meant to be subpropertied (not
-        subclassed) by domain ontologies that want a narrower, ergonomic,
-        domain-flavored property name with a tighter domain or range.
-
-        4.0.1: documentation-only layering hygiene -- removed downstream
-        ontology name-drops from the extension-contract paragraph and from
-        live property/section comments; no vocabulary changes."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/4.0.1> ;
+        extension points — domain ontologies subclass them. obs:ConditionFactor
+        and obs:QualitativeConditionValue are open controlled vocabularies.
+        obs:hasInputEntity / hasOutputEntity / hasObservation /
+        producedByProcess / hasQuantityResult / hasQualitativeResult are
+        meant to be subpropertied by domain ontologies that want a
+        narrower, domain-flavored property name."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/5.0.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
-        <http://purl.obolibrary.org/obo/bfo.owl> ,
-        <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "4.0.1" .
+        <http://purl.obolibrary.org/obo/bfo.owl> ;
+    owl:versionInfo "5.0.0" ;
+    rdfs:seeAlso
+        <http://www.w3.org/ns/prov#wasDerivedFrom> ,
+        <http://purl.org/dc/terms/source> .
 
 #################################################################
 # Process execution layer
@@ -106,7 +53,10 @@
 obs:Process a owl:Class ;
     rdfs:label "Process"@en ;
     rdfs:subClassOf obo:BFO_0000015 ;
-    rdfs:comment "A concrete process carried out in time."@en .
+    rdfs:comment
+        """A concrete process carried out in time (BFO process/occurrent).
+        Not disjoint with obs:Phenomenon: an individual may be both when
+        a phenomenon is itself process-like in BFO terms."""@en .
 
 #################################################################
 # Phenomena
@@ -117,13 +67,17 @@ obs:Phenomenon a owl:Class ;
     rdfs:comment
         """Any observable occurrence, state, or effect exhibited by a feature
         of interest, without commitment to whether it is physical,
-        informational, or otherwise."""@en .
+        informational, or otherwise. Subclasses may be disposition, quality,
+        or process-typed; not disjoint with obs:Process. See
+        obs:PhysicalPhenomenon for the physically-anchored specialization."""@en .
 
 obs:PhysicalPhenomenon a owl:Class ;
     rdfs:label "Physical phenomenon"@en ;
     rdfs:comment
-        """Superclass for physical phenomena exhibited by samples.
-        Note: subclasses are semantically heterogeneous (disposition, quality,
+        """Physically-anchored specialization of obs:Phenomenon. Use this
+        when the phenomenon is physical; use obs:Phenomenon when it need
+        not be (e.g. time-dependent effects in temporal-ontology).
+        Subclasses are semantically heterogeneous (disposition, quality,
         process) and should be anchored individually in BFO rather than
         anchoring this superclass."""@en ;
     rdfs:subClassOf obs:Phenomenon .
@@ -134,7 +88,8 @@ obs:PhysicalPhenomenon a owl:Class ;
 
 obs:QualitativeResult a owl:Class ;
     rdfs:label "Qualitative result"@en ;
-    rdfs:comment "Superclass for categorical observation results."@en .
+    rdfs:comment "Superclass for categorical observation results."@en ;
+    rdfs:subClassOf sosa:Result .
 
 #################################################################
 # Observation model
@@ -149,7 +104,6 @@ obs:QuantitativeObservation a owl:Class ;
     rdfs:label "Quantitative observation"@en ;
     rdfs:subClassOf
         obs:Observation ,
-        # Results are qudt:QuantityValue (includes qqval:ApproximateQuantityValue as subclass)
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
             owl:someValuesFrom qudt:QuantityValue
@@ -157,11 +111,6 @@ obs:QuantitativeObservation a owl:Class ;
         [ a owl:Restriction ;
             owl:onProperty sosa:hasResult ;
             owl:allValuesFrom qudt:QuantityValue
-        ] ,
-        # Required result type: at least one result must carry an epistemic qualifier
-        [ a owl:Restriction ;
-            owl:onProperty sosa:hasResult ;
-            owl:someValuesFrom qqval:ApproximateQuantityValue
         ] .
 
 obs:QualitativeObservation a owl:Class ;
@@ -236,15 +185,12 @@ obs:hasObservation a owl:ObjectProperty ;
 obs:hasQuantityResult a owl:ObjectProperty ;
     rdfs:label "has quantity result"@en ;
     rdfs:comment
-        """Links a quantitative observation to a qualified quantity result.
-        The range is qqval:ApproximateQuantityValue (required, not merely
-        preferred): obs:QuantitativeObservation already carries a mandatory
-        someValuesFrom qqval:ApproximateQuantityValue restriction on
-        sosa:hasResult, so every result reached via this property must
-        carry an epistemic qualifier (use qqval:Exact when the source
-        value is exact)."""@en ;
+        """Links a quantitative observation to a quantity result.
+        Range is qudt:QuantityValue. Consumers that require
+        qqval-qualified results import pergres-ontology, which tightens
+        this range to qqval:QualifiedQuantityValue."""@en ;
     rdfs:domain obs:QuantitativeObservation ;
-    rdfs:range qqval:ApproximateQuantityValue ;
+    rdfs:range qudt:QuantityValue ;
     rdfs:subPropertyOf sosa:hasResult .
 
 obs:hasQualitativeResult a owl:ObjectProperty ;
@@ -310,23 +256,11 @@ obs:producedByProcess a owl:ObjectProperty ;
     owl:inverseOf obs:hasOutputEntity .
 
 #################################################################
-# Datatype properties
-#################################################################
-
-obs:observationSource a owl:DatatypeProperty ;
-    rdfs:label "observation source"@en ;
-    rdfs:comment "DOI or URL of the paper or dataset from which the observation was extracted."@en ;
-    rdfs:domain obs:Observation ;
-    rdfs:range xsd:anyURI .
-
-#################################################################
 # Generic condition-factor vocabulary
 #
-# "time" is kept here (rather than in a downstream domain ontology) because
-# it is the one concrete ConditionFactor individual that a domain-independent
-# consumer (temporal-ontology) needs to reference directly as a
-# skos:broader target. Domain-specific factors remain minted in downstream
-# domain ontologies.
+# "time" lives here so any domain-neutral consumer can hang narrower
+# temporal factors off it via skos:broader without importing
+# temporal-ontology's full process taxonomy.
 #################################################################
 
 obs:time a owl:NamedIndividual, obs:ConditionFactor ;

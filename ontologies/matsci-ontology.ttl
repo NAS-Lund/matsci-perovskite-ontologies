@@ -20,86 +20,35 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """General materials-science ontology split from perovOntology.
-        It contains concepts and relations reusable across materials-science
-        domains.
+        """General materials-science ontology: materials, samples,
+        synthesis, characterization, morphology, and properties.
+        Layers on observation-ontology and temporal-ontology; imports
+        qqval-ontology for qualified quantity values and pergres-ontology
+        for the policy that quantitative observation results are
+        qqval-qualified.
 
-        As of 2.0.0, the domain-independent Process/Observation/condition
-        scaffolding (Process, Observation, QuantitativeObservation,
-        QualitativeObservation, PhysicalPhenomenon, QualitativeResult, the
-        ConditionValue/Condition/ConditionFactor triad, and
-        the object/datatype properties gluing them together) has been
-        nucleated out into core-ontology, which this ontology imports.
-        matsci-ontology now supplies only the materials-science-specific
-        vocabulary layered on top of that scaffolding.
+        matsci:hasInputSample / hasOutputSample are sosa:Sample-narrowed
+        convenience subproperties of obs:hasInputEntity / hasOutputEntity.
 
-        Temporal/aging vocabulary (process duration, entity aging,
-        storage, time-resolved characterization) remains factored out into
-        temporal-ontology. Unlike in 1.4.0, this ontology now imports
-        temporal-ontology (temporal-ontology itself depends only on
-        observation-ontology, not on matsci-ontology, so the dependency graph
-        stays acyclic); this lets matsci-native individuals and classes
-        carry their temporal typing directly here instead of via the
-        supplementary-assertions pattern used previously -- see the
-        'Temporal typing of matsci-native terms' section at the end
-        of this file.
-
-        2.1.0: updated to follow core-ontology's rename to
-        experiment-ontology (prefix core: -> exp:); no vocabulary changes
-        of its own.
-
-        2.2.0: updated to follow experiment-ontology's rename to
-        observation-ontology (prefix exp: -> obs:). Absorbed
-        matsci/spectroscopy-specific temporal vocabulary moved out of
-        temporal-ontology 3.0.0 (environment factors, process/transient
-        temporal observable properties). Expanded temporal typing section.
-
-        2.3.0: absorbed matsci:airAgedSampleState and
-        matsci:vacuumAgedSampleState, moved out of temporal-ontology 3.1.0
-        -- these are materials-science storage conditions, not universal
-        sample states, and had been missed in the 3.0.0 pass that moved
-        the rest of the matsci-specific temporal vocabulary here.
-
-        3.0.0 (breaking): follows observation-ontology 4.0.0's and
-        temporal-ontology 4.0.0's renames. obs:EnvironmentFactor/
-        EnvironmentCondition are now obs:ConditionFactor/Condition;
-        retyped matsci:atmosphere/humidity/temperature/processDuration/
-        synthesisDuration/assemblyDuration/pulseDuration accordingly and
-        switched their obs:broaderEnvironmentFactor links to skos:broader.
-        tempo:SampleTemporalState is now tempo:EntityTemporalState; renamed
-        matsci:airAgedSampleState/vacuumAgedSampleState to
-        matsci:airAgedEntityState/vacuumAgedEntityState to match. Added
-        matsci:hasInputSample/hasOutputSample as sosa:Sample-narrowed
-        convenience subproperties of obs:hasInputEntity/hasOutputEntity
-        (which replaced obs:hasInputSample/hasOutputSample at the
-        domain-neutral layer), so existing matsci-flavored usage keeps its
-        familiar name; updated matsci:hasInputMaterial/hasOutputMaterial's
-        rdfs:comment cross-references accordingly.
-
-        3.1.0: added matsci:derivedFromSample for sample lineage and
-        provenance tracking across processes and time points.
-
-        Extension contract: matsci-ontology is itself the extension layer
-        for observation-ontology/temporal-ontology -- it subclasses
-        obs:Process/obs:Phenomenon/tempo:TemporalProcess/
+        Extension contract: matsci-ontology is the domain extension layer
+        for observation-ontology / temporal-ontology — it subclasses
+        obs:Process / obs:Phenomenon / tempo:TemporalProcess /
         tempo:ObservableTemporalProperty and subproperties the generic
-        Entity-of-Interest properties, exactly the pattern a new domain
-        ontology (economics, clinical, etc.) would follow at the same
-        layer. matsci:Material, matsci:MaterialRole, and the various
-        *Method/*Process/*Value controlled vocabularies here are open:
-        further materials-science-specific individuals and siblings are
-        expected."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/3.1.0> ;
+        entity-of-interest properties. matsci:Material, matsci:MaterialRole,
+        and the various *Method/*Process/*Value controlled vocabularies
+        here are open."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/4.0.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation-ontology> ,
         <https://growgraph.dev/ontologies/temporal-ontology> ,
+        <https://growgraph.dev/ontologies/qqval-ontology> ,
+        <https://growgraph.dev/ontologies/pergres-ontology> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
-        <http://qudt.org/2.1/vocab/unit> ,
-        <https://growgraph.dev/ontologies/qqval-ontology> ;
-    owl:versionInfo "3.1.0" .
+        <http://qudt.org/2.1/vocab/unit> ;
+    owl:versionInfo "4.0.0" .
 
 #################################################################
 # Core classes
@@ -436,14 +385,14 @@ matsci:hasSuperlatticeSymmetryValue a owl:ObjectProperty ;
 matsci:hasEdgeLength a owl:ObjectProperty ;
     rdfs:label "has edge length"@en ;
     rdfs:comment
-        "Links a nanocrystal morphology state to a quantity value for edge length.  The value may be a qqval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
+        "Links a nanocrystal morphology state to a quantity value for edge length.  The value may be a qqval:QualifiedQuantityValue when the measurement carries an epistemic qualifier."@en ;
     rdfs:domain matsci:NanocrystalMorphologyState ;
     rdfs:range qudt:QuantityValue .
 
 matsci:hasThickness a owl:ObjectProperty ;
     rdfs:label "has thickness"@en ;
     rdfs:comment
-        "Links a nanocrystal morphology state to a quantity value for thickness.  The value may be a qqval:ApproximateQuantityValue when the measurement carries an epistemic qualifier."@en ;
+        "Links a nanocrystal morphology state to a quantity value for thickness.  The value may be a qqval:QualifiedQuantityValue when the measurement carries an epistemic qualifier."@en ;
     rdfs:domain matsci:NanocrystalMorphologyState ;
     rdfs:range qudt:QuantityValue .
 
@@ -453,7 +402,8 @@ matsci:hasValueRange a owl:ObjectProperty ;
         """Links a morphology state to a quantitative interval represented as
         a qqval:QuantityRange node (bounds are independent qudt:QuantityValue
         nodes).  For compact same-unit ranges, prefer an observation result
-        typed as qqval:ApproximateQuantityValue with qqval:Range qualifier."""@en ;
+        typed as qqval:QualifiedQuantityValue with both numericLowerBound and
+        numericUpperBound populated."""@en ;
     rdfs:domain matsci:MorphologyState ;
     rdfs:range qqval:QuantityRange .
 

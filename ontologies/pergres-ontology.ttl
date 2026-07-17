@@ -1,0 +1,54 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix pergres: <https://growgraph.dev/ontologies/pergres-ontology#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
+
+
+<https://growgraph.dev/ontologies/pergres-ontology> a owl:Ontology ;
+    rdfs:label "pergres"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """Bridge ontology for the Pergres project: asserts the cross-module
+        policy that quantitative observation results and temporal quantity
+        values are qqval-qualified.
+
+        Leaves qqval-ontology, observation-ontology, and temporal-ontology
+        free of mutual coupling. Consumers that want qqval-qualified
+        results (e.g. matsci-ontology) import this module; consumers that
+        only need bare qudt:QuantityValue results import observation /
+        temporal alone.
+
+        Axioms:
+          • obs:hasQuantityResult range → qqval:QualifiedQuantityValue
+          • obs:QuantitativeObservation requires some sosa:hasResult that
+            is a qqval:QualifiedQuantityValue
+          • tempo:TimeQuantityValue ⊑ qqval:QualifiedQuantityValue"""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/pergres-ontology/1.0.0> ;
+    owl:imports
+        <https://growgraph.dev/ontologies/qqval-ontology> ,
+        <https://growgraph.dev/ontologies/observation-ontology> ,
+        <https://growgraph.dev/ontologies/temporal-ontology> ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+# qqval-qualification policy for observation results
+#################################################################
+
+obs:hasQuantityResult rdfs:range qqval:QualifiedQuantityValue .
+
+obs:QuantitativeObservation rdfs:subClassOf
+    [ a owl:Restriction ;
+        owl:onProperty sosa:hasResult ;
+        owl:someValuesFrom qqval:QualifiedQuantityValue
+    ] .
+
+#################################################################
+# qqval-qualification policy for temporal quantity values
+#################################################################
+
+tempo:TimeQuantityValue rdfs:subClassOf qqval:QualifiedQuantityValue .

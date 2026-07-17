@@ -12,23 +12,11 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """Perovskite-specific ontology split from perovOntology. It
-        contains only concepts and individuals that are specific to
-        perovskite materials.
-
-        1.2.4: cosmetic consistency pass -- aligned the @prefix block,
-        reordered the ontology header (versionIRI before owl:imports, to
-        match the other ontologies in this collection), switched section
-        banners from ALL CAPS to Title Case, and dropped @en tags from
-        dcterms:alternative literals to match matsci-ontology/
-        temporal-ontology.
-
-        1.3.0: added perovmat:SiteOccupancy vocabulary for fractional
-        site-occupancy and mixed-composition stoichiometry (e.g. mixed
-        halide fractions, doping levels) using qqval-qualified fractions."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.3.0> ;
+        """Perovskite-specific ontology: composition sites, halide
+        perovskites, named compounds. Imports matsci-ontology only."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.4.0> ;
     owl:imports <https://growgraph.dev/ontologies/matsci-ontology> ;
-    owl:versionInfo "1.3.0" .
+    owl:versionInfo "1.4.0" .
 
 #################################################################
 # Perovskite core
@@ -144,10 +132,10 @@ perovmat:occupancyFraction a owl:ObjectProperty ;
         """Links a site occupancy to a qqval-qualified fraction of the site
         occupied by the component (dimensionless value in [0, 1], or a
         reported range/approximation thereof). Express the fraction with
-        qqval:ApproximateQuantityValue and qqval:Exact (or another
-        qqval:ApproximationQualifier) when the source states it."""@en ;
+        qqval:QualifiedQuantityValue and qqval:Exact (or qqval:Approximate)
+        when the source states it."""@en ;
     rdfs:domain perovmat:SiteOccupancy ;
-    rdfs:range qqval:ApproximateQuantityValue .
+    rdfs:range qqval:QualifiedQuantityValue .
 
 #################################################################
 # Perovskite family classes

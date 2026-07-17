@@ -10,16 +10,7 @@
 # Shapes graph header
 #
 # Closed-world validation companion to qqval-ontology. OWL restrictions
-# in qqval-ontology.ttl are open-world: a reasoner will not flag missing
-# data as invalid, only as "not yet known". These SHACL shapes mirror
-# the same cardinality/qualifier rules but reject non-conforming data
-# outright -- the intended use is validating LLM-extracted graphs before
-# they are persisted, not ontological reasoning.
-#
-# Apply against the data graph together with qqval-ontology's own
-# vocabulary (qqval:, qudt:) in scope. Written for SHACL Core plus
-# SHACL-SPARQL (sh:sparql) for the qualifier-conditional rules that
-# SHACL Core's declarative shapes cannot express.
+# are open-world; these SHACL shapes reject non-conforming data outright.
 #################################################################
 
 <https://growgraph.dev/ontologies/qqval-shapes> a owl:Ontology ;
@@ -27,35 +18,29 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """SHACL shapes mirroring the OWL cardinality/qualifier restrictions
-        declared on qqval:ApproximateQuantityValue and qqval:QuantityRange
-        in qqval-ontology (>= 1.2.0). See that ontology's rdfs:comment for
-        the modeling rationale.
-
-        1.0.0: initial version, covering ApproximateQuantityValue's
-        structural cardinalities plus the per-qualifier requirements
-        (Range needs both bounds, AtLeast/AtMost need exactly one bound,
-        WithUncertainty needs a nominal value and an uncertainty, bound
-        properties are mutually exclusive with WithUncertainty), and
-        QuantityRange's "at least one bound node" rule."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval-shapes/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+        """SHACL shapes mirroring the OWL cardinality restrictions on
+        qqval:QualifiedQuantityValue and qqval:QuantityRange, plus
+        property-presence rules for numeric form and uncertainty
+        mutual exclusion. Aligns with qqval-ontology >= 2.0.0."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-shapes/2.0.0> ;
+    owl:versionInfo "2.0.0" .
 
 #################################################################
-# ApproximateQuantityValue — structural shape
+# QualifiedQuantityValue — structural shape
 #################################################################
 
-qqval:ApproximateQuantityValueShape a sh:NodeShape ;
-    sh:targetClass qqval:ApproximateQuantityValue ;
+qqval:QualifiedQuantityValueShape a sh:NodeShape ;
+    sh:targetClass qqval:QualifiedQuantityValue ;
     sh:property
-        [ sh:path qqval:approximationQualifier ;
+        [ sh:path qqval:epistemicQualifier ;
             sh:minCount 1 ;
-            sh:class qqval:ApproximationQualifier ;
-            sh:message "ApproximateQuantityValue requires at least one qqval:approximationQualifier."@en
+            sh:maxCount 1 ;
+            sh:class qqval:EpistemicQualifier ;
+            sh:message "QualifiedQuantityValue requires exactly one qqval:epistemicQualifier (Exact or Approximate)."@en
         ] ,
         [ sh:path qudt:unit ;
             sh:minCount 1 ;
-            sh:message "ApproximateQuantityValue requires qudt:unit."@en
+            sh:message "QualifiedQuantityValue requires qudt:unit."@en
         ] ,
         [ sh:path qudt:numericValue ;
             sh:maxCount 1 ;
@@ -71,6 +56,16 @@ qqval:ApproximateQuantityValueShape a sh:NodeShape ;
             sh:maxCount 1 ;
             sh:datatype xsd:decimal ;
             sh:message "qqval:numericUpperBound must be a single xsd:decimal."@en
+        ] ,
+        [ sh:path qqval:lowerBoundInclusive ;
+            sh:maxCount 1 ;
+            sh:datatype xsd:boolean ;
+            sh:message "qqval:lowerBoundInclusive must be a single xsd:boolean."@en
+        ] ,
+        [ sh:path qqval:upperBoundInclusive ;
+            sh:maxCount 1 ;
+            sh:datatype xsd:boolean ;
+            sh:message "qqval:upperBoundInclusive must be a single xsd:boolean."@en
         ] ,
         [ sh:path qqval:numericUncertainty ;
             sh:maxCount 1 ;
@@ -92,88 +87,69 @@ qqval:ApproximateQuantityValueShape a sh:NodeShape ;
             sh:class qqval:DistributionAssumption ;
             sh:message "qqval:distributionAssumption must be a single qqval:DistributionAssumption individual."@en
         ] ;
-    # Bound and uncertainty properties are mutually exclusive per-qualifier
-    # requirements below; disjointness with QuantityRange mirrors the OWL
-    # owl:disjointWith axiom in a closed-world-checkable form.
+    # Representation-pattern convention: not also a QuantityRange
     sh:not [ sh:class qqval:QuantityRange ] ;
     sh:sparql
         [ a sh:SPARQLConstraint ;
-            rdfs:comment "Range requires both numericLowerBound and numericUpperBound."@en ;
-            sh:message "qqval:Range qualifier requires both qqval:numericLowerBound and qqval:numericUpperBound."@en ;
-            sh:select
-                """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
-                SELECT $this
-                WHERE {
-                    $this qqval:approximationQualifier qqval:Range .
-                    FILTER ( NOT EXISTS { $this qqval:numericLowerBound ?lb }
-                             || NOT EXISTS { $this qqval:numericUpperBound ?ub } )
-                }
-                """ ;
-        ] ,
-        [ a sh:SPARQLConstraint ;
-            rdfs:comment "AtLeast requires numericLowerBound and forbids numericUpperBound."@en ;
-            sh:message "qqval:AtLeast qualifier requires qqval:numericLowerBound and must not carry qqval:numericUpperBound."@en ;
-            sh:select
-                """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
-                SELECT $this
-                WHERE {
-                    $this qqval:approximationQualifier qqval:AtLeast .
-                    FILTER ( NOT EXISTS { $this qqval:numericLowerBound ?lb }
-                             || EXISTS { $this qqval:numericUpperBound ?ub } )
-                }
-                """ ;
-        ] ,
-        [ a sh:SPARQLConstraint ;
-            rdfs:comment "AtMost requires numericUpperBound and forbids numericLowerBound."@en ;
-            sh:message "qqval:AtMost qualifier requires qqval:numericUpperBound and must not carry qqval:numericLowerBound."@en ;
-            sh:select
-                """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
-                SELECT $this
-                WHERE {
-                    $this qqval:approximationQualifier qqval:AtMost .
-                    FILTER ( NOT EXISTS { $this qqval:numericUpperBound ?ub }
-                             || EXISTS { $this qqval:numericLowerBound ?lb } )
-                }
-                """ ;
-        ] ,
-        [ a sh:SPARQLConstraint ;
-            rdfs:comment "WithUncertainty requires a nominal value and exactly one of numericUncertainty/numericRelativeUncertainty; forbids bound properties."@en ;
-            sh:message "qqval:WithUncertainty qualifier requires qudt:numericValue plus exactly one of qqval:numericUncertainty / qqval:numericRelativeUncertainty, and must not carry bound properties."@en ;
+            rdfs:comment "At least one of numericValue / numericLowerBound / numericUpperBound must be present."@en ;
+            sh:message "QualifiedQuantityValue requires at least one of qudt:numericValue, qqval:numericLowerBound, or qqval:numericUpperBound."@en ;
             sh:select
                 """
                 PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
                 PREFIX qudt: <http://qudt.org/schema/qudt/>
                 SELECT $this
                 WHERE {
-                    $this qqval:approximationQualifier qqval:WithUncertainty .
-                    BIND( EXISTS { $this qqval:numericUncertainty ?u } AS ?hasAbs )
-                    BIND( EXISTS { $this qqval:numericRelativeUncertainty ?r } AS ?hasRel )
                     FILTER ( NOT EXISTS { $this qudt:numericValue ?v }
-                             || ( ?hasAbs = ?hasRel )
-                             || EXISTS { $this qqval:numericLowerBound ?lb }
-                             || EXISTS { $this qqval:numericUpperBound ?ub } )
+                             && NOT EXISTS { $this qqval:numericLowerBound ?lb }
+                             && NOT EXISTS { $this qqval:numericUpperBound ?ub } )
                 }
                 """ ;
         ] ,
         [ a sh:SPARQLConstraint ;
-            rdfs:comment "Exact/Approximate alone (no bound/uncertainty qualifier) requires a nominal value."@en ;
-            sh:message "qqval:Exact / qqval:Approximate (without Range, AtLeast, AtMost, or WithUncertainty) requires qudt:numericValue."@en ;
+            rdfs:comment "Bound properties and uncertainty properties are mutually exclusive."@en ;
+            sh:message "QualifiedQuantityValue must not combine bound properties (numericLowerBound/numericUpperBound) with uncertainty properties (numericUncertainty/numericRelativeUncertainty)."@en ;
+            sh:select
+                """
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                SELECT $this
+                WHERE {
+                    FILTER (
+                        ( EXISTS { $this qqval:numericLowerBound ?lb }
+                          || EXISTS { $this qqval:numericUpperBound ?ub } )
+                        &&
+                        ( EXISTS { $this qqval:numericUncertainty ?u }
+                          || EXISTS { $this qqval:numericRelativeUncertainty ?r } )
+                    )
+                }
+                """ ;
+        ] ,
+        [ a sh:SPARQLConstraint ;
+            rdfs:comment "At most one of absolute / relative uncertainty."@en ;
+            sh:message "QualifiedQuantityValue must not carry both qqval:numericUncertainty and qqval:numericRelativeUncertainty."@en ;
+            sh:select
+                """
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                SELECT $this
+                WHERE {
+                    $this qqval:numericUncertainty ?u .
+                    $this qqval:numericRelativeUncertainty ?r .
+                }
+                """ ;
+        ] ,
+        [ a sh:SPARQLConstraint ;
+            rdfs:comment "Uncertainty requires a nominal numericValue."@en ;
+            sh:message "Uncertainty (numericUncertainty or numericRelativeUncertainty) requires qudt:numericValue."@en ;
             sh:select
                 """
                 PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
                 PREFIX qudt: <http://qudt.org/schema/qudt/>
                 SELECT $this
                 WHERE {
-                    $this qqval:approximationQualifier ?q .
-                    FILTER ( ?q = qqval:Exact || ?q = qqval:Approximate )
-                    FILTER NOT EXISTS { $this qqval:approximationQualifier qqval:Range }
-                    FILTER NOT EXISTS { $this qqval:approximationQualifier qqval:AtLeast }
-                    FILTER NOT EXISTS { $this qqval:approximationQualifier qqval:AtMost }
-                    FILTER NOT EXISTS { $this qqval:approximationQualifier qqval:WithUncertainty }
-                    FILTER NOT EXISTS { $this qudt:numericValue ?v }
+                    FILTER (
+                        ( EXISTS { $this qqval:numericUncertainty ?u }
+                          || EXISTS { $this qqval:numericRelativeUncertainty ?r } )
+                        && NOT EXISTS { $this qudt:numericValue ?v }
+                    )
                 }
                 """ ;
         ] .
@@ -195,7 +171,7 @@ qqval:QuantityRangeShape a sh:NodeShape ;
             sh:class qudt:QuantityValue ;
             sh:message "QuantityRange allows at most one qqval:hasUpperBound."@en
         ] ;
-    sh:not [ sh:class qqval:ApproximateQuantityValue ] ;
+    sh:not [ sh:class qqval:QualifiedQuantityValue ] ;
     sh:sparql
         [ a sh:SPARQLConstraint ;
             rdfs:comment "At least one of hasLowerBound / hasUpperBound must be present."@en ;
