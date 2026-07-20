@@ -1,0 +1,362 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+<https://growgraph.dev/ontologies/temporal-ontology> a owl:Ontology ;
+    rdfs:label "temporal"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """Domain-independent vocabulary for process duration, entity aging,
+        storage, exposure, and time-resolved characterization. Specializes
+        observation-ontology's Process / Observation / Phenomenon /
+        QualitativeResult / Condition model for the time domain.
+
+        Imports observation-ontology only (plus SOSA). Does not import
+        qqval-ontology; tempo:TimeQuantityValue is a qudt:QuantityValue.
+        Optional subclassing under qqval:QualifiedQuantityValue is asserted
+        by pergres-ontology.
+
+        Observed-property scope (process- vs. entity-scoped) and result
+        kind (quantitative vs. qualitative) are independent axes:
+        tempo:TemporalObservation covers quantitative results at any scope;
+        tempo:QualitativeEntityTemporalObservation is the entity-scoped,
+        qualitative case (result is a tempo:EntityTemporalState).
+
+        Extension contract: tempo:TemporalProcess, tempo:TimeDependentEffect,
+        and tempo:ObservableTemporalProperty are the primary extension
+        points. tempo:EntityTemporalState is an open controlled vocabulary
+        (fresh/aged/stored trio is universal; domain ontologies add further
+        states as siblings). Temporal condition-factor individuals are
+        likewise open for further skos:broader-linked siblings."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/temporal-ontology/5.0.0> ;
+    owl:imports
+        <https://growgraph.dev/ontologies/observation-ontology> ,
+        <https://www.w3.org/ns/sosa/sosa.ttl> ,
+        <http://qudt.org/2.1/schema/facade/qudt> ;
+    owl:versionInfo "5.0.0" .
+
+#################################################################
+# Process taxonomy
+#################################################################
+
+tempo:TemporalProcess a owl:Class ;
+    rdfs:label "Temporal process"@en ;
+    rdfs:comment "A process for which duration, elapsed time, temporal order, or time-dependent evolution is explicitly relevant."@en ;
+    rdfs:subClassOf obs:Process .
+
+tempo:PostCreationProcess a owl:Class ;
+    rdfs:label "Post-creation process"@en ;
+    rdfs:comment "A process performed on an entity after it comes into existence, including storage, exposure, aging, and post-creation treatment."@en ;
+    skos:example "synthesis"@en , "fabrication"@en ;
+    rdfs:subClassOf tempo:TemporalProcess .
+
+tempo:StorageProcess a owl:Class ;
+    rdfs:label "Storage process"@en ;
+    rdfs:comment "A post-creation process in which an entity is kept under specified conditions for a specified duration."@en ;
+    rdfs:subClassOf tempo:PostCreationProcess .
+
+tempo:ExposureProcess a owl:Class ;
+    rdfs:label "Exposure process"@en ;
+    rdfs:comment "A process in which an entity is subjected to a specified factor for a specified duration."@en ;
+    skos:example "environmental factor"@en , "optical factor"@en , "thermal factor"@en , "chemical factor"@en , "mechanical factor"@en ;
+    rdfs:subClassOf tempo:TemporalProcess .
+
+tempo:AgingProcess a owl:Class ;
+    rdfs:label "Aging process"@en ;
+    rdfs:comment "A time-dependent post-creation process in which an entity evolves during storage, exposure, or operation, potentially changing its state."@en ;
+    skos:example "composition"@en , "morphology"@en , "structure"@en , "optical properties"@en ;
+    rdfs:subClassOf tempo:PostCreationProcess .
+
+tempo:StorageAgingProcess a owl:Class ;
+    rdfs:label "Storage aging process"@en ;
+    rdfs:comment "An aging process in which an entity evolves over time while being stored under specified conditions."@en ;
+    skos:example "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en , "storage duration"@en ;
+    rdfs:subClassOf tempo:AgingProcess,
+                    tempo:StorageProcess .
+
+tempo:ExposureAgingProcess a owl:Class ;
+    rdfs:label "Exposure aging process"@en ;
+    rdfs:comment "An aging process in which an entity evolves over time while being exposed to an external factor."@en ;
+    skos:example "environmental exposure"@en , "optical exposure"@en , "thermal exposure"@en , "chemical exposure"@en , "mechanical exposure"@en ;
+    rdfs:subClassOf tempo:AgingProcess,
+                    tempo:ExposureProcess .
+
+tempo:OperationProcess a owl:Class ;
+    rdfs:label "Operation process"@en ;
+    rdfs:comment "A process in which an entity is used under functional working conditions."@en ;
+    skos:example "illumination"@en , "biasing"@en , "cycling"@en , "charging"@en , "discharging"@en , "device operation"@en ;
+    rdfs:subClassOf tempo:TemporalProcess .
+
+tempo:OperationalAgingProcess a owl:Class ;
+    rdfs:label "Operational aging process"@en ;
+    rdfs:comment "An aging process in which an entity evolves over time during operation or use."@en ;
+    skos:example "cycling"@en , "illumination"@en , "biasing"@en ;
+    rdfs:subClassOf tempo:AgingProcess,
+                    tempo:OperationProcess .
+
+#################################################################
+# Quantity values, effects, and observation model
+#################################################################
+
+tempo:TimeQuantityValue a owl:Class ;
+    rdfs:label "Time quantity value"@en ;
+    rdfs:comment
+        """A quantity value representing a time, duration, elapsed time,
+        delay, lifetime, time scale, or entity age. Subclass of
+        qudt:QuantityValue. Optional further subclassing under
+        qqval:QualifiedQuantityValue is asserted by pergres-ontology."""@en ;
+    rdfs:subClassOf qudt:QuantityValue .
+
+tempo:TimeDependentEffect a owl:Class ;
+    rdfs:label "Time-dependent effect"@en ;
+    rdfs:comment "An effect associated with elapsed time during synthesis, storage, aging, exposure, or characterization."@en ;
+    rdfs:subClassOf obs:Phenomenon .
+
+tempo:AgingEffect a owl:Class ;
+    rdfs:label "Aging effect"@en ;
+    rdfs:comment "A time-dependent effect produced or observed after entity aging."@en ;
+    rdfs:subClassOf tempo:TimeDependentEffect .
+
+# StorageEffect is the only dedicated sibling narrowing AgingEffect by
+# process kind; exposure/operational aging effects are covered generically
+# by AgingEffect itself rather than by dedicated ExposureEffect/
+# OperationalEffect siblings. Intentional (storage conditions warrant their
+# own class; exposure/operational don't yet), not a gap to fill in by
+# pattern-matching the process taxonomy below.
+tempo:StorageEffect a owl:Class ;
+    rdfs:label "Storage effect"@en ;
+    rdfs:comment "A time-dependent effect associated with keeping an entity under specified storage conditions."@en ;
+    rdfs:subClassOf tempo:TimeDependentEffect .
+
+tempo:ObservableTemporalProperty a owl:Class ;
+    rdfs:label "Observable temporal property"@en ;
+    rdfs:comment "An observable property whose value is a time, duration, elapsed time, delay, lifetime, rate-related time scale, or entity age."@en ;
+    rdfs:subClassOf sosa:ObservableProperty .
+
+tempo:TemporalObservation a owl:Class ;
+    rdfs:label "Temporal observation"@en ;
+    rdfs:comment "A quantitative observation whose observed property is temporal and whose result is represented as a time quantity value."@en ;
+    rdfs:subClassOf obs:QuantitativeObservation ,
+        [
+            a owl:Restriction ;
+            owl:onProperty sosa:observedProperty ;
+            owl:someValuesFrom tempo:ObservableTemporalProperty
+        ] ,
+        [
+            a owl:Restriction ;
+            owl:onProperty tempo:hasTemporalQuantityResult ;
+            owl:someValuesFrom tempo:TimeQuantityValue
+        ] .
+
+tempo:EntityTemporalState a owl:Class ;
+    rdfs:label "Entity temporal state"@en ;
+    rdfs:comment "A qualitative result describing the temporal status of an entity. Open vocabulary: domain ontologies add domain-specific states as siblings of the universal fresh/aged/stored trio defined here."@en ;
+    skos:example "fresh"@en , "aged"@en , "stored"@en , "condition-specific aged"@en ;
+    rdfs:subClassOf obs:QualitativeResult .
+
+tempo:QualitativeEntityTemporalObservation a owl:Class ;
+    rdfs:label "Qualitative entity temporal observation"@en ;
+    rdfs:comment "A qualitative observation (see obs:QualitativeObservation) whose observed property is entity-scoped and temporal (tempo:ObservableEntityTemporalProperty) and whose result is a categorical entity temporal state (tempo:EntityTemporalState), e.g. fresh/aged/stored. Quantitative entity-scoped temporal observations (e.g. numeric entity age) are typed tempo:TemporalObservation instead: entity-vs-process observed-property scope and quantitative-vs-qualitative result are independent axes, not a single quantitative/qualitative pair."@en ;
+    rdfs:subClassOf obs:QualitativeObservation ,
+        [
+            a owl:Restriction ;
+            owl:onProperty sosa:observedProperty ;
+            owl:someValuesFrom tempo:ObservableEntityTemporalProperty
+        ] ,
+        [
+            a owl:Restriction ;
+            owl:onProperty tempo:hasEntityTemporalStateResult ;
+            owl:someValuesFrom tempo:EntityTemporalState
+        ] .
+
+tempo:ObservableProcessTemporalProperty a owl:Class ;
+    rdfs:label "Observable process temporal property"@en ;
+    rdfs:comment "A temporal property describing the duration or elapsed time of a process or process step."@en ;
+    rdfs:subClassOf tempo:ObservableTemporalProperty .
+
+tempo:ObservableEntityTemporalProperty a owl:Class ;
+    rdfs:label "Observable entity temporal property"@en ;
+    rdfs:comment "A temporal property describing the age, temporal status, or time-dependent condition of an entity. Covers both quantitative individuals observed via tempo:TemporalObservation (e.g. entityAgeProperty, agingTimeProperty) and the qualitative entityTemporalStateProperty observed via tempo:QualitativeEntityTemporalObservation: entity-scoping and quantitative-vs-qualitative result are independent axes."@en ;
+    rdfs:subClassOf tempo:ObservableTemporalProperty .
+
+tempo:ObservableTransientTemporalProperty a owl:Class ;
+    rdfs:label "Observable transient temporal property"@en ;
+    rdfs:comment "A temporal property characterizing an event-triggered, finely time-resolved transient response of a process or system, independent of measurement technique."@en ;
+    rdfs:subClassOf tempo:ObservableTemporalProperty .
+
+tempo:TimeConditionValue a owl:Class ;
+    rdfs:label "Time condition value"@en ;
+    rdfs:comment "A quantitative condition value representing a temporal condition, such as storage duration, aging time, exposure duration, delay time, or entity age. It is also a time quantity value."@en ;
+    rdfs:subClassOf obs:QuantitativeConditionValue,
+                    tempo:TimeQuantityValue .
+
+#################################################################
+# Object properties
+#################################################################
+
+tempo:hasDuration a owl:ObjectProperty ;
+    rdfs:label "has duration"@en ;
+    rdfs:comment "Links a process to a time quantity value representing its duration."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range tempo:TimeQuantityValue .
+
+tempo:hasElapsedTime a owl:ObjectProperty ;
+    rdfs:label "has elapsed time"@en ;
+    rdfs:comment "Links an entity, process, or observation to a time quantity value representing elapsed time since a relevant reference event. Deliberately left without rdfs:domain: tempo:hasObservationDelay, a subproperty with domain obs:Observation, would conflict with a narrower domain (e.g. sosa:FeatureOfInterest) asserted here, since rdfs:domain propagates through rdfs:subPropertyOf."@en ;
+    rdfs:range tempo:TimeQuantityValue .
+
+tempo:hasEntityAge a owl:ObjectProperty ;
+    rdfs:label "has entity age"@en ;
+    rdfs:comment "Links a concrete entity (sosa:FeatureOfInterest) to a time quantity value representing the time elapsed since its synthesis, fabrication, deposition, or another stated reference event."@en ;
+    rdfs:domain sosa:FeatureOfInterest ;
+    rdfs:range tempo:TimeQuantityValue ;
+    rdfs:subPropertyOf tempo:hasElapsedTime .
+
+tempo:hasTemporalQuantityResult a owl:ObjectProperty ;
+    rdfs:label "has temporal quantity result"@en ;
+    rdfs:comment "Links a temporal observation to a time quantity value."@en ;
+    rdfs:domain tempo:TemporalObservation ;
+    rdfs:range tempo:TimeQuantityValue ;
+    rdfs:subPropertyOf obs:hasQuantityResult .
+
+tempo:hasEntityTemporalStateResult a owl:ObjectProperty ;
+    rdfs:label "has entity temporal state result"@en ;
+    rdfs:comment "Links an entity temporal state observation to its entity temporal state result."@en ;
+    rdfs:domain tempo:QualitativeEntityTemporalObservation ;
+    rdfs:range tempo:EntityTemporalState ;
+    rdfs:subPropertyOf obs:hasQualitativeResult .
+
+tempo:hasObservationDelay a owl:ObjectProperty ;
+    rdfs:label "has observation delay"@en ;
+    rdfs:comment "Links an observation to a time quantity value representing the relative delay at which the observation result was recorded (e.g. 5 ps after excitation). Always a relative elapsed time, never an absolute wall-clock timestamp."@en ;
+    rdfs:domain obs:Observation ;
+    rdfs:range tempo:TimeQuantityValue ;
+    rdfs:subPropertyOf tempo:hasElapsedTime .
+
+tempo:hasTemporalReferenceProcess a owl:ObjectProperty ;
+    rdfs:label "has temporal reference process"@en ;
+    rdfs:comment "Links a temporal value, observation, entity, or process to the process used as the reference point for elapsed time, such as synthesis, deposition, storage start, aging start, excitation, or measurement start."@en ;
+    rdfs:range obs:Process .
+
+tempo:hasStorageCondition a owl:ObjectProperty ;
+    rdfs:label "has storage condition"@en ;
+    rdfs:comment "Links a storage or aging process to a reified condition, such as atmosphere, pressure, humidity, temperature, or storage duration."@en ;
+    rdfs:domain tempo:StorageProcess ;
+    rdfs:range obs:Condition ;
+    rdfs:subPropertyOf obs:hasProcessCondition .
+
+tempo:hasTimeDependentEffect a owl:ObjectProperty ;
+    rdfs:label "has time-dependent effect"@en ;
+    rdfs:comment "Links a temporal process to an effect associated with elapsed time."@en ;
+    rdfs:domain tempo:TemporalProcess ;
+    rdfs:range tempo:TimeDependentEffect .
+
+tempo:affectsObservableProperty a owl:ObjectProperty ;
+    rdfs:label "affects observable property"@en ;
+    rdfs:comment "Links a time-dependent effect to the observable property whose value or qualitative state changes."@en ;
+    rdfs:domain tempo:TimeDependentEffect ;
+    rdfs:range sosa:ObservableProperty .
+
+tempo:precedes a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "precedes"@en ;
+    rdfs:comment
+        """States that one process temporally precedes another (ends at or
+        before the other begins). Native, deliberately minimal relation so
+        tempo:TemporalProcess's "temporal order... is explicitly relevant"
+        claim is backed by vocabulary without importing OWL-Time; see
+        rdfs:seeAlso for a future alignment hook."""@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range obs:Process ;
+    owl:inverseOf tempo:follows ;
+    rdfs:seeAlso <http://www.w3.org/2006/time#before> .
+
+tempo:follows a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "follows"@en ;
+    rdfs:comment "States that one process temporally follows another (begins at or after the other ends). Inverse of tempo:precedes."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range obs:Process ;
+    rdfs:seeAlso <http://www.w3.org/2006/time#after> .
+
+#################################################################
+# Temporal condition factors
+#
+# Typed obs:ConditionFactor and linked via skos:broader.
+# The top-level "time" factor these chain up to is obs:time.
+#################################################################
+
+tempo:duration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "duration"@en ;
+    rdfs:comment "General temporal extent of a process or interval."@en ;
+    skos:broader obs:time .
+
+tempo:storageDuration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "storage duration"@en ;
+    rdfs:comment "Duration for which an entity is stored under specified conditions."@en ;
+    skos:broader tempo:duration .
+
+tempo:agingTime a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "aging time"@en ;
+    rdfs:comment "Elapsed time during which an entity ages under storage, exposure, operational, or other time-dependent conditions."@en ;
+    skos:broader tempo:duration .
+
+tempo:exposureDuration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "exposure duration"@en ;
+    rdfs:comment "Duration for which an entity is exposed to an environmental, optical, thermal, chemical, or mechanical factor."@en ;
+    skos:broader tempo:duration .
+
+tempo:entityAge a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "entity age"@en ;
+    rdfs:comment "Elapsed time between an entity's creation (synthesis, fabrication, etc.) and a later process or observation."@en ;
+    skos:broader obs:time .
+
+tempo:measurementDelayTime a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "measurement delay time"@en ;
+    rdfs:comment "Delay time between a reference event and a measurement."@en ;
+    skos:broader obs:time .
+
+#################################################################
+# Temporal observable property vocabulary
+#
+# Domain-neutral individuals only. Domain-specific vocabulary is minted in
+# downstream domain ontologies and typed against these classes there.
+#################################################################
+
+tempo:storageDurationProperty a owl:NamedIndividual, tempo:ObservableProcessTemporalProperty ;
+    rdfs:label "storage duration"@en .
+
+tempo:agingTimeProperty a owl:NamedIndividual, tempo:ObservableEntityTemporalProperty ;
+    rdfs:label "aging time"@en .
+
+tempo:entityAgeProperty a owl:NamedIndividual, tempo:ObservableEntityTemporalProperty ;
+    rdfs:label "entity age"@en .
+
+tempo:exposureDurationProperty a owl:NamedIndividual, tempo:ObservableProcessTemporalProperty ;
+    rdfs:label "exposure duration"@en .
+
+#################################################################
+# Entity temporal state controlled vocabulary
+#
+# Universal trio only. Domain-specific storage/aging states are minted as
+# siblings of this class in downstream domain ontologies.
+#################################################################
+
+tempo:freshEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "fresh"@en ;
+    dcterms:alternative "day 0", "pristine" .
+
+tempo:agedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "aged"@en .
+
+tempo:storedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "stored"@en .
+
+tempo:entityTemporalStateProperty a owl:NamedIndividual, tempo:ObservableEntityTemporalProperty ;
+    rdfs:label "entity temporal state"@en .

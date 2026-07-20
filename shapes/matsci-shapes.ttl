@@ -1,0 +1,95 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+
+#################################################################
+# Shapes graph header
+#
+# Unlike qqval/observation/temporal-ontology, matsci-ontology declares
+# almost no qualified OWL restrictions (owl:disjointWith between
+# ObservableMaterialProperty and ObservableMorphologyProperty is the one
+# exception) -- its ~50 object/datatype properties are plain
+# rdfs:domain/range declarations with no cardinality axioms attached to a
+# class. There is therefore little to literally "mirror" the way the
+# other three shapes files do.
+#
+# What follows instead is a small, deliberately curated closed-world
+# type-sanity net for the matsci-native properties/classes that see the
+# highest volume of LLM-extracted triples and the highest observed rate
+# of wrong-node-type mistakes (per the extraction-quality review in
+# aux/notes/expert.ontocast.md: rdf:type pointing at a string literal
+# instead of an IRI, morphology values attached to the wrong class,
+# etc.). It is not, and is not meant to be, exhaustive coverage of every
+# matsci property.
+#################################################################
+
+<https://growgraph.dev/ontologies/matsci-shapes> a owl:Ontology ;
+    rdfs:label "matsci shapes"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """SHACL shapes for matsci-ontology (>= 3.0.0): the one real OWL
+        disjointness mirror (ObservableMaterialProperty /
+        ObservableMorphologyProperty), plus a curated closed-world
+        type-sanity net for MorphologyState's value properties and the
+        matsci:hasInputSample/hasOutputSample convenience subproperties.
+
+        1.0.0: initial version."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.0.0> ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+# ObservableMaterialProperty / ObservableMorphologyProperty — disjoint
+#################################################################
+
+matsci:ObservableMaterialPropertyShape a sh:NodeShape ;
+    sh:targetClass matsci:ObservableMaterialProperty ;
+    sh:not [ sh:class matsci:ObservableMorphologyProperty ] ;
+    rdfs:comment "Mirrors matsci-ontology's owl:disjointWith axiom in a closed-world-checkable form."@en .
+
+#################################################################
+# MorphologyState — value-property type sanity
+#################################################################
+
+matsci:MorphologyStateShape a sh:NodeShape ;
+    sh:targetClass matsci:MorphologyState ;
+    sh:property
+        [ sh:path matsci:hasDimensionalityValue ;
+            sh:class matsci:DimensionalityValue ;
+            sh:message "matsci:hasDimensionalityValue must be a matsci:DimensionalityValue."@en
+        ] ,
+        [ sh:path matsci:hasShapeValue ;
+            sh:class matsci:ShapeValue ;
+            sh:message "matsci:hasShapeValue must be a matsci:ShapeValue."@en
+        ] ,
+        [ sh:path matsci:hasFacetExposureValue ;
+            sh:class matsci:FacetExposureValue ;
+            sh:message "matsci:hasFacetExposureValue must be a matsci:FacetExposureValue."@en
+        ] ,
+        [ sh:path matsci:hasPackingMotifValue ;
+            sh:class matsci:PackingMotifValue ;
+            sh:message "matsci:hasPackingMotifValue must be a matsci:PackingMotifValue."@en
+        ] ,
+        [ sh:path matsci:hasSuperlatticeSymmetryValue ;
+            sh:class matsci:SuperlatticeSymmetryValue ;
+            sh:message "matsci:hasSuperlatticeSymmetryValue must be a matsci:SuperlatticeSymmetryValue."@en
+        ] .
+
+#################################################################
+# Sample-flavored convenience subproperties — range sanity
+#################################################################
+
+matsci:ProcessSampleShape a sh:NodeShape ;
+    sh:targetSubjectsOf matsci:hasInputSample, matsci:hasOutputSample ;
+    sh:property
+        [ sh:path matsci:hasInputSample ;
+            sh:class sosa:Sample ;
+            sh:message "matsci:hasInputSample must be a sosa:Sample."@en
+        ] ,
+        [ sh:path matsci:hasOutputSample ;
+            sh:class sosa:Sample ;
+            sh:message "matsci:hasOutputSample must be a sosa:Sample."@en
+        ] .

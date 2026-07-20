@@ -1,0 +1,91 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Shapes graph header
+#
+# Closed-world validation companion to observation-ontology. Mirrors the
+# qualified-cardinality restrictions already declared as OWL axioms
+# there, so that an extraction pipeline can reject non-conforming
+# LLM output outright instead of relying on open-world reasoning (which
+# only ever concludes "not yet known", never "invalid").
+#
+# Depends on qqval-shapes for the ApproximateQuantityValue shape used by
+# obs:QuantitativeObservationShape below.
+#################################################################
+
+<https://growgraph.dev/ontologies/observation-shapes> a owl:Ontology ;
+    rdfs:label "observation shapes"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """SHACL shapes mirroring the OWL cardinality/qualifier
+        restrictions declared on obs:Condition, obs:QuantitativeObservation,
+        and obs:QualitativeObservation in observation-ontology (>= 4.0.0).
+
+        1.0.0: initial version.
+
+        2.0.0 (breaking): renamed obs:EnvironmentConditionShape to
+        obs:ConditionShape and retargeted it at obs:Condition /
+        obs:ConditionFactor, following observation-ontology 4.0.0's
+        rename of those classes."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.0.0> ;
+    owl:versionInfo "2.0.0" .
+
+#################################################################
+# Condition — exactly one factor, exactly one value
+#################################################################
+
+obs:ConditionShape a sh:NodeShape ;
+    sh:targetClass obs:Condition ;
+    sh:property
+        [ sh:path obs:conditionFactor ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
+            sh:class obs:ConditionFactor ;
+            sh:message "Condition requires exactly one obs:conditionFactor of type obs:ConditionFactor."@en
+        ] ,
+        [ sh:path obs:conditionValue ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
+            sh:class obs:ConditionValue ;
+            sh:message "Condition requires exactly one obs:conditionValue of type obs:ConditionValue."@en
+        ] .
+
+#################################################################
+# QuantitativeObservation — result must be a qualified quantity value
+#################################################################
+
+obs:QuantitativeObservationShape a sh:NodeShape ;
+    sh:targetClass obs:QuantitativeObservation ;
+    rdfs:comment
+        """Checked via obs:hasQuantityResult directly rather than its
+        super-property sosa:hasResult, so validation does not depend on an
+        RDFS/OWL reasoning pass having run first -- the extraction
+        pipeline is expected to emit the concrete obs: property."""@en ;
+    sh:property
+        [ sh:path obs:hasQuantityResult ;
+            sh:minCount 1 ;
+            sh:class qqval:ApproximateQuantityValue ;
+            sh:message "QuantitativeObservation requires at least one obs:hasQuantityResult whose value is a qqval:ApproximateQuantityValue (use qqval:Exact when the source value is exact)."@en
+        ] ;
+    sh:not [ sh:class obs:QualitativeObservation ] .
+
+#################################################################
+# QualitativeObservation — result must be a qualitative result
+#################################################################
+
+obs:QualitativeObservationShape a sh:NodeShape ;
+    sh:targetClass obs:QualitativeObservation ;
+    sh:property
+        [ sh:path obs:hasQualitativeResult ;
+            sh:minCount 1 ;
+            sh:class obs:QualitativeResult ;
+            sh:message "QualitativeObservation requires at least one obs:hasQualitativeResult whose value is an obs:QualitativeResult."@en
+        ] ;
+    sh:not [ sh:class obs:QuantitativeObservation ] .

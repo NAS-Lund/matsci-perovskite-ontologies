@@ -1,0 +1,457 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix om:      <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Ontology header
+#################################################################
+
+<https://growgraph.dev/ontologies/qqval-ontology> a owl:Ontology ;
+    rdfs:label "qqval"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """Reusable ontology for quantitative values whose reported numeric
+        component carries an epistemic qualifier (exact or approximate) and
+        may be a scalar, a range, a one-sided bound, or a value with
+        explicit uncertainty.
+
+        Epistemic status is asserted via qqval:epistemicQualifier
+        (Exact / Approximate). Numeric form (scalar / range / at-least /
+        at-most) and uncertainty presence are inferred from which
+        properties are populated — see QualifiedQuantityValue.
+
+        Extraction convention: "not extracted from source" is expressed by
+        omitting the relevant result triple entirely, never by asserting a
+        placeholder QualifiedQuantityValue.
+
+        Extension contract: qqval:EpistemicQualifier is a closed controlled
+        vocabulary (Exact, Approximate only). qqval:DistributionAssumption
+        is open. qqval:QualifiedQuantityValue and qqval:QuantityRange are
+        the extension points for domain-typed quantity values."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/2.0.0> ;
+    owl:imports
+        <http://qudt.org/2.1/schema/facade/qudt> ,
+        <http://qudt.org/2.1/vocab/unit> ;
+    owl:versionInfo "2.0.0" ;
+    rdfs:seeAlso
+        <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
+
+
+#################################################################
+# EpistemicQualifier — class and named individuals
+#################################################################
+
+qqval:EpistemicQualifier a owl:Class ;
+    rdfs:label "Epistemic qualifier"@en ;
+    rdfs:comment
+        """A controlled-vocabulary individual that encodes whether a
+        reported numeric value is exact or approximate. Numeric form
+        (scalar, range, one-sided bound) and uncertainty are not part of
+        this vocabulary — they follow from which properties are populated
+        on the QualifiedQuantityValue.
+
+        No individual of this class means "not reported" or "unknown" —
+        that is expressed by omitting the result triple entirely."""@en ;
+    skos:altLabel
+        "measurement qualifier"@en ,
+        "numeric qualifier"@en ,
+        "value qualifier"@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:Exact a owl:NamedIndividual , qqval:EpistemicQualifier ;
+    rdfs:label "exact"@en ;
+    rdfs:comment
+        """The reported value is considered exact or nominal within the
+        precision of the source. No approximation marker is applied."""@en ;
+    skos:altLabel
+        "nominal"@en , "precise"@en , "exact value"@en ,
+        "nominal value"@en , "definite"@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:Approximate a owl:NamedIndividual , qqval:EpistemicQualifier ;
+    rdfs:label "approximately"@en ;
+    rdfs:comment
+        """The reported value is a central estimate, not exact.
+        Expressed in source text as ∼, ~, ≈, ca., about, roughly,
+        or nominally."""@en ;
+    skos:altLabel
+        "∼"@en , "~"@en , "≈"@en ,
+        "ca."@en , "about"@en , "roughly"@en ,
+        "nominally"@en , "around"@en , "near"@en ,
+        "approximate value"@en , "order of magnitude"@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+[] a owl:AllDifferent ;
+    owl:distinctMembers (
+        qqval:Exact
+        qqval:Approximate
+    ) .
+
+
+#################################################################
+# DistributionAssumption — class and named individuals
+#
+# Open vocabulary: consumers may add further distributions as siblings.
+#################################################################
+
+qqval:DistributionAssumption a owl:Class ;
+    rdfs:label "Distribution assumption"@en ;
+    rdfs:comment
+        """An assumption about the statistical distribution underlying a
+        reported uncertainty (qqval:numericUncertainty /
+        qqval:numericRelativeUncertainty). Linking a value to one of these
+        individuals via qqval:distributionAssumption is optional; absence
+        means the distribution is not stated, not that it is Gaussian."""@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:Gaussian a owl:NamedIndividual, qqval:DistributionAssumption ;
+    rdfs:label "Gaussian"@en ;
+    skos:altLabel "normal distribution"@en , "1-sigma Gaussian"@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:Unspecified a owl:NamedIndividual, qqval:DistributionAssumption ;
+    rdfs:label "unspecified"@en ;
+    rdfs:comment
+        """The source does not state, or the extractor could not determine,
+        the distribution underlying a reported uncertainty. Prefer omitting
+        qqval:distributionAssumption entirely over asserting this
+        individual, unless a pipeline needs an explicit marker that the
+        question was actively considered and left unresolved."""@en ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+
+#################################################################
+# QualifiedQuantityValue — class
+#
+# Pattern: compact flat representation of a qualified scalar or
+# range, all values sharing one unit attached to this node.
+#################################################################
+
+qqval:QualifiedQuantityValue a owl:Class ;
+    rdfs:label "Qualified quantity value"@en ;
+    rdfs:comment
+        """A qudt:QuantityValue whose reported numeric component carries an
+        epistemic qualifier (exact or approximate) and may be a scalar, a
+        range, a one-sided bound, or a value with explicit uncertainty.
+
+        All numeric components are plain xsd:decimal literals sharing the
+        unit declared via qudt:unit on this node:
+          • qudt:numericValue              — central / nominal value
+          • qqval:numericLowerBound         — lower bound
+          • qqval:numericUpperBound         — upper bound
+          • qqval:numericUncertainty        — absolute ± uncertainty
+          • qqval:numericRelativeUncertainty — relative ± uncertainty in %
+
+        Epistemic status is declared via qqval:epistemicQualifier
+        (exactly one of Exact / Approximate).
+
+        Numeric form is inferred from which properties are populated:
+          scalar (central only)  → qudt:numericValue only
+          range                  → numericLowerBound + numericUpperBound
+          at-least (lower only)  → numericLowerBound only
+          at-most (upper only)   → numericUpperBound only
+          with uncertainty       → qudt:numericValue + numericUncertainty
+                                   or numericRelativeUncertainty
+
+        Bound inclusivity defaults to inclusive; set
+        qqval:lowerBoundInclusive / qqval:upperBoundInclusive to false for
+        strict bounds (< / >).
+
+        Contrast with qqval:QuantityRange, which models bounds as object
+        properties to separate qudt:QuantityValue nodes. Prefer
+        QualifiedQuantityValue unless bounds carry independently-tracked
+        provenance or units.
+
+        Uncertainty distribution: qqval:numericUncertainty /
+        qqval:numericRelativeUncertainty do not imply any particular
+        distribution unless qqval:distributionAssumption states one.
+        Use qqval:confidenceLevel when the source states a confidence
+        level."""@en ;
+    rdfs:subClassOf qudt:QuantityValue ;
+    skos:altLabel
+        "bounded quantity value"@en ,
+        "measured quantity with uncertainty"@en ,
+        "qualified measurement"@en ,
+        "value with error bar"@en ,
+        "value with qualifier"@en ;
+    rdfs:seeAlso
+        om:Measure ,
+        qudt:QuantityValue ,
+        qqval:QuantityRange ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> ;
+    # Exactly one epistemic qualifier
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:epistemicQualifier ;
+            owl:cardinality "1"^^xsd:nonNegativeInteger
+        ] ;
+    # A unit is required
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qudt:unit ;
+            owl:minCardinality "1"^^xsd:nonNegativeInteger
+        ] ;
+    # At most one lower bound
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:numericLowerBound ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger
+        ] ;
+    # At most one upper bound
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:numericUpperBound ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger
+        ] ;
+    # At most one absolute uncertainty
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:numericUncertainty ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger
+        ] ;
+    # At most one relative uncertainty
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:numericRelativeUncertainty ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger
+        ] .
+
+
+#################################################################
+# QuantityRange — class
+#
+# Pattern: bounds represented as independent qudt:QuantityValue
+# object nodes (may carry their own units and provenance).
+#################################################################
+
+qqval:QuantityRange a owl:Class ;
+    rdfs:label "Quantity range"@en ;
+    rdfs:comment
+        """A quantitative interval defined by lower and/or upper bound nodes,
+        each being an independent qudt:QuantityValue. Use this pattern
+        when bounds may carry different units, independent provenance, or
+        individual observation metadata.
+
+        At least one bound (lower or upper) must be present.
+
+        Contrast with qqval:QualifiedQuantityValue, which stores bounds as
+        plain decimals on a single node sharing one unit — preferable for
+        compact, unit-homogeneous ranges."""@en ;
+    rdfs:seeAlso qqval:QualifiedQuantityValue ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> ;
+    # At most one lower bound node
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:hasLowerBound ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass qudt:QuantityValue
+        ] ;
+    # At most one upper bound node
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty qqval:hasUpperBound ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass qudt:QuantityValue
+        ] ;
+    # At least one bound must be present (lower OR upper)
+    rdfs:subClassOf
+        [ a owl:Class ;
+            owl:unionOf (
+                [ a owl:Restriction ;
+                    owl:onProperty qqval:hasLowerBound ;
+                    owl:someValuesFrom qudt:QuantityValue ]
+                [ a owl:Restriction ;
+                    owl:onProperty qqval:hasUpperBound ;
+                    owl:someValuesFrom qudt:QuantityValue ]
+            )
+        ] .
+
+
+#################################################################
+# Object properties
+#################################################################
+
+qqval:epistemicQualifier a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label "epistemic qualifier"@en ;
+    rdfs:comment
+        """Links a QualifiedQuantityValue to exactly one EpistemicQualifier
+        (Exact or Approximate). Declared owl:FunctionalProperty."""@en ;
+    skos:altLabel
+        "numeric qualifier"@en ,
+        "value qualifier"@en ,
+        "measurement qualifier"@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  qqval:EpistemicQualifier ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:hasLowerBound a owl:ObjectProperty ;
+    rdfs:label "has lower bound"@en ;
+    rdfs:comment
+        """Links a QuantityRange to a qudt:QuantityValue representing the
+        lower bound. Prefer qqval:numericLowerBound on
+        QualifiedQuantityValue when all bounds share one unit."""@en ;
+    rdfs:domain qqval:QuantityRange ;
+    rdfs:range  qudt:QuantityValue ;
+    rdfs:seeAlso qqval:numericLowerBound ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:hasUpperBound a owl:ObjectProperty ;
+    rdfs:label "has upper bound"@en ;
+    rdfs:comment
+        """Links a QuantityRange to a qudt:QuantityValue representing the
+        upper bound. Prefer qqval:numericUpperBound on
+        QualifiedQuantityValue when all bounds share one unit."""@en ;
+    rdfs:domain qqval:QuantityRange ;
+    rdfs:range  qudt:QuantityValue ;
+    rdfs:seeAlso qqval:numericUpperBound ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:distributionAssumption a owl:ObjectProperty ;
+    rdfs:label "distribution assumption"@en ;
+    rdfs:comment
+        """Optionally links a QualifiedQuantityValue to the statistical
+        distribution assumption underlying its reported uncertainty (e.g.
+        qqval:Gaussian). Absence of this property means the distribution is
+        unstated — it must never be read as an implicit Gaussian
+        assumption."""@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  qqval:DistributionAssumption ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+
+#################################################################
+# Datatype properties
+#################################################################
+
+qqval:numericLowerBound a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "numeric lower bound"@en ;
+    rdfs:comment
+        """The lower bound of a range or at-least measurement, as a plain
+        decimal sharing the unit of the parent QualifiedQuantityValue.
+        Use together with qqval:numericUpperBound for an X–Y range, or
+        alone for a lower-bound-only value. Inclusivity defaults to
+        inclusive; see qqval:lowerBoundInclusive.
+        Declared owl:FunctionalProperty."""@en ;
+    skos:altLabel
+        "lower bound"@en ,
+        "minimum value"@en ,
+        "range minimum"@en ,
+        "lower limit"@en ,
+        "from value"@en ,
+        "range start"@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:seeAlso qqval:hasLowerBound ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:numericUpperBound a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "numeric upper bound"@en ;
+    rdfs:comment
+        """The upper bound of a range or at-most measurement, as a plain
+        decimal sharing the unit of the parent QualifiedQuantityValue.
+        Use together with qqval:numericLowerBound for an X–Y range, or
+        alone for an upper-bound-only value. Inclusivity defaults to
+        inclusive; see qqval:upperBoundInclusive.
+        Declared owl:FunctionalProperty."""@en ;
+    skos:altLabel
+        "upper bound"@en ,
+        "maximum value"@en ,
+        "range maximum"@en ,
+        "upper limit"@en ,
+        "to value"@en ,
+        "range end"@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:seeAlso qqval:hasUpperBound ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:lowerBoundInclusive a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "lower bound inclusive"@en ;
+    rdfs:comment
+        """Whether qqval:numericLowerBound is inclusive (≥) or exclusive (>).
+        Defaults to true (inclusive) when absent. Declared
+        owl:FunctionalProperty."""@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:boolean ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:upperBoundInclusive a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "upper bound inclusive"@en ;
+    rdfs:comment
+        """Whether qqval:numericUpperBound is inclusive (≤) or exclusive (<).
+        Defaults to true (inclusive) when absent. Declared
+        owl:FunctionalProperty."""@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:boolean ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:numericUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "numeric uncertainty"@en ;
+    rdfs:comment
+        """The absolute symmetric uncertainty (± value) of a measurement,
+        as a plain decimal sharing the unit of the parent
+        QualifiedQuantityValue node. Corresponds to the ± notation
+        (e.g. 8.5 ± 0.5 nm → qudt:numericValue 8.5, numericUncertainty 0.5).
+        Declared owl:FunctionalProperty.
+        See also qqval:numericRelativeUncertainty for percentage uncertainty."""@en ;
+    skos:altLabel
+        "absolute uncertainty"@en ,
+        "± value"@en ,
+        "plus or minus"@en ,
+        "standard deviation"@en ,
+        "error bar"@en ,
+        "measurement error"@en ,
+        "experimental uncertainty"@en ,
+        "standard error"@en ,
+        "confidence interval half-width"@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:seeAlso om:hasUncertainty ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:numericRelativeUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "numeric relative uncertainty"@en ;
+    rdfs:comment
+        """The relative (percentage) uncertainty of a measurement,
+        expressed as a plain decimal in percent (e.g. 5.0 means 5 %).
+        Use when the source reports uncertainty as a fraction or percentage
+        of the nominal value (e.g. "8.5 nm ± 6 %" → numericRelativeUncertainty 6.0).
+        Exactly one of numericUncertainty or numericRelativeUncertainty
+        should be present when uncertainty is asserted.
+        Declared owl:FunctionalProperty."""@en ;
+    skos:altLabel
+        "relative uncertainty"@en ,
+        "percentage uncertainty"@en ,
+        "percent error"@en ,
+        "relative error"@en ,
+        "coefficient of variation"@en ,
+        "RSD"@en ,
+        "relative standard deviation"@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:seeAlso qqval:numericUncertainty ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+
+qqval:confidenceLevel a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "confidence level"@en ;
+    rdfs:comment
+        """The confidence level, in percent, that the source explicitly
+        associates with a reported uncertainty (e.g. 68.0 for a 1-sigma
+        interval, 95.0 for a 2-sigma interval). Optional and independent of
+        qqval:distributionAssumption. Absence of this property must not be
+        read as any particular confidence level.
+        Declared owl:FunctionalProperty."""@en ;
+    skos:altLabel
+        "confidence interval"@en ,
+        "coverage probability"@en ,
+        "sigma level"@en ;
+    rdfs:domain qqval:QualifiedQuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:seeAlso qqval:distributionAssumption ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .

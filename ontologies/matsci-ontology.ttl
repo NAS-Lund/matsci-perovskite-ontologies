@@ -1,0 +1,1043 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci-ontology#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix ssn:     <http://www.w3.org/ns/ssn/> .
+@prefix obo:     <http://purl.obolibrary.org/obo/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix om:      <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
+
+
+<https://growgraph.dev/ontologies/matsci-ontology> a owl:Ontology ;
+    rdfs:label "matsci"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """General materials-science ontology: materials, samples,
+        synthesis, characterization, morphology, and properties.
+        Layers on observation-ontology and temporal-ontology; imports
+        qqval-ontology for qualified quantity values and pergres-ontology
+        for the policy that quantitative observation results are
+        qqval-qualified.
+
+        matsci:hasInputSample / hasOutputSample are sosa:Sample-narrowed
+        convenience subproperties of obs:hasInputEntity / hasOutputEntity.
+
+        Extension contract: matsci-ontology is the domain extension layer
+        for observation-ontology / temporal-ontology — it subclasses
+        obs:Process / obs:Phenomenon / tempo:TemporalProcess /
+        tempo:ObservableTemporalProperty and subproperties the generic
+        entity-of-interest properties. matsci:Material, matsci:MaterialRole,
+        and the various *Method/*Process/*Value controlled vocabularies
+        here are open."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/4.0.0> ;
+    owl:imports
+        <https://growgraph.dev/ontologies/observation-ontology> ,
+        <https://growgraph.dev/ontologies/temporal-ontology> ,
+        <https://growgraph.dev/ontologies/qqval-ontology> ,
+        <https://growgraph.dev/ontologies/pergres-ontology> ,
+        <https://www.w3.org/ns/sosa/sosa.ttl> ,
+        <http://www.w3.org/ns/ssn/> ,
+        <http://qudt.org/2.1/schema/facade/qudt> ,
+        <http://purl.obolibrary.org/obo/bfo.owl> ,
+        <http://qudt.org/2.1/vocab/unit> ;
+    owl:versionInfo "4.0.0" .
+
+#################################################################
+# Core classes
+#################################################################
+
+matsci:Material a owl:Class ;
+    rdfs:label "Material"@en ;
+    rdfs:comment "A material kind or material concept instantiated by concrete samples."@en .
+
+matsci:Impurity a owl:Class ;
+    rdfs:label "Impurity"@en ;
+    rdfs:subClassOf matsci:Material .
+
+matsci:LuminescentImpurity a owl:Class ;
+    rdfs:label "Luminescent impurity"@en ;
+    rdfs:subClassOf matsci:Impurity .
+
+matsci:MaterialRole a owl:Class ;
+    rdfs:label "Material role"@en ;
+    rdfs:comment
+        """A functional role that a material plays within a specific process
+        context.  Inheres in the material bearer and is realized during the
+        process in which that material is used.
+        Grounded in BFO Role (obo:BFO_0000023)."""@en ;
+    rdfs:subClassOf obo:BFO_0000023 .
+
+matsci:SolventRole a owl:Class ;
+    rdfs:label "Solvent role"@en ;
+    rdfs:comment
+        "Role realized when a material dissolves or disperses another substance in a synthesis process."@en ;
+    rdfs:subClassOf matsci:MaterialRole .
+
+matsci:AntisolventRole a owl:Class ;
+    rdfs:label "Antisolvent role"@en ;
+    rdfs:comment
+        "Role realized when a material triggers precipitation by reducing solubility of a target species."@en ;
+    rdfs:subClassOf matsci:MaterialRole .
+
+matsci:LigandRole a owl:Class ;
+    rdfs:label "Ligand role"@en ;
+    rdfs:comment
+        "Role realized when a material coordinates to a surface or metal centre in a synthesis process."@en ;
+    rdfs:subClassOf matsci:MaterialRole .
+
+matsci:Application a owl:Class ;
+    rdfs:label "Application"@en .
+
+matsci:OptoelectronicApplication a owl:Class ;
+    rdfs:label "Optoelectronic application"@en ;
+    rdfs:subClassOf matsci:Application .
+
+matsci:QuantumConfinement a owl:Class ;
+    rdfs:label "Quantum confinement"@en ;
+    rdfs:comment
+        """A disposition of a nanocrystal whereby quantum mechanical boundary
+        conditions restrict charge-carrier wavefunctions.  Realised during
+        optical characterization.
+        Grounded in BFO Disposition (obo:BFO_0000016)."""@en ;
+    rdfs:subClassOf obs:PhysicalPhenomenon ,
+                    obo:BFO_0000016 .
+
+matsci:RedShift a owl:Class ;
+    rdfs:label "Red shift"@en ;
+    rdfs:subClassOf obs:PhysicalPhenomenon .
+
+matsci:PhotonPropagationEffect a owl:Class ;
+    rdfs:label "Photon propagation effect"@en ;
+    rdfs:subClassOf obs:PhysicalPhenomenon .
+
+matsci:Equipment a owl:Class ;
+    rdfs:label "Equipment"@en ;
+    rdfs:comment
+        "Generic scientific equipment used in synthesis, sampling, processing, or characterization workflows."@en ;
+    rdfs:subClassOf ssn:System .
+
+matsci:ProcessingEquipment a owl:Class ;
+    rdfs:label "Processing equipment"@en ;
+    rdfs:subClassOf matsci:Equipment .
+
+matsci:ActuatingEquipment a owl:Class ;
+    rdfs:label "Actuating equipment"@en ;
+    rdfs:subClassOf matsci:ProcessingEquipment, sosa:Actuator .
+
+matsci:CharacterizationEquipment a owl:Class ;
+    rdfs:label "Characterization equipment"@en ;
+    rdfs:comment "Scientific equipment used in a characterization process."@en ;
+    rdfs:subClassOf matsci:Equipment .
+
+matsci:CharacterizationSensor a owl:Class ;
+    rdfs:label "Characterization sensor"@en ;
+    rdfs:subClassOf matsci:CharacterizationEquipment, sosa:Sensor .
+
+#################################################################
+# Procedures and process types
+#################################################################
+
+matsci:SynthesisMethod a owl:Class ;
+    rdfs:label "Synthesis method"@en ;
+    rdfs:comment "A synthesis procedure type."@en ;
+    rdfs:subClassOf sosa:Procedure .
+
+matsci:AssemblyMethod a owl:Class ;
+    rdfs:label "Assembly method"@en ;
+    rdfs:comment "An assembly procedure type."@en ;
+    rdfs:subClassOf sosa:Procedure .
+
+matsci:CharacterizationMethod a owl:Class ;
+    rdfs:label "Characterization method"@en ;
+    rdfs:comment "A characterization procedure type."@en ;
+    rdfs:subClassOf sosa:Procedure .
+
+matsci:OpticalCharacterizationMethod a owl:Class ;
+    rdfs:label "Optical characterization method"@en ;
+    rdfs:subClassOf matsci:CharacterizationMethod .
+
+matsci:ElectronicCharacterizationMethod a owl:Class ;
+    rdfs:label "Electronic characterization method"@en ;
+    rdfs:subClassOf matsci:CharacterizationMethod .
+
+matsci:StructuralCharacterizationMethod a owl:Class ;
+    rdfs:label "Structural characterization method"@en ;
+    rdfs:subClassOf matsci:CharacterizationMethod .
+
+matsci:SelfAssemblyTechnique a owl:Class ;
+    rdfs:label "Self-assembly technique"@en ;
+    rdfs:comment "A procedure type used to organize nanocrystals into superlattices."@en ;
+    rdfs:subClassOf matsci:AssemblyMethod .
+
+matsci:ChemicalTransformationType a owl:Class ;
+    rdfs:label "Chemical transformation type"@en ;
+    rdfs:comment
+        "A transformation procedure type, such as anion exchange, cation exchange, doping, or ligand exchange."@en ;
+    rdfs:subClassOf sosa:Procedure .
+
+#################################################################
+# Process execution layer
+#
+# matsci:Process itself (and the generic Observation/PhysicalPhenomenon
+# scaffolding it participates in) now lives in observation-ontology as
+# obs:Process. The concrete process types below are the
+# materials-science-specific subclasses of obs:Process.
+#################################################################
+
+matsci:SynthesisProcess a owl:Class ;
+    rdfs:label "Synthesis process"@en ;
+    rdfs:comment "A concrete execution of a synthesis method."@en ;
+    rdfs:subClassOf obs:Process .
+
+matsci:AssemblyProcess a owl:Class ;
+    rdfs:label "Assembly process"@en ;
+    rdfs:comment "A concrete execution of an assembly method."@en ;
+    rdfs:subClassOf obs:Process .
+
+matsci:CharacterizationProcess a owl:Class ;
+    rdfs:label "Characterization process"@en ;
+    rdfs:comment
+        "A concrete execution of a characterization method that generates one or more observations."@en ;
+    rdfs:subClassOf obs:Process .
+
+matsci:ChemicalTransformation a owl:Class ;
+    rdfs:label "Chemical transformation"@en ;
+    rdfs:comment
+        "A concrete transformation step occurring during a synthesis or post-synthetic process."@en ;
+    rdfs:subClassOf obs:Process .
+
+#################################################################
+# Samples and morphology
+#################################################################
+
+matsci:BulkSample a owl:Class ;
+    rdfs:label "Bulk sample"@en ;
+    rdfs:comment "Concrete bulk material sample."@en ;
+    rdfs:subClassOf sosa:Sample .
+
+matsci:NanocrystalSample a owl:Class ;
+    rdfs:label "Nanocrystal sample"@en ;
+    dcterms:alternative "NC", "QD", "nanocrystal", "quantum dot" ;
+    rdfs:comment "Concrete nanocrystal sample."@en ;
+    rdfs:subClassOf sosa:Sample .
+
+matsci:SuperlatticeSample a owl:Class ;
+    rdfs:label "Superlattice sample"@en ;
+    dcterms:alternative "SL", "superlattice" ;
+    rdfs:comment "Concrete superlattice sample."@en ;
+    rdfs:subClassOf sosa:Sample .
+
+matsci:NanocrystalSuperlatticeSample a owl:Class ;
+    rdfs:label "Nanocrystal superlattice sample"@en ;
+    rdfs:comment
+        "A structured arrangement of nanocrystal samples that exhibits collective properties."@en ;
+    rdfs:subClassOf matsci:SuperlatticeSample .
+
+matsci:MorphologyState a owl:Class ;
+    rdfs:label "Morphology state"@en ;
+    rdfs:comment
+        """An intrinsic quality of a sample describing its morphological
+        characteristics.  Inheres in the sample bearer.
+        Grounded in BFO Quality (obo:BFO_0000019)."""@en ;
+    rdfs:subClassOf obo:BFO_0000019 .
+
+matsci:NanocrystalMorphologyState a owl:Class ;
+    rdfs:label "Nanocrystal morphology state"@en ;
+    rdfs:subClassOf matsci:MorphologyState .
+
+matsci:SuperlatticeMorphologyState a owl:Class ;
+    rdfs:label "Superlattice morphology state"@en ;
+    rdfs:subClassOf matsci:MorphologyState .
+
+matsci:AssemblyStructure a owl:Class ;
+    rdfs:label "Assembly structure"@en ;
+    rdfs:subClassOf matsci:SuperlatticeMorphologyState .
+
+#################################################################
+# Qualitative result vocabulary
+#
+# matsci:QualitativeResult itself now lives in observation-ontology as
+# obs:QualitativeResult. The classes below are its
+# materials-science-specific subclasses.
+#################################################################
+
+matsci:DimensionalityValue a owl:Class ;
+    rdfs:label "Dimensionality value"@en ;
+    rdfs:subClassOf obs:QualitativeResult .
+
+matsci:PackingMotifValue a owl:Class ;
+    rdfs:label "Packing motif value"@en ;
+    rdfs:subClassOf obs:QualitativeResult .
+
+matsci:SuperlatticeSymmetryValue a owl:Class ;
+    rdfs:label "Superlattice symmetry value"@en ;
+    rdfs:subClassOf obs:QualitativeResult .
+
+matsci:FacetExposureValue a owl:Class ;
+    rdfs:label "Facet exposure value"@en ;
+    rdfs:subClassOf obs:QualitativeResult .
+
+matsci:ShapeValue a owl:Class ;
+    rdfs:label "Shape value"@en ;
+    rdfs:subClassOf obs:QualitativeResult .
+
+#################################################################
+# Observation model
+#
+# matsci:Observation, QuantitativeObservation, and QualitativeObservation
+# now live in observation-ontology (obs:Observation, obs:QuantitativeObservation,
+# obs:QualitativeObservation). Only the materials-science-specific
+# ObservableProperty subclasses remain here.
+#################################################################
+
+matsci:ObservableMaterialProperty a owl:Class ;
+    rdfs:label "Observable material property"@en ;
+    rdfs:subClassOf sosa:ObservableProperty .
+
+matsci:ObservableMorphologyProperty a owl:Class ;
+    rdfs:label "Observable morphology property"@en ;
+    rdfs:subClassOf sosa:ObservableProperty .
+
+matsci:ObservableMaterialProperty owl:disjointWith matsci:ObservableMorphologyProperty .
+
+#################################################################
+# Object properties
+#################################################################
+
+matsci:describesMaterial a owl:ObjectProperty ;
+    rdfs:label "describes material"@en ;
+    rdfs:comment "Links a concrete sample to the material concept it instantiates."@en ;
+    rdfs:domain sosa:Sample ;
+    rdfs:range matsci:Material .
+
+matsci:hasApplication a owl:ObjectProperty ;
+    rdfs:label "has application"@en ;
+    rdfs:domain matsci:Material ;
+    rdfs:range matsci:Application .
+
+matsci:exhibitsPhenomenon a owl:ObjectProperty ;
+    rdfs:label "exhibits phenomenon"@en ;
+    rdfs:domain sosa:Sample ;
+    rdfs:range obs:PhysicalPhenomenon .
+
+matsci:exhibitsQuantumConfinement a owl:ObjectProperty ;
+    rdfs:label "exhibits quantum confinement"@en ;
+    rdfs:domain matsci:NanocrystalSample ;
+    rdfs:range matsci:QuantumConfinement ;
+    rdfs:subPropertyOf matsci:exhibitsPhenomenon .
+
+matsci:hasPhotonPropagationEffect a owl:ObjectProperty ;
+    rdfs:label "has photon propagation effect"@en ;
+    rdfs:domain matsci:NanocrystalSuperlatticeSample ;
+    rdfs:range matsci:PhotonPropagationEffect ;
+    rdfs:subPropertyOf matsci:exhibitsPhenomenon .
+
+matsci:hasMorphology a owl:ObjectProperty ;
+    rdfs:label "has morphology"@en ;
+    rdfs:domain sosa:Sample ;
+    rdfs:range matsci:MorphologyState .
+
+matsci:hasNanocrystalMorphology a owl:ObjectProperty ;
+    rdfs:label "has nanocrystal morphology"@en ;
+    rdfs:domain matsci:NanocrystalSample ;
+    rdfs:range matsci:NanocrystalMorphologyState ;
+    rdfs:subPropertyOf matsci:hasMorphology .
+
+matsci:hasSuperlatticeMorphology a owl:ObjectProperty ;
+    rdfs:label "has superlattice morphology"@en ;
+    rdfs:domain matsci:SuperlatticeSample ;
+    rdfs:range matsci:SuperlatticeMorphologyState ;
+    rdfs:subPropertyOf matsci:hasMorphology .
+
+matsci:hasDimensionalityValue a owl:ObjectProperty ;
+    rdfs:label "has dimensionality value"@en ;
+    rdfs:domain matsci:MorphologyState ;
+    rdfs:range matsci:DimensionalityValue .
+
+matsci:hasShapeValue a owl:ObjectProperty ;
+    rdfs:label "has shape value"@en ;
+    rdfs:domain matsci:MorphologyState ;
+    rdfs:range matsci:ShapeValue .
+
+matsci:hasFacetExposureValue a owl:ObjectProperty ;
+    rdfs:label "has facet exposure value"@en ;
+    rdfs:domain matsci:MorphologyState ;
+    rdfs:range matsci:FacetExposureValue .
+
+matsci:hasPackingMotifValue a owl:ObjectProperty ;
+    rdfs:label "has packing motif value"@en ;
+    rdfs:domain matsci:MorphologyState ;
+    rdfs:range matsci:PackingMotifValue .
+
+matsci:hasSuperlatticeSymmetryValue a owl:ObjectProperty ;
+    rdfs:label "has superlattice symmetry value"@en ;
+    rdfs:domain matsci:SuperlatticeMorphologyState ;
+    rdfs:range matsci:SuperlatticeSymmetryValue .
+
+matsci:hasEdgeLength a owl:ObjectProperty ;
+    rdfs:label "has edge length"@en ;
+    rdfs:comment
+        "Links a nanocrystal morphology state to a quantity value for edge length.  The value may be a qqval:QualifiedQuantityValue when the measurement carries an epistemic qualifier."@en ;
+    rdfs:domain matsci:NanocrystalMorphologyState ;
+    rdfs:range qudt:QuantityValue .
+
+matsci:hasThickness a owl:ObjectProperty ;
+    rdfs:label "has thickness"@en ;
+    rdfs:comment
+        "Links a nanocrystal morphology state to a quantity value for thickness.  The value may be a qqval:QualifiedQuantityValue when the measurement carries an epistemic qualifier."@en ;
+    rdfs:domain matsci:NanocrystalMorphologyState ;
+    rdfs:range qudt:QuantityValue .
+
+matsci:hasValueRange a owl:ObjectProperty ;
+    rdfs:label "has value range"@en ;
+    rdfs:comment
+        """Links a morphology state to a quantitative interval represented as
+        a qqval:QuantityRange node (bounds are independent qudt:QuantityValue
+        nodes).  For compact same-unit ranges, prefer an observation result
+        typed as qqval:QualifiedQuantityValue with both numericLowerBound and
+        numericUpperBound populated."""@en ;
+    rdfs:domain matsci:MorphologyState ;
+    rdfs:range qqval:QuantityRange .
+
+matsci:derivedFromObservation a owl:ObjectProperty ;
+    rdfs:label "derived from observation"@en ;
+    rdfs:comment "Links an interpreted state description to the observation supporting it."@en ;
+    rdfs:domain matsci:MorphologyState ;
+    rdfs:range obs:Observation .
+
+matsci:usesSelfAssemblyTechnique a owl:ObjectProperty ;
+    rdfs:label "uses self-assembly technique"@en ;
+    rdfs:domain matsci:AssemblyProcess ;
+    rdfs:range matsci:SelfAssemblyTechnique .
+
+matsci:hasInputMaterial a owl:ObjectProperty ;
+    rdfs:label "has input material"@en ;
+    rdfs:comment
+        "Links a process to the abstract material kind it consumes, for recipe or provenance tracking.  For concrete sample-level traceability use matsci:hasInputSample."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range matsci:Material .
+
+matsci:hasOutputMaterial a owl:ObjectProperty ;
+    rdfs:label "has output material"@en ;
+    rdfs:comment
+        "Links a process to the abstract material kind it targets as output.  For the concrete produced sample use matsci:hasOutputSample."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range matsci:Material .
+
+matsci:hasInputSample a owl:ObjectProperty ;
+    rdfs:label "has input sample"@en ;
+    rdfs:comment
+        "Sample-flavored convenience subproperty of obs:hasInputEntity, narrowed to sosa:Sample.  Use this at the matsci layer instead of obs:hasInputEntity directly."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range sosa:Sample ;
+    rdfs:subPropertyOf obs:hasInputEntity .
+
+matsci:hasOutputSample a owl:ObjectProperty ;
+    rdfs:label "has output sample"@en ;
+    rdfs:comment
+        "Sample-flavored convenience subproperty of obs:hasOutputEntity, narrowed to sosa:Sample.  Use this at the matsci layer instead of obs:hasOutputEntity directly."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range sosa:Sample ;
+    rdfs:subPropertyOf obs:hasOutputEntity .
+
+matsci:usedProcessingEquipment a owl:ObjectProperty ;
+    rdfs:label "used processing equipment"@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range matsci:Equipment .
+
+matsci:usedCharacterizationEquipment a owl:ObjectProperty ;
+    rdfs:label "used characterization equipment"@en ;
+    rdfs:domain matsci:CharacterizationProcess ;
+    rdfs:range matsci:CharacterizationEquipment ;
+    rdfs:subPropertyOf matsci:usedProcessingEquipment .
+
+matsci:generatedObservation a owl:ObjectProperty ;
+    rdfs:label "generated observation"@en ;
+    rdfs:domain matsci:CharacterizationProcess ;
+    rdfs:range obs:Observation .
+
+matsci:usedSolvent a owl:ObjectProperty ;
+    rdfs:label "used solvent"@en ;
+    rdfs:comment
+        "Links a synthesis process to the material playing the solvent role in that process."@en ;
+    rdfs:domain matsci:SynthesisProcess ;
+    rdfs:range matsci:Material .
+
+matsci:usedAntisolvent a owl:ObjectProperty ;
+    rdfs:label "used antisolvent"@en ;
+    rdfs:comment
+        "Links a synthesis process to the material playing the antisolvent role in that process."@en ;
+    rdfs:domain matsci:SynthesisProcess ;
+    rdfs:range matsci:Material .
+
+matsci:usedLigand a owl:ObjectProperty ;
+    rdfs:label "used ligand"@en ;
+    rdfs:comment
+        "Links a synthesis process to the material playing the ligand role in that process."@en ;
+    rdfs:domain matsci:SynthesisProcess ;
+    rdfs:range matsci:Material .
+
+matsci:hasRole a owl:ObjectProperty ;
+    rdfs:label "has role"@en ;
+    rdfs:comment
+        """Asserts that a material has a capacity to play a given functional
+        role.  For context-specific role assignments, prefer the process-level
+        shortcut properties (usedSolvent, usedAntisolvent, usedLigand)."""@en ;
+    rdfs:domain matsci:Material ;
+    rdfs:range matsci:MaterialRole .
+
+matsci:hasTransformationStep a owl:ObjectProperty ;
+    rdfs:label "has transformation step"@en ;
+    rdfs:comment "Links a concrete process to a concrete chemical transformation step."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range matsci:ChemicalTransformation .
+
+matsci:hasTransformationType a owl:ObjectProperty ;
+    rdfs:label "has transformation type"@en ;
+    rdfs:comment
+        "Links a concrete chemical transformation to the transformation procedure type it instantiates."@en ;
+    rdfs:domain matsci:ChemicalTransformation ;
+    rdfs:range matsci:ChemicalTransformationType .
+
+matsci:transformsSample a owl:ObjectProperty ;
+    rdfs:label "transforms sample"@en ;
+    rdfs:comment "Links a chemical transformation step to the concrete sample it operates on."@en ;
+    rdfs:domain matsci:ChemicalTransformation ;
+    rdfs:range sosa:Sample .
+
+matsci:derivedFromSample a owl:ObjectProperty ;
+    rdfs:label "derived from sample"@en ;
+    rdfs:comment
+        """Links a sample to an earlier sample from which it was physically
+        derived, such as an aliquot, aged specimen, post-treatment product,
+        or other lineage continuation of the same experimental material.
+        Use this to connect observations on different time points or
+        processing stages to a shared physical specimen rather than minting
+        unrelated sample instances."""@en ;
+    rdfs:domain sosa:Sample ;
+    rdfs:range sosa:Sample .
+
+matsci:producesAssemblyStructure a owl:ObjectProperty ;
+    rdfs:label "produces assembly structure"@en ;
+    rdfs:domain matsci:AssemblyProcess ;
+    rdfs:range matsci:AssemblyStructure .
+
+matsci:hasConstituentNanocrystalSample a owl:ObjectProperty ;
+    rdfs:label "has constituent nanocrystal sample"@en ;
+    rdfs:domain matsci:SuperlatticeSample ;
+    rdfs:range matsci:NanocrystalSample .
+
+matsci:isCompatibleWithSolvent a owl:ObjectProperty ;
+    rdfs:label "is compatible with solvent"@en ;
+    rdfs:comment
+        "Links a nanocrystal superlattice sample to a material that acts as a compatible solvent.  Range is matsci:Material following the role-based redesign."@en ;
+    rdfs:domain matsci:NanocrystalSuperlatticeSample ;
+    rdfs:range matsci:Material .
+
+matsci:hasImpurity a owl:ObjectProperty ;
+    rdfs:label "has impurity"@en ;
+    rdfs:comment
+        "Links a superlattice sample to a material that occurs as an impurity in that context."@en ;
+    rdfs:domain matsci:NanocrystalSuperlatticeSample ;
+    rdfs:range matsci:Impurity .
+
+matsci:hasLuminescentImpurity a owl:ObjectProperty ;
+    rdfs:label "has luminescent impurity"@en ;
+    rdfs:domain matsci:NanocrystalSuperlatticeSample ;
+    rdfs:range matsci:LuminescentImpurity ;
+    rdfs:subPropertyOf matsci:hasImpurity .
+
+#################################################################
+# Controlled vocabulary individuals
+#################################################################
+
+matsci:Absorption a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "UV-vis absorption"@en ;
+    dcterms:alternative "Absorption", "absorption" .
+
+matsci:Ellipsometry a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "ellipsometry"@en .
+
+matsci:PLE a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "photoluminescence excitation (PLE)"@en .
+
+matsci:Photoluminescence a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "photoluminescence (PL)"@en ;
+    dcterms:alternative "PL", "Photoluminescence" ;
+    rdfs:comment "Photoluminescence is emission of light after photon absorption."@en .
+
+matsci:PolarizationResolvedPL a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "polarization-resolved PL"@en .
+
+matsci:Raman a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "Raman spectroscopy"@en .
+
+matsci:Reflectance a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "reflectance"@en .
+
+matsci:TA a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "transient absorption (pump-probe)"@en ;
+    dcterms:alternative "pump-probe" .
+
+matsci:TRPL a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
+    rdfs:label "time-resolved PL (TRPL)"@en .
+
+matsci:XRD a owl:NamedIndividual, matsci:StructuralCharacterizationMethod ;
+    rdfs:label "X-ray diffraction (XRD)"@en .
+
+matsci:LARP a owl:NamedIndividual, matsci:SynthesisMethod ;
+    rdfs:label "ligand-assisted reprecipitation"@en ;
+    dcterms:alternative "LARP", "anti-solvent reprecipitation" .
+
+matsci:hot_injection a owl:NamedIndividual, matsci:SynthesisMethod ;
+    rdfs:label "hot-injection synthesis"@en ;
+    dcterms:alternative "hot injection" .
+
+matsci:mechanochemical a owl:NamedIndividual, matsci:SynthesisMethod ;
+    rdfs:label "mechanochemical synthesis"@en ;
+    dcterms:alternative "ball-milling" .
+
+matsci:solvothermal a owl:NamedIndividual, matsci:SynthesisMethod ;
+    rdfs:label "solvothermal synthesis"@en .
+
+matsci:AnionExchange a owl:NamedIndividual, matsci:ChemicalTransformationType ;
+    rdfs:label "anion exchange"@en .
+
+matsci:CationExchange a owl:NamedIndividual, matsci:ChemicalTransformationType ;
+    rdfs:label "cation exchange"@en .
+
+matsci:Doping a owl:NamedIndividual, matsci:ChemicalTransformationType ;
+    rdfs:label "doping"@en .
+
+matsci:LigandExchange a owl:NamedIndividual, matsci:ChemicalTransformationType ;
+    rdfs:label "ligand exchange"@en .
+
+matsci:LED a owl:NamedIndividual, matsci:OptoelectronicApplication ;
+    rdfs:label "light-emitting diode"@en .
+
+matsci:Laser a owl:NamedIndividual, matsci:OptoelectronicApplication ;
+    rdfs:label "laser"@en .
+
+matsci:SolarCell a owl:NamedIndividual, matsci:OptoelectronicApplication ;
+    rdfs:label "solar cell"@en .
+
+matsci:Memristor a owl:NamedIndividual, matsci:Application ;
+    rdfs:label "memristor"@en .
+
+matsci:acetone a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "acetone"@en ;
+    dcterms:alternative "2-propanone", "Dimethyl ketone", "propanone" .
+
+matsci:isopropanol a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "isopropanol"@en ;
+    dcterms:alternative "IPA" .
+
+matsci:acetonitrile a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "acetonitrile"@en ;
+    dcterms:alternative "ACN" .
+
+matsci:dmf a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "DMF"@en ;
+    dcterms:alternative "Dimethylformamide" .
+
+matsci:dmso a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "DMSO"@en ;
+    dcterms:alternative "Dimethyl sulfoxide" .
+
+matsci:hexane a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "hexane"@en ;
+    dcterms:alternative "n-hexane" .
+
+matsci:octadecene a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "octadecene"@en .
+
+matsci:toluene a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "toluene"@en ;
+    dcterms:alternative "PhCH3" .
+
+matsci:hexylamine a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "hexylamine"@en .
+
+matsci:octylamine a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "octylamine"@en ;
+    dcterms:alternative "1-Aminooctane", "N-OCTYLAMINE", "octan-1-amine" .
+
+matsci:oleicAcid a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "oleic acid"@en ;
+    dcterms:alternative "OA" .
+
+matsci:oleylamine a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "oleylamine"@en ;
+    dcterms:alternative "OLA" .
+
+matsci:oleylammoniumBromide a owl:NamedIndividual, matsci:Material ;
+    rdfs:label "oleylammonium bromide"@en ;
+    dcterms:alternative "C18H38BrN" .
+
+#################################################################
+# Condition factor and condition-value individuals
+#
+# matsci:ConditionFactor / matsci:QualitativeConditionValue classes now
+# live in observation-ontology (obs:ConditionFactor / obs:QualitativeConditionValue).
+# These concrete controlled-vocabulary individuals stay minted in the
+# matsci namespace since they are domain vocabulary choices, not generic
+# infrastructure. (The one exception, "time", moved to observation-ontology as
+# obs:time, since temporal-ontology -- which must not import matsci --
+# needs to reference it directly as a skos:broader target.)
+#################################################################
+
+matsci:atmosphere a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "atmosphere"@en .
+
+matsci:humidity a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "humidity"@en .
+
+matsci:temperature a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "temperature"@en .
+
+matsci:air a owl:NamedIndividual, obs:QualitativeConditionValue ;
+    rdfs:label "air"@en .
+
+matsci:vacuum a owl:NamedIndividual, obs:QualitativeConditionValue ;
+    rdfs:label "vacuum"@en .
+
+matsci:nitrogenAtmosphere a owl:NamedIndividual, obs:QualitativeConditionValue ;
+    rdfs:label "nitrogen atmosphere"@en .
+
+#################################################################
+# Entity temporal state individuals (matsci-specific)
+#
+# Domain-specific storage/aging states, moved out of temporal-ontology
+# 3.1.0. Siblings of the universal fresh/aged/stored trio defined on
+# tempo:EntityTemporalState.
+#################################################################
+
+matsci:airAgedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "air-aged"@en .
+
+matsci:vacuumAgedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+    rdfs:label "vacuum-aged"@en .
+
+matsci:plate a owl:NamedIndividual, matsci:ShapeValue ;
+    rdfs:label "plate"@en .
+
+matsci:rod a owl:NamedIndividual, matsci:ShapeValue ;
+    rdfs:label "rod"@en .
+
+matsci:wire a owl:NamedIndividual, matsci:ShapeValue ;
+    rdfs:label "wire"@en .
+
+matsci:facet100 a owl:NamedIndividual, matsci:FacetExposureValue ;
+    rdfs:label "{100}"@en .
+
+matsci:facet110 a owl:NamedIndividual, matsci:FacetExposureValue ;
+    rdfs:label "{110}"@en .
+
+matsci:facet111 a owl:NamedIndividual, matsci:FacetExposureValue ;
+    rdfs:label "{111}"@en .
+
+#################################################################
+# Observable property vocabulary
+#################################################################
+
+matsci:absorptionCoefficientProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "absorption coefficient"@en .
+
+matsci:bandgapProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "bandgap"@en ;
+    rdfs:comment "The bandgap of a material, treated as an observable property in an observation."@en .
+
+matsci:biexcitonBindingEnergyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "biexciton binding energy"@en .
+
+matsci:bleachCrossSectionProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "bleach cross-section"@en .
+
+matsci:excitonBindingEnergyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "exciton binding energy"@en .
+
+matsci:fineStructureSplittingProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "fine-structure splitting"@en .
+
+matsci:fwhmProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "FWHM"@en .
+
+matsci:gFactorProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "exciton g-factor"@en .
+
+matsci:lifetimeProperty a owl:NamedIndividual,
+        matsci:ObservableMaterialProperty ;
+    rdfs:label "lifetime"@en ;
+    dcterms:alternative "PL lifetime", "photoluminescence lifetime" .
+matsci:oscillatorStrengthProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "oscillator strength"@en .
+
+matsci:plPeakWavelengthProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "PL peak wavelength"@en ;
+    dcterms:alternative "PL peak energy" .
+
+matsci:polarizationAnisotropyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "polarization anisotropy"@en .
+
+matsci:quantumYieldProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "quantum yield"@en .
+
+matsci:refractiveIndexProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "refractive index"@en .
+
+matsci:stimulatedEmissionCrossSectionProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "stimulated emission cross-section"@en .
+
+matsci:stokesShiftProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "Stokes shift"@en .
+
+matsci:urbachEnergyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
+    rdfs:label "Urbach energy"@en .
+
+matsci:dimensionalityProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "dimensionality"@en .
+
+matsci:edgeLengthProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "edge length"@en ;
+    rdfs:comment
+        "Observable property for edge length.  Corresponds to the matsci:hasEdgeLength shortcut on NanocrystalMorphologyState."@en .
+
+matsci:facetExposureProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "facet exposure"@en .
+
+matsci:packingMotifProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "packing motif"@en .
+
+matsci:shapeProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "shape"@en .
+
+matsci:superlatticeSymmetryProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "superlattice symmetry"@en .
+
+matsci:thicknessProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
+    rdfs:label "thickness"@en ;
+    rdfs:comment
+        "Observable property for thickness.  Corresponds to the matsci:hasThickness shortcut on NanocrystalMorphologyState."@en .
+
+#################################################################
+# Collective optical phenomena
+#
+# matsci:PhysicalPhenomenon itself now lives in observation-ontology as
+# obs:PhysicalPhenomenon.
+#################################################################
+
+matsci:CollectiveEmissionPhenomenon a owl:Class ;
+    rdfs:label "Collective emission phenomenon"@en ;
+    rdfs:comment "A physical phenomenon involving collective light emission from an ensemble of emitters, such as superfluorescence or superradiance."@en ;
+    rdfs:subClassOf obs:PhysicalPhenomenon .
+
+matsci:Superfluorescence a owl:Class ;
+    rdfs:label "Superfluorescence"@en ;
+    dcterms:alternative "SF", "superfluorescent emission" ;
+    rdfs:comment "A collective emission phenomenon characterized by delayed, correlated, burst-like emission from an ensemble of excited emitters."@en ;
+    rdfs:subClassOf matsci:CollectiveEmissionPhenomenon .
+
+matsci:Superradiance a owl:Class ;
+    rdfs:label "Superradiance"@en ;
+    dcterms:alternative "SR", "superradiant emission" ;
+    rdfs:comment "A collective emission phenomenon characterized by enhanced radiative emission caused by coherent or cooperative coupling between emitters."@en ;
+    rdfs:subClassOf matsci:CollectiveEmissionPhenomenon .
+
+matsci:associatedWithPhenomenon a owl:ObjectProperty ;
+    rdfs:label "associated with phenomenon"@en ;
+    rdfs:comment "Links an observation, time-dependent effect, or observable property to the physical phenomenon it characterizes or affects."@en ;
+    rdfs:range obs:PhysicalPhenomenon .
+
+matsci:ObservableCollectiveEmissionProperty a owl:Class ;
+    rdfs:label "Observable collective emission property"@en ;
+    rdfs:comment "An observable property used to characterize collective emission phenomena such as superfluorescence or superradiance."@en ;
+    rdfs:subClassOf matsci:ObservableMaterialProperty .
+
+matsci:superfluorescenceIntensityProperty a owl:NamedIndividual, matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superfluorescence intensity"@en ;
+    dcterms:alternative "SF intensity" ;
+    matsci:associatedWithPhenomenon matsci:Superfluorescence .
+
+matsci:superfluorescenceDelayTimeProperty a owl:NamedIndividual,
+        matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superfluorescence delay time"@en ;
+    dcterms:alternative "SF delay time", "burst delay time" ;
+    matsci:associatedWithPhenomenon matsci:Superfluorescence .
+
+matsci:superfluorescenceLifetimeProperty a owl:NamedIndividual,
+        matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superfluorescence lifetime"@en ;
+    dcterms:alternative "SF lifetime" ;
+    matsci:associatedWithPhenomenon matsci:Superfluorescence .
+
+matsci:superradianceIntensityProperty a owl:NamedIndividual, matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superradiance intensity"@en ;
+    dcterms:alternative "SR intensity" ;
+    matsci:associatedWithPhenomenon matsci:Superradiance .
+
+matsci:superradianceLifetimeProperty a owl:NamedIndividual,
+        matsci:ObservableCollectiveEmissionProperty ;
+    rdfs:label "superradiance lifetime"@en ;
+    dcterms:alternative "SR lifetime" ;
+    matsci:associatedWithPhenomenon matsci:Superradiance .
+
+matsci:AgingInfluenceOnSuperfluorescence a owl:Class ;
+    rdfs:label "Aging influence on superfluorescence"@en ;
+    rdfs:comment "A time-dependent effect in which sample aging affects superfluorescence-related observable properties, such as intensity, delay time, lifetime, threshold, or emission dynamics."@en .
+
+matsci:AgingInfluenceOnSuperradiance a owl:Class ;
+    rdfs:label "Aging influence on superradiance"@en ;
+    rdfs:comment "A time-dependent effect in which sample aging affects superradiance-related observable properties, such as intensity, lifetime, emission rate, or cooperative emission behavior."@en .
+
+#################################################################
+# Temporal condition factors (matsci-specific)
+#
+# Domain-specific temporal factors moved out of temporal-ontology 3.0.0.
+# They chain up to tempo:duration or obs:time via skos:broader.
+#################################################################
+
+matsci:processDuration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "process duration"@en ;
+    rdfs:comment "Duration of a materials-science process."@en ;
+    skos:broader tempo:duration .
+
+matsci:synthesisDuration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "synthesis duration"@en ;
+    rdfs:comment "Duration of a synthesis process or synthesis step."@en ;
+    skos:broader matsci:processDuration .
+
+matsci:assemblyDuration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "assembly duration"@en ;
+    rdfs:comment "Duration of an assembly or self-assembly process."@en ;
+    skos:broader matsci:processDuration .
+
+matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "pulse duration"@en ;
+    rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
+    skos:broader tempo:duration .
+
+#################################################################
+# Temporal observable properties (matsci-specific)
+#
+# Domain-specific temporal observable properties moved out of
+# temporal-ontology 3.0.0. Temporal typing against tempo: classes is
+# asserted in the section below.
+#################################################################
+
+matsci:processDurationProperty a owl:NamedIndividual ;
+    rdfs:label "process duration"@en .
+
+matsci:synthesisDurationProperty a owl:NamedIndividual ;
+    rdfs:label "synthesis duration"@en .
+
+matsci:assemblyDurationProperty a owl:NamedIndividual ;
+    rdfs:label "assembly duration"@en .
+
+matsci:reactionTimeProperty a owl:NamedIndividual ;
+    rdfs:label "reaction time"@en .
+
+matsci:solventEvaporationTimeProperty a owl:NamedIndividual ;
+    rdfs:label "solvent evaporation time"@en .
+
+matsci:dryingTimeProperty a owl:NamedIndividual ;
+    rdfs:label "drying time"@en .
+
+matsci:centrifugationTimeProperty a owl:NamedIndividual ;
+    rdfs:label "centrifugation time"@en .
+
+matsci:measurementDelayTimeProperty a owl:NamedIndividual ;
+    rdfs:label "measurement delay time"@en .
+
+matsci:pumpProbeDelayTimeProperty a owl:NamedIndividual ;
+    rdfs:label "pump-probe delay time"@en ;
+    dcterms:alternative "pump-probe delay", "delay time", "Δt" .
+
+matsci:pulseDurationProperty a owl:NamedIndividual ;
+    rdfs:label "pulse duration"@en .
+
+matsci:radiativeDurationProperty a owl:NamedIndividual ;
+    rdfs:label "radiative duration"@en ;
+    dcterms:alternative "radiative time" .
+
+matsci:decayTimeProperty a owl:NamedIndividual ;
+    rdfs:label "decay time"@en ;
+    dcterms:alternative "decay lifetime", "decay component" .
+
+matsci:relaxationTimeProperty a owl:NamedIndividual ;
+    rdfs:label "relaxation time"@en .
+
+matsci:coherenceTimeProperty a owl:NamedIndividual ;
+    rdfs:label "coherence time"@en ;
+    dcterms:alternative "temporal coherence time" .
+
+matsci:energyTransferTimeProperty a owl:NamedIndividual ;
+    rdfs:label "energy transfer time"@en ;
+    dcterms:alternative "FRET time", "FRET lifetime" .
+
+matsci:carrierCoolingTimeProperty a owl:NamedIndividual ;
+    rdfs:label "carrier cooling time"@en .
+
+#################################################################
+# Temporal typing of matsci-native terms
+#
+# These individuals and classes are minted and primarily typed above, in
+# matsci-ontology's own namespace. The triples below add their temporal
+# typing/subclassing here, now that matsci-ontology imports
+# temporal-ontology (temporal-ontology depends only on observation-ontology, so
+# this direction keeps the dependency graph acyclic). Previously (temporal
+# 1.0.0 / matsci 1.4.0), this typing lived in temporal-ontology as
+# "supplementary assertions" on matsci IRIs, to avoid matsci importing
+# temporal; that workaround is no longer needed.
+#################################################################
+
+matsci:processDurationProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:synthesisDurationProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:assemblyDurationProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:reactionTimeProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:solventEvaporationTimeProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:dryingTimeProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:centrifugationTimeProperty a tempo:ObservableProcessTemporalProperty .
+
+matsci:measurementDelayTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:pumpProbeDelayTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:pulseDurationProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:radiativeDurationProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:decayTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:relaxationTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:coherenceTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:energyTransferTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:carrierCoolingTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:lifetimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:superfluorescenceDelayTimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:superfluorescenceLifetimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:superradianceLifetimeProperty a tempo:ObservableTransientTemporalProperty .
+
+matsci:AgingInfluenceOnSuperfluorescence rdfs:subClassOf tempo:AgingEffect .
+
+matsci:AgingInfluenceOnSuperradiance rdfs:subClassOf tempo:AgingEffect .

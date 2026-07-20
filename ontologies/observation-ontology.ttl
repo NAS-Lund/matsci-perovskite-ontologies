@@ -1,0 +1,268 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix obo:     <http://purl.obolibrary.org/obo/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+<https://growgraph.dev/ontologies/observation-ontology> a owl:Ontology ;
+    rdfs:label "observation"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """Domain-independent scaffolding for processes, observations,
+        phenomena, and conditions. Grounded in SOSA/BFO. Quantitative
+        observation results are qudt:QuantityValue; optional tightening to
+        qqval-qualified values is asserted by pergres-ontology, not here.
+
+        Extraction convention: a result that was not extracted from source
+        is expressed by omitting the hasQuantityResult /
+        hasQualitativeResult triple entirely, not by asserting a
+        placeholder value.
+
+        Provenance: link an observation to its source document via
+        dcterms:source (object property to an RDF resource). Compatible
+        full-PROV consumers may additionally use prov:wasDerivedFrom
+        (see rdfs:seeAlso on this ontology).
+
+        Extension contract: obs:Process and obs:Phenomenon are the primary
+        extension points — domain ontologies subclass them. obs:ConditionFactor
+        and obs:QualitativeConditionValue are open controlled vocabularies.
+        obs:hasInputEntity / hasOutputEntity / hasObservation /
+        producedByProcess / hasQuantityResult / hasQualitativeResult are
+        meant to be subpropertied by domain ontologies that want a
+        narrower, domain-flavored property name."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/5.0.0> ;
+    owl:imports
+        <https://www.w3.org/ns/sosa/sosa.ttl> ,
+        <http://qudt.org/2.1/schema/facade/qudt> ,
+        <http://purl.obolibrary.org/obo/bfo.owl> ;
+    owl:versionInfo "5.0.0" ;
+    rdfs:seeAlso
+        <http://www.w3.org/ns/prov#wasDerivedFrom> ,
+        <http://purl.org/dc/terms/source> .
+
+#################################################################
+# Process execution layer
+#################################################################
+
+obs:Process a owl:Class ;
+    rdfs:label "Process"@en ;
+    rdfs:subClassOf obo:BFO_0000015 ;
+    rdfs:comment
+        """A concrete process carried out in time (BFO process/occurrent).
+        Not disjoint with obs:Phenomenon: an individual may be both when
+        a phenomenon is itself process-like in BFO terms."""@en .
+
+#################################################################
+# Phenomena
+#################################################################
+
+obs:Phenomenon a owl:Class ;
+    rdfs:label "Phenomenon"@en ;
+    rdfs:comment
+        """Any observable occurrence, state, or effect exhibited by a feature
+        of interest, without commitment to whether it is physical,
+        informational, or otherwise. Subclasses may be disposition, quality,
+        or process-typed; not disjoint with obs:Process. See
+        obs:PhysicalPhenomenon for the physically-anchored specialization."""@en .
+
+obs:PhysicalPhenomenon a owl:Class ;
+    rdfs:label "Physical phenomenon"@en ;
+    rdfs:comment
+        """Physically-anchored specialization of obs:Phenomenon. Use this
+        when the phenomenon is physical; use obs:Phenomenon when it need
+        not be (e.g. time-dependent effects in temporal-ontology).
+        Subclasses are semantically heterogeneous (disposition, quality,
+        process) and should be anchored individually in BFO rather than
+        anchoring this superclass."""@en ;
+    rdfs:subClassOf obs:Phenomenon .
+
+#################################################################
+# Qualitative results
+#################################################################
+
+obs:QualitativeResult a owl:Class ;
+    rdfs:label "Qualitative result"@en ;
+    rdfs:comment "Superclass for categorical observation results."@en ;
+    rdfs:subClassOf sosa:Result .
+
+#################################################################
+# Observation model
+#################################################################
+
+obs:Observation a owl:Class ;
+    rdfs:label "Observation"@en ;
+    rdfs:comment "A generic observation in the SOSA sense."@en ;
+    rdfs:subClassOf sosa:Observation .
+
+obs:QuantitativeObservation a owl:Class ;
+    rdfs:label "Quantitative observation"@en ;
+    rdfs:subClassOf
+        obs:Observation ,
+        [ a owl:Restriction ;
+            owl:onProperty sosa:hasResult ;
+            owl:someValuesFrom qudt:QuantityValue
+        ] ,
+        [ a owl:Restriction ;
+            owl:onProperty sosa:hasResult ;
+            owl:allValuesFrom qudt:QuantityValue
+        ] .
+
+obs:QualitativeObservation a owl:Class ;
+    rdfs:label "Qualitative observation"@en ;
+    rdfs:subClassOf
+        obs:Observation ,
+        [ a owl:Restriction ;
+            owl:onProperty sosa:hasResult ;
+            owl:someValuesFrom obs:QualitativeResult
+        ] ,
+        [ a owl:Restriction ;
+            owl:onProperty sosa:hasResult ;
+            owl:allValuesFrom obs:QualitativeResult
+        ] .
+
+obs:QuantitativeObservation owl:disjointWith obs:QualitativeObservation .
+
+#################################################################
+# Conditions
+#################################################################
+
+obs:ConditionValue a owl:Class ;
+    rdfs:label "Condition value"@en ;
+    rdfs:comment
+        "Superclass for values used in conditions, including quantitative and qualitative values."@en .
+
+obs:QualitativeConditionValue a owl:Class ;
+    rdfs:label "Qualitative condition value"@en ;
+    rdfs:comment "A non-numeric categorical value used in a condition."@en ;
+    rdfs:subClassOf obs:ConditionValue .
+
+obs:QuantitativeConditionValue a owl:Class ;
+    rdfs:label "Quantitative condition value"@en ;
+    rdfs:comment "A quantitative value used in a condition."@en ;
+    rdfs:subClassOf obs:ConditionValue, qudt:QuantityValue .
+
+obs:Condition a owl:Class ;
+    rdfs:label "Condition"@en ;
+    rdfs:comment "Reified condition linking a condition factor to a value."@en ;
+    rdfs:subClassOf
+        [ a owl:Restriction ;
+            owl:onProperty obs:conditionFactor ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass obs:ConditionFactor
+        ] ,
+        [ a owl:Restriction ;
+            owl:onProperty obs:conditionValue ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass obs:ConditionValue
+        ] .
+
+obs:ConditionFactor a owl:Class ;
+    rdfs:label "Condition factor"@en ;
+    rdfs:comment
+        "A dimension or aspect of a process's or observation's context being specified. Open vocabulary: domain ontologies mint further individuals as siblings; use skos:broader to relate a narrower factor to a broader one."@en ;
+    skos:example
+        "atmosphere"@en , "humidity"@en , "temperature"@en , "time"@en .
+
+#################################################################
+# Object properties
+#################################################################
+
+obs:hasObservation a owl:ObjectProperty ;
+    rdfs:label "has observation"@en ;
+    rdfs:comment
+        "Links a feature of interest to an observation about it.  Use sosa:hasFeatureOfInterest in the opposite direction."@en ;
+    rdfs:domain sosa:FeatureOfInterest ;
+    rdfs:range obs:Observation ;
+    rdfs:subPropertyOf sosa:isFeatureOfInterestOf ;
+    owl:inverseOf sosa:hasFeatureOfInterest .
+
+obs:hasQuantityResult a owl:ObjectProperty ;
+    rdfs:label "has quantity result"@en ;
+    rdfs:comment
+        """Links a quantitative observation to a quantity result.
+        Range is qudt:QuantityValue. Consumers that require
+        qqval-qualified results import pergres-ontology, which tightens
+        this range to qqval:QualifiedQuantityValue."""@en ;
+    rdfs:domain obs:QuantitativeObservation ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:subPropertyOf sosa:hasResult .
+
+obs:hasQualitativeResult a owl:ObjectProperty ;
+    rdfs:label "has qualitative result"@en ;
+    rdfs:comment "Links an observation to a qualitative categorical result."@en ;
+    rdfs:domain obs:QualitativeObservation ;
+    rdfs:range obs:QualitativeResult ;
+    rdfs:subPropertyOf sosa:hasResult .
+
+obs:hasObservationCondition a owl:ObjectProperty ;
+    rdfs:label "has observation condition"@en ;
+    rdfs:comment "Links an observation to a reified condition instance."@en ;
+    rdfs:domain obs:Observation ;
+    rdfs:range obs:Condition .
+
+obs:hasProcessCondition a owl:ObjectProperty ;
+    rdfs:label "has process condition"@en ;
+    rdfs:comment "Links a concrete process to a reified condition instance."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range obs:Condition .
+
+obs:conditionFactor a owl:ObjectProperty ;
+    rdfs:label "condition factor"@en ;
+    rdfs:domain obs:Condition ;
+    rdfs:range obs:ConditionFactor .
+
+obs:conditionValue a owl:ObjectProperty ;
+    rdfs:label "condition value"@en ;
+    rdfs:domain obs:Condition ;
+    rdfs:range obs:ConditionValue .
+
+obs:usesMethod a owl:ObjectProperty ;
+    rdfs:label "uses method"@en ;
+    rdfs:comment "Links a concrete process to the procedure type it follows."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:subPropertyOf sosa:usedProcedure ;
+    rdfs:range sosa:Procedure .
+
+obs:hasInputEntity a owl:ObjectProperty ;
+    rdfs:label "has input entity"@en ;
+    rdfs:comment
+        """Links a process to a concrete feature of interest (sosa:FeatureOfInterest)
+        used as input. Domain-specific ontologies may declare rdfs:subPropertyOf
+        descendants with a narrower range and/or a parallel property for the
+        abstract kind consumed."""@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range sosa:FeatureOfInterest .
+
+obs:hasOutputEntity a owl:ObjectProperty ;
+    rdfs:label "has output entity"@en ;
+    rdfs:comment
+        """Links a process to the concrete feature of interest (sosa:FeatureOfInterest)
+        it produced. Domain-specific ontologies may declare rdfs:subPropertyOf
+        descendants with a narrower range and/or a parallel property for the
+        abstract kind targeted."""@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range sosa:FeatureOfInterest .
+
+obs:producedByProcess a owl:ObjectProperty ;
+    rdfs:label "produced by process"@en ;
+    rdfs:domain sosa:FeatureOfInterest ;
+    rdfs:range obs:Process ;
+    owl:inverseOf obs:hasOutputEntity .
+
+#################################################################
+# Generic condition-factor vocabulary
+#
+# "time" lives here so any domain-neutral consumer can hang narrower
+# temporal factors off it via skos:broader without importing
+# temporal-ontology's full process taxonomy.
+#################################################################
+
+obs:time a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "time"@en ;
+    rdfs:comment "A temporal factor, including duration, elapsed time, delay time, entity age, storage time, aging time, exposure time, or process time."@en .
