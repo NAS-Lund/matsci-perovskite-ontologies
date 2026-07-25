@@ -1,7 +1,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
@@ -9,7 +9,7 @@
 #################################################################
 # Shapes graph header
 #
-# Closed-world validation companion to observation-ontology. Mirrors the
+# Closed-world validation companion to observation. Mirrors the
 # qualified-cardinality restrictions already declared as OWL axioms
 # there, so that an extraction pipeline can reject non-conforming
 # LLM output outright instead of relying on open-world reasoning (which
@@ -26,16 +26,16 @@
     rdfs:comment
         """SHACL shapes mirroring the OWL cardinality/qualifier
         restrictions declared on obs:Condition, obs:QuantitativeObservation,
-        and obs:QualitativeObservation in observation-ontology (>= 4.0.0).
+        and obs:QualitativeObservation in observation (>= 4.0.0).
 
         1.0.0: initial version.
 
         2.0.0 (breaking): renamed obs:EnvironmentConditionShape to
         obs:ConditionShape and retargeted it at obs:Condition /
-        obs:ConditionFactor, following observation-ontology 4.0.0's
+        obs:ConditionFactor, following observation 4.0.0's
         rename of those classes."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.0.0> ;
-    owl:versionInfo "2.0.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.1.0> ;
+    owl:versionInfo "2.1.0" .
 
 #################################################################
 # Condition — exactly one factor, exactly one value

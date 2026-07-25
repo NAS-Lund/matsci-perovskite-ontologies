@@ -1,8 +1,8 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix matsci:  <https://growgraph.dev/ontologies/matsci-ontology#> .
-@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
-@prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
+@prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix unit:    <http://qudt.org/vocab/unit/> .
@@ -15,40 +15,40 @@
 @prefix om:      <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
 
-<https://growgraph.dev/ontologies/matsci-ontology> a owl:Ontology ;
+<https://growgraph.dev/ontologies/matsci> a owl:Ontology ;
     rdfs:label "matsci"@en ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
         """General materials-science ontology: materials, samples,
         synthesis, characterization, morphology, and properties.
-        Layers on observation-ontology and temporal-ontology; imports
-        qqval-ontology for qualified quantity values and pergres-ontology
+        Layers on observation and lifecycle; imports
+        qqval for qualified quantity values and pergres
         for the policy that quantitative observation results are
         qqval-qualified.
 
         matsci:hasInputSample / hasOutputSample are sosa:Sample-narrowed
         convenience subproperties of obs:hasInputEntity / hasOutputEntity.
 
-        Extension contract: matsci-ontology is the domain extension layer
-        for observation-ontology / temporal-ontology — it subclasses
-        obs:Process / obs:Phenomenon / tempo:TemporalProcess /
-        tempo:ObservableTemporalProperty and subproperties the generic
+        Extension contract: matsci is the domain extension layer
+        for observation / lifecycle — it subclasses
+        obs:Process / obs:Phenomenon / life:LifecycleProcess /
+        life:ObservableTemporalProperty and subproperties the generic
         entity-of-interest properties. matsci:Material, matsci:MaterialRole,
         and the various *Method/*Process/*Value controlled vocabularies
         here are open."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-ontology/4.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci/4.1.0> ;
     owl:imports
-        <https://growgraph.dev/ontologies/observation-ontology> ,
-        <https://growgraph.dev/ontologies/temporal-ontology> ,
-        <https://growgraph.dev/ontologies/qqval-ontology> ,
-        <https://growgraph.dev/ontologies/pergres-ontology> ,
+        <https://growgraph.dev/ontologies/observation> ,
+        <https://growgraph.dev/ontologies/lifecycle> ,
+        <https://growgraph.dev/ontologies/qqval> ,
+        <https://growgraph.dev/ontologies/pergres> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
         <http://qudt.org/2.1/vocab/unit> ;
-    owl:versionInfo "4.0.0" .
+    owl:versionInfo "4.1.0" .
 
 #################################################################
 # Core classes
@@ -187,7 +187,7 @@ matsci:ChemicalTransformationType a owl:Class ;
 # Process execution layer
 #
 # matsci:Process itself (and the generic Observation/PhysicalPhenomenon
-# scaffolding it participates in) now lives in observation-ontology as
+# scaffolding it participates in) now lives in observation as
 # obs:Process. The concrete process types below are the
 # materials-science-specific subclasses of obs:Process.
 #################################################################
@@ -264,7 +264,7 @@ matsci:AssemblyStructure a owl:Class ;
 #################################################################
 # Qualitative result vocabulary
 #
-# matsci:QualitativeResult itself now lives in observation-ontology as
+# matsci:QualitativeResult itself now lives in observation as
 # obs:QualitativeResult. The classes below are its
 # materials-science-specific subclasses.
 #################################################################
@@ -293,7 +293,7 @@ matsci:ShapeValue a owl:Class ;
 # Observation model
 #
 # matsci:Observation, QuantitativeObservation, and QualitativeObservation
-# now live in observation-ontology (obs:Observation, obs:QuantitativeObservation,
+# now live in observation (obs:Observation, obs:QuantitativeObservation,
 # obs:QualitativeObservation). Only the materials-science-specific
 # ObservableProperty subclasses remain here.
 #################################################################
@@ -686,11 +686,11 @@ matsci:oleylammoniumBromide a owl:NamedIndividual, matsci:Material ;
 # Condition factor and condition-value individuals
 #
 # matsci:ConditionFactor / matsci:QualitativeConditionValue classes now
-# live in observation-ontology (obs:ConditionFactor / obs:QualitativeConditionValue).
+# live in observation (obs:ConditionFactor / obs:QualitativeConditionValue).
 # These concrete controlled-vocabulary individuals stay minted in the
 # matsci namespace since they are domain vocabulary choices, not generic
-# infrastructure. (The one exception, "time", moved to observation-ontology as
-# obs:time, since temporal-ontology -- which must not import matsci --
+# infrastructure. (The one exception, "time", moved to observation as
+# obs:time, since lifecycle -- which must not import matsci --
 # needs to reference it directly as a skos:broader target.)
 #################################################################
 
@@ -713,17 +713,17 @@ matsci:nitrogenAtmosphere a owl:NamedIndividual, obs:QualitativeConditionValue ;
     rdfs:label "nitrogen atmosphere"@en .
 
 #################################################################
-# Entity temporal state individuals (matsci-specific)
+# Entity lifecycle state individuals (matsci-specific)
 #
-# Domain-specific storage/aging states, moved out of temporal-ontology
+# Domain-specific storage/aging states, moved out of lifecycle
 # 3.1.0. Siblings of the universal fresh/aged/stored trio defined on
-# tempo:EntityTemporalState.
+# life:EntityLifecycleState.
 #################################################################
 
-matsci:airAgedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+matsci:airAgedEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
     rdfs:label "air-aged"@en .
 
-matsci:vacuumAgedEntityState a owl:NamedIndividual, tempo:EntityTemporalState ;
+matsci:vacuumAgedEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
     rdfs:label "vacuum-aged"@en .
 
 matsci:plate a owl:NamedIndividual, matsci:ShapeValue ;
@@ -830,7 +830,7 @@ matsci:thicknessProperty a owl:NamedIndividual, matsci:ObservableMorphologyPrope
 #################################################################
 # Collective optical phenomena
 #
-# matsci:PhysicalPhenomenon itself now lives in observation-ontology as
+# matsci:PhysicalPhenomenon itself now lives in observation as
 # obs:PhysicalPhenomenon.
 #################################################################
 
@@ -900,14 +900,14 @@ matsci:AgingInfluenceOnSuperradiance a owl:Class ;
 #################################################################
 # Temporal condition factors (matsci-specific)
 #
-# Domain-specific temporal factors moved out of temporal-ontology 3.0.0.
-# They chain up to tempo:duration or obs:time via skos:broader.
+# Domain-specific temporal factors moved out of lifecycle 3.0.0.
+# They chain up to life:duration or obs:time via skos:broader.
 #################################################################
 
 matsci:processDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "process duration"@en ;
     rdfs:comment "Duration of a materials-science process."@en ;
-    skos:broader tempo:duration .
+    skos:broader life:duration .
 
 matsci:synthesisDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "synthesis duration"@en ;
@@ -922,13 +922,13 @@ matsci:assemblyDuration a owl:NamedIndividual, obs:ConditionFactor ;
 matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "pulse duration"@en ;
     rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
-    skos:broader tempo:duration .
+    skos:broader life:duration .
 
 #################################################################
 # Temporal observable properties (matsci-specific)
 #
 # Domain-specific temporal observable properties moved out of
-# temporal-ontology 3.0.0. Temporal typing against tempo: classes is
+# lifecycle 3.0.0. Temporal typing against life: classes is
 # asserted in the section below.
 #################################################################
 
@@ -989,55 +989,55 @@ matsci:carrierCoolingTimeProperty a owl:NamedIndividual ;
 # Temporal typing of matsci-native terms
 #
 # These individuals and classes are minted and primarily typed above, in
-# matsci-ontology's own namespace. The triples below add their temporal
-# typing/subclassing here, now that matsci-ontology imports
-# temporal-ontology (temporal-ontology depends only on observation-ontology, so
+# matsci's own namespace. The triples below add their temporal
+# typing/subclassing here, now that matsci imports
+# lifecycle (lifecycle depends only on observation, so
 # this direction keeps the dependency graph acyclic). Previously (temporal
-# 1.0.0 / matsci 1.4.0), this typing lived in temporal-ontology as
+# 1.0.0 / matsci 1.4.0), this typing lived in lifecycle as
 # "supplementary assertions" on matsci IRIs, to avoid matsci importing
 # temporal; that workaround is no longer needed.
 #################################################################
 
-matsci:processDurationProperty a tempo:ObservableProcessTemporalProperty .
+matsci:processDurationProperty a life:ObservableProcessTemporalProperty .
 
-matsci:synthesisDurationProperty a tempo:ObservableProcessTemporalProperty .
+matsci:synthesisDurationProperty a life:ObservableProcessTemporalProperty .
 
-matsci:assemblyDurationProperty a tempo:ObservableProcessTemporalProperty .
+matsci:assemblyDurationProperty a life:ObservableProcessTemporalProperty .
 
-matsci:reactionTimeProperty a tempo:ObservableProcessTemporalProperty .
+matsci:reactionTimeProperty a life:ObservableProcessTemporalProperty .
 
-matsci:solventEvaporationTimeProperty a tempo:ObservableProcessTemporalProperty .
+matsci:solventEvaporationTimeProperty a life:ObservableProcessTemporalProperty .
 
-matsci:dryingTimeProperty a tempo:ObservableProcessTemporalProperty .
+matsci:dryingTimeProperty a life:ObservableProcessTemporalProperty .
 
-matsci:centrifugationTimeProperty a tempo:ObservableProcessTemporalProperty .
+matsci:centrifugationTimeProperty a life:ObservableProcessTemporalProperty .
 
-matsci:measurementDelayTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:measurementDelayTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:pumpProbeDelayTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:pumpProbeDelayTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:pulseDurationProperty a tempo:ObservableTransientTemporalProperty .
+matsci:pulseDurationProperty a life:ObservableTransientTemporalProperty .
 
-matsci:radiativeDurationProperty a tempo:ObservableTransientTemporalProperty .
+matsci:radiativeDurationProperty a life:ObservableTransientTemporalProperty .
 
-matsci:decayTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:decayTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:relaxationTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:relaxationTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:coherenceTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:coherenceTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:energyTransferTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:energyTransferTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:carrierCoolingTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:carrierCoolingTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:lifetimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:lifetimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:superfluorescenceDelayTimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:superfluorescenceDelayTimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:superfluorescenceLifetimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:superfluorescenceLifetimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:superradianceLifetimeProperty a tempo:ObservableTransientTemporalProperty .
+matsci:superradianceLifetimeProperty a life:ObservableTransientTemporalProperty .
 
-matsci:AgingInfluenceOnSuperfluorescence rdfs:subClassOf tempo:AgingEffect .
+matsci:AgingInfluenceOnSuperfluorescence rdfs:subClassOf life:AgingEffect .
 
-matsci:AgingInfluenceOnSuperradiance rdfs:subClassOf tempo:AgingEffect .
+matsci:AgingInfluenceOnSuperradiance rdfs:subClassOf life:AgingEffect .

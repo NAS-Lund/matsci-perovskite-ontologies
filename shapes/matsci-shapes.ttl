@@ -1,5 +1,5 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix matsci:  <https://growgraph.dev/ontologies/matsci-ontology#> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
@@ -8,7 +8,7 @@
 #################################################################
 # Shapes graph header
 #
-# Unlike qqval/observation/temporal-ontology, matsci-ontology declares
+# Unlike qqval/observation/lifecycle, matsci declares
 # almost no qualified OWL restrictions (owl:disjointWith between
 # ObservableMaterialProperty and ObservableMorphologyProperty is the one
 # exception) -- its ~50 object/datatype properties are plain
@@ -31,15 +31,15 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """SHACL shapes for matsci-ontology (>= 3.0.0): the one real OWL
+        """SHACL shapes for matsci (>= 3.0.0): the one real OWL
         disjointness mirror (ObservableMaterialProperty /
         ObservableMorphologyProperty), plus a curated closed-world
         type-sanity net for MorphologyState's value properties and the
         matsci:hasInputSample/hasOutputSample convenience subproperties.
 
         1.0.0: initial version."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.1.0> ;
+    owl:versionInfo "1.1.0" .
 
 #################################################################
 # ObservableMaterialProperty / ObservableMorphologyProperty — disjoint
@@ -48,7 +48,7 @@
 matsci:ObservableMaterialPropertyShape a sh:NodeShape ;
     sh:targetClass matsci:ObservableMaterialProperty ;
     sh:not [ sh:class matsci:ObservableMorphologyProperty ] ;
-    rdfs:comment "Mirrors matsci-ontology's owl:disjointWith axiom in a closed-world-checkable form."@en .
+    rdfs:comment "Mirrors matsci's owl:disjointWith axiom in a closed-world-checkable form."@en .
 
 #################################################################
 # MorphologyState — value-property type sanity

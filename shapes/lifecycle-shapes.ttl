@@ -1,0 +1,91 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
+
+#################################################################
+# Shapes graph header
+#
+# Closed-world validation companion to lifecycle. Mirrors the
+# someValuesFrom restrictions declared on life:TemporalObservation and
+# life:QualitativeEntityLifecycleObservation, the same way qqval-shapes/
+# observation-shapes mirror their respective ontologies' OWL
+# restrictions. Unlike those two, most of lifecycle's other
+# classes (LifecycleProcess, TimeDependentEffect, ...) carry no qualified
+# OWL restrictions of their own to mirror -- they are open extension
+# points, not closed structural shapes -- so this file stays small.
+#
+# Apply against the data graph together with observation-shapes and
+# qqval-shapes in scope (and pergres-shapes when qqval-qualification
+# policy is in force), since TemporalObservation /
+# QualitativeEntityLifecycleObservation instances are also validated against
+# obs:QuantitativeObservationShape / obs:QualitativeObservationShape via
+# SHACL's subclass-aware sh:targetClass matching.
+#
+# Requires RDFS inference (pyshacl -i rdfs) on the data graph:
+# life:hasTemporalQuantityResult / life:hasEntityLifecycleStateResult are
+# rdfs:subPropertyOf obs:hasQuantityResult / obs:hasQualitativeResult.
+# Without an inference pass, asserting only the more specific life:
+# property (the extraction-pipeline-expected behavior) fails
+# observation-shapes.ttl's class-level MinCountConstraintComponent checks,
+# since SHACL Core does not itself follow rdfs:subPropertyOf.
+#################################################################
+
+<https://growgraph.dev/ontologies/lifecycle-shapes> a owl:Ontology ;
+    rdfs:label "lifecycle shapes"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """SHACL shapes mirroring the OWL someValuesFrom restrictions
+        declared on life:TemporalObservation and
+        life:QualitativeEntityLifecycleObservation in lifecycle
+        (>= 4.0.0).
+
+        1.0.0: initial version.
+
+        1.1.0: renamed life:EntityTemporalObservationShape ->
+        QualitativeEntityLifecycleObservationShape, following
+        lifecycle 4.1.0's life:EntityTemporalObservation ->
+        QualitativeEntityLifecycleObservation / hasEntityTemporalResult ->
+        hasEntityLifecycleStateResult rename."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle-shapes/2.0.0> ;
+    owl:versionInfo "2.0.0" .
+
+#################################################################
+# TemporalObservation — observed property and result must be temporal
+#################################################################
+
+life:TemporalObservationShape a sh:NodeShape ;
+    sh:targetClass life:TemporalObservation ;
+    sh:property
+        [ sh:path sosa:observedProperty ;
+            sh:minCount 1 ;
+            sh:class life:ObservableTemporalProperty ;
+            sh:message "TemporalObservation requires at least one sosa:observedProperty of type life:ObservableTemporalProperty."@en
+        ] ,
+        [ sh:path life:hasTemporalQuantityResult ;
+            sh:minCount 1 ;
+            sh:class life:TimeQuantityValue ;
+            sh:message "TemporalObservation requires at least one life:hasTemporalQuantityResult whose value is a life:TimeQuantityValue."@en
+        ] .
+
+#################################################################
+# QualitativeEntityLifecycleObservation — entity-scoped qualitative observation
+#################################################################
+
+life:QualitativeEntityLifecycleObservationShape a sh:NodeShape ;
+    sh:targetClass life:QualitativeEntityLifecycleObservation ;
+    sh:property
+        [ sh:path sosa:observedProperty ;
+            sh:minCount 1 ;
+            sh:class life:ObservableEntityTemporalProperty ;
+            sh:message "QualitativeEntityLifecycleObservation requires at least one sosa:observedProperty of type life:ObservableEntityTemporalProperty."@en
+        ] ,
+        [ sh:path life:hasEntityLifecycleStateResult ;
+            sh:minCount 1 ;
+            sh:class life:EntityLifecycleState ;
+            sh:message "QualitativeEntityLifecycleObservation requires at least one life:hasEntityLifecycleStateResult whose value is a life:EntityLifecycleState."@en
+        ] .

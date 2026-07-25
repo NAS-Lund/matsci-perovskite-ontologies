@@ -1,5 +1,5 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
@@ -9,7 +9,7 @@
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 
-<https://growgraph.dev/ontologies/observation-ontology> a owl:Ontology ;
+<https://growgraph.dev/ontologies/observation> a owl:Ontology ;
     rdfs:label "observation"@en ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
@@ -17,7 +17,7 @@
         """Domain-independent scaffolding for processes, observations,
         phenomena, and conditions. Grounded in SOSA/BFO. Quantitative
         observation results are qudt:QuantityValue; optional tightening to
-        qqval-qualified values is asserted by pergres-ontology, not here.
+        qqval-qualified values is asserted by pergres, not here.
 
         Extraction convention: a result that was not extracted from source
         is expressed by omitting the hasQuantityResult /
@@ -36,12 +36,12 @@
         producedByProcess / hasQuantityResult / hasQualitativeResult are
         meant to be subpropertied by domain ontologies that want a
         narrower, domain-flavored property name."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-ontology/5.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.1.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.0.0" ;
+    owl:versionInfo "5.1.0" ;
     rdfs:seeAlso
         <http://www.w3.org/ns/prov#wasDerivedFrom> ,
         <http://purl.org/dc/terms/source> .
@@ -76,7 +76,7 @@ obs:PhysicalPhenomenon a owl:Class ;
     rdfs:comment
         """Physically-anchored specialization of obs:Phenomenon. Use this
         when the phenomenon is physical; use obs:Phenomenon when it need
-        not be (e.g. time-dependent effects in temporal-ontology).
+        not be (e.g. time-dependent effects in lifecycle).
         Subclasses are semantically heterogeneous (disposition, quality,
         process) and should be anchored individually in BFO rather than
         anchoring this superclass."""@en ;
@@ -187,7 +187,7 @@ obs:hasQuantityResult a owl:ObjectProperty ;
     rdfs:comment
         """Links a quantitative observation to a quantity result.
         Range is qudt:QuantityValue. Consumers that require
-        qqval-qualified results import pergres-ontology, which tightens
+        qqval-qualified results import pergres, which tightens
         this range to qqval:QualifiedQuantityValue."""@en ;
     rdfs:domain obs:QuantitativeObservation ;
     rdfs:range qudt:QuantityValue ;
@@ -260,7 +260,7 @@ obs:producedByProcess a owl:ObjectProperty ;
 #
 # "time" lives here so any domain-neutral consumer can hang narrower
 # temporal factors off it via skos:broader without importing
-# temporal-ontology's full process taxonomy.
+# lifecycle's full process taxonomy.
 #################################################################
 
 obs:time a owl:NamedIndividual, obs:ConditionFactor ;

@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed (naming — breaking for IRI consumers)
+
+- Dropped the `-ontology` suffix from ontology file stems and IRIs
+  (`qqval-ontology` → `qqval`, etc.; `perovskitemat` unchanged). Prefixes
+  unchanged (`qqval:`, `obs:`, `matsci:`, …). Minor version bumps for
+  path-only modules: qqval 2.0.0 → **2.1.0**, observation 5.0.0 → **5.1.0**,
+  pergres 1.0.0 → **1.1.0**, matsci 4.0.0 → **4.1.0**, perovskitemat 1.4.0 →
+  **1.5.0**; companion shapes bumped minor.
+- Renamed module `temporal` → **`lifecycle`** (file/IRI/`rdfs:label`; prefix
+  `tempo:` → **`life:`**). Selective local-name renames for lifecycle
+  concepts only: `TemporalProcess` → `LifecycleProcess`,
+  `EntityTemporalState` → `EntityLifecycleState`,
+  `entityTemporalStateProperty` → `entityLifecycleStateProperty`,
+  `QualitativeEntityTemporalObservation` →
+  `QualitativeEntityLifecycleObservation` (+ shape),
+  `hasEntityTemporalStateResult` → `hasEntityLifecycleStateResult`.
+  Kept temporal-quantity vocabulary as `Temporal*` / `Time*`
+  (`TemporalObservation`, `Observable*TemporalProperty`,
+  `hasTemporalQuantityResult`, `hasTemporalReferenceProcess`, …).
+  `lifecycle` 5.0.0 → **6.0.0**; `lifecycle-shapes` 1.1.0 → **2.0.0**.
+  No redirects for old IRIs. Design notes:
+  [`planning/modularization.md`](planning/modularization.md).
+
 ## 2026-07
 
 ### Changed (modularization — breaking)
