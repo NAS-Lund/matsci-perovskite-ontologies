@@ -1,14 +1,14 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-@prefix pergres: <https://growgraph.dev/ontologies/pergres-ontology#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix pergres: <https://growgraph.dev/ontologies/pergres#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
-@prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
+@prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
 
 
-<https://growgraph.dev/ontologies/pergres-ontology> a owl:Ontology ;
+<https://growgraph.dev/ontologies/pergres> a owl:Ontology ;
     rdfs:label "pergres"@en ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
@@ -17,23 +17,23 @@
         policy that quantitative observation results and temporal quantity
         values are qqval-qualified.
 
-        Leaves qqval-ontology, observation-ontology, and temporal-ontology
+        Leaves qqval, observation, and lifecycle
         free of mutual coupling. Consumers that want qqval-qualified
-        results (e.g. matsci-ontology) import this module; consumers that
+        results (e.g. matsci) import this module; consumers that
         only need bare qudt:QuantityValue results import observation /
-        temporal alone.
+        lifecycle alone.
 
         Axioms:
           • obs:hasQuantityResult range → qqval:QualifiedQuantityValue
           • obs:QuantitativeObservation requires some sosa:hasResult that
             is a qqval:QualifiedQuantityValue
-          • tempo:TimeQuantityValue ⊑ qqval:QualifiedQuantityValue"""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/pergres-ontology/1.0.0> ;
+          • life:TimeQuantityValue ⊑ qqval:QualifiedQuantityValue"""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/pergres/1.1.0> ;
     owl:imports
-        <https://growgraph.dev/ontologies/qqval-ontology> ,
-        <https://growgraph.dev/ontologies/observation-ontology> ,
-        <https://growgraph.dev/ontologies/temporal-ontology> ;
-    owl:versionInfo "1.0.0" .
+        <https://growgraph.dev/ontologies/qqval> ,
+        <https://growgraph.dev/ontologies/observation> ,
+        <https://growgraph.dev/ontologies/lifecycle> ;
+    owl:versionInfo "1.1.0" .
 
 #################################################################
 # qqval-qualification policy for observation results
@@ -51,4 +51,4 @@ obs:QuantitativeObservation rdfs:subClassOf
 # qqval-qualification policy for temporal quantity values
 #################################################################
 
-tempo:TimeQuantityValue rdfs:subClassOf qqval:QualifiedQuantityValue .
+life:TimeQuantityValue rdfs:subClassOf qqval:QualifiedQuantityValue .

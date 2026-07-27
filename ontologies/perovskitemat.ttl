@@ -1,8 +1,8 @@
 @prefix dcterms:  <http://purl.org/dc/terms/> .
-@prefix matsci:   <https://growgraph.dev/ontologies/matsci-ontology#> .
+@prefix matsci:   <https://growgraph.dev/ontologies/matsci#> .
 @prefix owl:      <http://www.w3.org/2002/07/owl#> .
 @prefix perovmat: <https://growgraph.dev/ontologies/perovskitemat#> .
-@prefix qqval:    <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix qqval:    <https://growgraph.dev/ontologies/qqval#> .
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sosa:     <http://www.w3.org/ns/sosa/> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
@@ -13,10 +13,10 @@
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
         """Perovskite-specific ontology: composition sites, halide
-        perovskites, named compounds. Imports matsci-ontology only."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.4.0> ;
-    owl:imports <https://growgraph.dev/ontologies/matsci-ontology> ;
-    owl:versionInfo "1.4.0" .
+        perovskites, named compounds. Imports matsci only."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.5.0> ;
+    owl:imports <https://growgraph.dev/ontologies/matsci> ;
+    owl:versionInfo "1.5.0" .
 
 #################################################################
 # Perovskite core

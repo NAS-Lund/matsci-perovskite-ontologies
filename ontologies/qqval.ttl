@@ -1,6 +1,6 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
@@ -11,7 +11,7 @@
 # Ontology header
 #################################################################
 
-<https://growgraph.dev/ontologies/qqval-ontology> a owl:Ontology ;
+<https://growgraph.dev/ontologies/qqval> a owl:Ontology ;
     rdfs:label "qqval"@en ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
@@ -34,11 +34,11 @@
         vocabulary (Exact, Approximate only). qqval:DistributionAssumption
         is open. qqval:QualifiedQuantityValue and qqval:QuantityRange are
         the extension points for domain-typed quantity values."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval-ontology/2.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.1.0> ;
     owl:imports
         <http://qudt.org/2.1/schema/facade/qudt> ,
         <http://qudt.org/2.1/vocab/unit> ;
-    owl:versionInfo "2.0.0" ;
+    owl:versionInfo "2.1.0" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
@@ -62,7 +62,7 @@ qqval:EpistemicQualifier a owl:Class ;
         "measurement qualifier"@en ,
         "numeric qualifier"@en ,
         "value qualifier"@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:Exact a owl:NamedIndividual , qqval:EpistemicQualifier ;
     rdfs:label "exact"@en ;
@@ -72,7 +72,7 @@ qqval:Exact a owl:NamedIndividual , qqval:EpistemicQualifier ;
     skos:altLabel
         "nominal"@en , "precise"@en , "exact value"@en ,
         "nominal value"@en , "definite"@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:Approximate a owl:NamedIndividual , qqval:EpistemicQualifier ;
     rdfs:label "approximately"@en ;
@@ -85,7 +85,7 @@ qqval:Approximate a owl:NamedIndividual , qqval:EpistemicQualifier ;
         "ca."@en , "about"@en , "roughly"@en ,
         "nominally"@en , "around"@en , "near"@en ,
         "approximate value"@en , "order of magnitude"@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 [] a owl:AllDifferent ;
     owl:distinctMembers (
@@ -108,12 +108,12 @@ qqval:DistributionAssumption a owl:Class ;
         qqval:numericRelativeUncertainty). Linking a value to one of these
         individuals via qqval:distributionAssumption is optional; absence
         means the distribution is not stated, not that it is Gaussian."""@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:Gaussian a owl:NamedIndividual, qqval:DistributionAssumption ;
     rdfs:label "Gaussian"@en ;
     skos:altLabel "normal distribution"@en , "1-sigma Gaussian"@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:Unspecified a owl:NamedIndividual, qqval:DistributionAssumption ;
     rdfs:label "unspecified"@en ;
@@ -123,7 +123,7 @@ qqval:Unspecified a owl:NamedIndividual, qqval:DistributionAssumption ;
         qqval:distributionAssumption entirely over asserting this
         individual, unless a pipeline needs an explicit marker that the
         question was actively considered and left unresolved."""@en ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 
 #################################################################
@@ -184,7 +184,7 @@ qqval:QualifiedQuantityValue a owl:Class ;
         om:Measure ,
         qudt:QuantityValue ,
         qqval:QuantityRange ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> ;
     # Exactly one epistemic qualifier
     rdfs:subClassOf
         [ a owl:Restriction ;
@@ -244,7 +244,7 @@ qqval:QuantityRange a owl:Class ;
         plain decimals on a single node sharing one unit — preferable for
         compact, unit-homogeneous ranges."""@en ;
     rdfs:seeAlso qqval:QualifiedQuantityValue ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> ;
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> ;
     # At most one lower bound node
     rdfs:subClassOf
         [ a owl:Restriction ;
@@ -288,7 +288,7 @@ qqval:epistemicQualifier a owl:ObjectProperty , owl:FunctionalProperty ;
         "measurement qualifier"@en ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  qqval:EpistemicQualifier ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:hasLowerBound a owl:ObjectProperty ;
     rdfs:label "has lower bound"@en ;
@@ -299,7 +299,7 @@ qqval:hasLowerBound a owl:ObjectProperty ;
     rdfs:domain qqval:QuantityRange ;
     rdfs:range  qudt:QuantityValue ;
     rdfs:seeAlso qqval:numericLowerBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:hasUpperBound a owl:ObjectProperty ;
     rdfs:label "has upper bound"@en ;
@@ -310,7 +310,7 @@ qqval:hasUpperBound a owl:ObjectProperty ;
     rdfs:domain qqval:QuantityRange ;
     rdfs:range  qudt:QuantityValue ;
     rdfs:seeAlso qqval:numericUpperBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:distributionAssumption a owl:ObjectProperty ;
     rdfs:label "distribution assumption"@en ;
@@ -322,7 +322,7 @@ qqval:distributionAssumption a owl:ObjectProperty ;
         assumption."""@en ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  qqval:DistributionAssumption ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 
 #################################################################
@@ -348,7 +348,7 @@ qqval:numericLowerBound a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:hasLowerBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:numericUpperBound a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "numeric upper bound"@en ;
@@ -369,7 +369,7 @@ qqval:numericUpperBound a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:hasUpperBound ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:lowerBoundInclusive a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "lower bound inclusive"@en ;
@@ -379,7 +379,7 @@ qqval:lowerBoundInclusive a owl:DatatypeProperty , owl:FunctionalProperty ;
         owl:FunctionalProperty."""@en ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:boolean ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:upperBoundInclusive a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "upper bound inclusive"@en ;
@@ -389,7 +389,7 @@ qqval:upperBoundInclusive a owl:DatatypeProperty , owl:FunctionalProperty ;
         owl:FunctionalProperty."""@en ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:boolean ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:numericUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "numeric uncertainty"@en ;
@@ -413,7 +413,7 @@ qqval:numericUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso om:hasUncertainty ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:numericRelativeUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "numeric relative uncertainty"@en ;
@@ -436,7 +436,7 @@ qqval:numericRelativeUncertainty a owl:DatatypeProperty , owl:FunctionalProperty
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:numericUncertainty ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:confidenceLevel a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "confidence level"@en ;
@@ -454,4 +454,4 @@ qqval:confidenceLevel a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:distributionAssumption ;
-    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval-ontology> .
+    rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .

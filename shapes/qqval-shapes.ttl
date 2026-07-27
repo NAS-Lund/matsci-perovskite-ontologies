@@ -1,6 +1,6 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
@@ -9,7 +9,7 @@
 #################################################################
 # Shapes graph header
 #
-# Closed-world validation companion to qqval-ontology. OWL restrictions
+# Closed-world validation companion to qqval. OWL restrictions
 # are open-world; these SHACL shapes reject non-conforming data outright.
 #################################################################
 
@@ -21,9 +21,9 @@
         """SHACL shapes mirroring the OWL cardinality restrictions on
         qqval:QualifiedQuantityValue and qqval:QuantityRange, plus
         property-presence rules for numeric form and uncertainty
-        mutual exclusion. Aligns with qqval-ontology >= 2.0.0."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval-shapes/2.0.0> ;
-    owl:versionInfo "2.0.0" .
+        mutual exclusion. Aligns with qqval >= 2.0.0."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-shapes/2.1.0> ;
+    owl:versionInfo "2.1.0" .
 
 #################################################################
 # QualifiedQuantityValue — structural shape
@@ -95,7 +95,7 @@ qqval:QualifiedQuantityValueShape a sh:NodeShape ;
             sh:message "QualifiedQuantityValue requires at least one of qudt:numericValue, qqval:numericLowerBound, or qqval:numericUpperBound."@en ;
             sh:select
                 """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
                 PREFIX qudt: <http://qudt.org/schema/qudt/>
                 SELECT $this
                 WHERE {
@@ -110,7 +110,7 @@ qqval:QualifiedQuantityValueShape a sh:NodeShape ;
             sh:message "QualifiedQuantityValue must not combine bound properties (numericLowerBound/numericUpperBound) with uncertainty properties (numericUncertainty/numericRelativeUncertainty)."@en ;
             sh:select
                 """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
                 SELECT $this
                 WHERE {
                     FILTER (
@@ -128,7 +128,7 @@ qqval:QualifiedQuantityValueShape a sh:NodeShape ;
             sh:message "QualifiedQuantityValue must not carry both qqval:numericUncertainty and qqval:numericRelativeUncertainty."@en ;
             sh:select
                 """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
                 SELECT $this
                 WHERE {
                     $this qqval:numericUncertainty ?u .
@@ -141,7 +141,7 @@ qqval:QualifiedQuantityValueShape a sh:NodeShape ;
             sh:message "Uncertainty (numericUncertainty or numericRelativeUncertainty) requires qudt:numericValue."@en ;
             sh:select
                 """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
                 PREFIX qudt: <http://qudt.org/schema/qudt/>
                 SELECT $this
                 WHERE {
@@ -178,7 +178,7 @@ qqval:QuantityRangeShape a sh:NodeShape ;
             sh:message "QuantityRange requires at least one of qqval:hasLowerBound or qqval:hasUpperBound."@en ;
             sh:select
                 """
-                PREFIX qqval: <https://growgraph.dev/ontologies/qqval-ontology#>
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
                 SELECT $this
                 WHERE {
                     FILTER ( NOT EXISTS { $this qqval:hasLowerBound ?lb }

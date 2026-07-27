@@ -1,18 +1,18 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix obs:     <https://growgraph.dev/ontologies/observation-ontology#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-@prefix pergres: <https://growgraph.dev/ontologies/pergres-ontology#> .
-@prefix qqval:   <https://growgraph.dev/ontologies/qqval-ontology#> .
+@prefix pergres: <https://growgraph.dev/ontologies/pergres#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
-@prefix tempo:   <https://growgraph.dev/ontologies/temporal-ontology#> .
+@prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
 
 #################################################################
 # Shapes graph header
 #
-# Closed-world validation companion to pergres-ontology. Enforces the
+# Closed-world validation companion to pergres. Enforces the
 # cross-module qqval-qualification policy that observation-shapes and
-# temporal-shapes deliberately leave open.
+# lifecycle-shapes deliberately leave open.
 #################################################################
 
 <https://growgraph.dev/ontologies/pergres-shapes> a owl:Ontology ;
@@ -20,12 +20,12 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """SHACL shapes mirroring pergres-ontology's qqval-qualification
+        """SHACL shapes mirroring pergres's qqval-qualification
         axioms: QuantitativeObservation results must be
         qqval:QualifiedQuantityValue, and TimeQuantityValue is treated as
-        qqval-qualified. Aligns with pergres-ontology >= 1.0.0."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/pergres-shapes/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+        qqval-qualified. Aligns with pergres >= 1.0.0."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/pergres-shapes/1.1.0> ;
+    owl:versionInfo "1.1.0" .
 
 #################################################################
 # QuantitativeObservation — result must be qqval-qualified
@@ -49,13 +49,13 @@ pergres:QuantitativeObservationShape a sh:NodeShape ;
 #################################################################
 
 pergres:TimeQuantityValueShape a sh:NodeShape ;
-    sh:targetClass tempo:TimeQuantityValue ;
+    sh:targetClass life:TimeQuantityValue ;
     rdfs:comment
-        """Mirrors pergres-ontology's axiom that tempo:TimeQuantityValue
+        """Mirrors pergres's axiom that life:TimeQuantityValue
         is a subclass of qqval:QualifiedQuantityValue. Structural checks
         for epistemicQualifier / unit / numeric form come from
         qqval:QualifiedQuantityValueShape via subclass targeting when
         RDFS inference is enabled; this shape asserts the class membership
         expectation for closed-world validation without inference."""@en ;
     sh:class qqval:QualifiedQuantityValue ;
-    sh:message "Under pergres policy, tempo:TimeQuantityValue must also be typed qqval:QualifiedQuantityValue."@en .
+    sh:message "Under pergres policy, life:TimeQuantityValue must also be typed qqval:QualifiedQuantityValue."@en .
