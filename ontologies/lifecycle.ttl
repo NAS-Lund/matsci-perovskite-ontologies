@@ -14,47 +14,34 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """Domain-independent module hosting two orthogonal concerns under
-        one namespace (prefix life: names the module, not every term's
-        semantic category):
-
-          • Temporal quantities / measurement — duration, elapsed time,
-            delay, process ordering, transient response
-            (life:TemporalObservation, life:ObservableTemporalProperty,
-            life:TimeQuantityValue, …).
-          • Entity lifecycle — post-creation processes (storage, exposure,
-            operation, aging) and categorical entity state
-            (life:LifecycleProcess, life:EntityLifecycleState,
-            life:QualitativeEntityLifecycleObservation).
-
-        Lifecycle processes use temporal quantities; that does not make
-        every temporal class a lifecycle class. Specializes observation's
+        """Domain-independent module covering two orthogonal concerns: temporal
+        quantities (duration, elapsed time, delay, process ordering, transient
+        response) and entity lifecycle (storage, exposure, operation, aging and
+        categorical entity state)."""@en ;
+    skos:scopeNote
+        """The prefix life: names the module, not every term's semantic
+        category. Lifecycle processes use temporal quantities; that does not
+        make every temporal class a lifecycle class. Specializes observation's
         Process / Observation / Phenomenon / QualitativeResult / Condition
-        model.
+        model, and does not import qqval -- life:TimeQuantityValue is a
+        qudt:QuantityValue, and the optional tightening to
+        qqval:QualifiedQuantityValue is asserted by pergres.
 
-        Imports observation only (plus SOSA). Does not import qqval;
-        life:TimeQuantityValue is a qudt:QuantityValue. Optional
-        subclassing under qqval:QualifiedQuantityValue is asserted by
-        pergres.
+        Observed-property scope (process- vs entity-scoped) and result kind
+        (quantitative vs qualitative) are independent axes.
 
-        Observed-property scope (process- vs. entity-scoped) and result
-        kind (quantitative vs. qualitative) are independent axes:
-        life:TemporalObservation covers quantitative results at any scope;
-        life:QualitativeEntityLifecycleObservation is the entity-scoped,
-        qualitative case (result is a life:EntityLifecycleState).
-
-        Extension contract: life:LifecycleProcess, life:TimeDependentEffect,
-        and life:ObservableTemporalProperty are the primary extension
-        points. life:EntityLifecycleState is an open controlled vocabulary
-        (fresh/aged/stored trio is universal; domain ontologies add further
-        states as siblings). Temporal condition-factor individuals are
-        likewise open for further skos:broader-linked siblings."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle/6.0.0> ;
+        Extension contract: life:LifecycleProcess, life:TimeDependentEffect and
+        life:ObservableTemporalProperty are the primary extension points.
+        life:EntityLifecycleState is an open vocabulary -- the fresh/aged/stored
+        trio is universal and domain ontologies add siblings. Temporal
+        condition factors are likewise open to skos:broader-linked
+        siblings."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle/6.1.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
-        <http://qudt.org/2.1/schema/facade/qudt> ;
-    owl:versionInfo "6.0.0" .
+        <http://qudt.org/3.1.4/schema/facade/qudt> ;
+    owl:versionInfo "6.1.0" .
 
 #################################################################
 # Process taxonomy
@@ -181,7 +168,15 @@ life:EntityLifecycleState a owl:Class ;
 
 life:QualitativeEntityLifecycleObservation a owl:Class ;
     rdfs:label "Qualitative entity lifecycle observation"@en ;
-    rdfs:comment "A qualitative observation (see obs:QualitativeObservation) whose observed property is entity-scoped (life:ObservableEntityTemporalProperty) and whose result is a categorical entity lifecycle state (life:EntityLifecycleState), e.g. fresh/aged/stored. Quantitative entity-scoped temporal observations (e.g. numeric entity age) are typed life:TemporalObservation instead: entity-vs-process observed-property scope and quantitative-vs-qualitative result are independent axes, not a single quantitative/qualitative pair."@en ;
+    rdfs:comment
+        """A qualitative observation of an entity-scoped temporal property whose
+        result is a categorical lifecycle state such as fresh, aged or
+        stored."""@en ;
+    skos:scopeNote
+        """Quantitative entity-scoped temporal observations (numeric entity age,
+        say) are typed life:TemporalObservation instead. Observed-property scope
+        (entity vs process) and result kind (quantitative vs qualitative) are
+        independent axes, not one pair."""@en ;
     rdfs:subClassOf obs:QualitativeObservation ,
         [
             a owl:Restriction ;
@@ -201,7 +196,14 @@ life:ObservableProcessTemporalProperty a owl:Class ;
 
 life:ObservableEntityTemporalProperty a owl:Class ;
     rdfs:label "Observable entity temporal property"@en ;
-    rdfs:comment "A temporal property describing the age, temporal status, or time-dependent condition of an entity. Covers both quantitative individuals observed via life:TemporalObservation (e.g. entityAgeProperty, agingTimeProperty) and the qualitative entityLifecycleStateProperty observed via life:QualitativeEntityLifecycleObservation: entity-scoping and quantitative-vs-qualitative result are independent axes."@en ;
+    rdfs:comment
+        """A temporal property describing the age, temporal status, or
+        time-dependent condition of an entity."""@en ;
+    skos:scopeNote
+        """Covers quantitative individuals observed via life:TemporalObservation
+        (entityAgeProperty, agingTimeProperty) as well as the qualitative
+        entityLifecycleStateProperty: entity-scoping and result kind are
+        independent axes."""@en ;
     rdfs:subClassOf life:ObservableTemporalProperty .
 
 life:ObservableTransientTemporalProperty a owl:Class ;
@@ -227,7 +229,13 @@ life:hasDuration a owl:ObjectProperty ;
 
 life:hasElapsedTime a owl:ObjectProperty ;
     rdfs:label "has elapsed time"@en ;
-    rdfs:comment "Links an entity, process, or observation to a time quantity value representing elapsed time since a relevant reference event. Deliberately left without rdfs:domain: life:hasObservationDelay, a subproperty with domain obs:Observation, would conflict with a narrower domain (e.g. sosa:FeatureOfInterest) asserted here, since rdfs:domain propagates through rdfs:subPropertyOf."@en ;
+    rdfs:comment
+        """Links an entity, process, or observation to the time elapsed since a
+        relevant reference event."""@en ;
+    skos:scopeNote
+        """Deliberately left without rdfs:domain: rdfs:domain propagates through
+        rdfs:subPropertyOf, so a domain here would conflict with
+        life:hasObservationDelay, whose domain is obs:Observation."""@en ;
     rdfs:range life:TimeQuantityValue .
 
 life:hasEntityAge a owl:ObjectProperty ;
@@ -285,11 +293,12 @@ life:affectsObservableProperty a owl:ObjectProperty ;
 life:precedes a owl:ObjectProperty, owl:TransitiveProperty ;
     rdfs:label "precedes"@en ;
     rdfs:comment
-        """States that one process temporally precedes another (ends at or
-        before the other begins). Native, deliberately minimal relation so
-        life:LifecycleProcess's "temporal order... is explicitly relevant"
-        claim is backed by vocabulary without importing OWL-Time; see
-        rdfs:seeAlso for a future alignment hook."""@en ;
+        """States that one process temporally precedes another, ending at or
+        before the other begins."""@en ;
+    skos:scopeNote
+        """Deliberately minimal, so lifecycle's temporal-order claim is backed
+        by vocabulary without importing OWL-Time; rdfs:seeAlso is the alignment
+        hook."""@en ;
     rdfs:domain obs:Process ;
     rdfs:range obs:Process ;
     owl:inverseOf life:follows ;
@@ -367,7 +376,7 @@ life:exposureDurationProperty a owl:NamedIndividual, life:ObservableProcessTempo
 
 life:freshEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
     rdfs:label "fresh"@en ;
-    dcterms:alternative "day 0", "pristine" .
+    skos:altLabel "day 0"@en, "pristine"@en, "as-synthesized"@en .
 
 life:agedEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
     rdfs:label "aged"@en .

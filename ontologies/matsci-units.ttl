@@ -1,0 +1,174 @@
+@prefix dcterms:      <http://purl.org/dc/terms/> .
+@prefix owl:          <http://www.w3.org/2002/07/owl#> .
+@prefix prefix:       <http://qudt.org/vocab/prefix/> .
+@prefix qudt:         <http://qudt.org/schema/qudt/> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdfs:         <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:         <http://www.w3.org/2004/02/skos/core#> .
+@prefix unit:         <http://qudt.org/vocab/unit/> .
+@prefix matsciunits:  <https://growgraph.dev/ontologies/matsci-units#> .
+
+<https://growgraph.dev/ontologies/matsci-units> a owl:Ontology ;
+    rdfs:label "matsci-units (QUDT gap-fillers)"@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-units/3.0.0> ;
+    owl:versionInfo "3.0.0" ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    owl:imports <https://growgraph.dev/ontologies/matsci-qudt-units> ;
+    rdfs:comment
+        """Units the matsci corpus reports that QUDT does not define. QUDT
+        stays canonical: units it already covers are used under their own QUDT
+        IRIs, with no local alias and no owl:sameAs bridge."""@en ;
+    skos:scopeNote
+        """Each term here mirrors how QUDT mints the same family -- asserting
+        qudt:prefix or qudt:scalingOf, a conversion multiplier and a dimension
+        vector -- so it can be proposed upstream and retired if accepted. QUDT
+        mints prefixed units as individuals rather than deriving them
+        compositionally, which is why the milli/micro forms of its compound
+        units are absent and have to be held here.
+
+        The QUDT units this corpus does use are vendored in
+        matsci-qudt-units.ttl. That file is the dependency to load, not QUDT
+        itself: OntoCast does not dereference owl:imports, so the import above
+        declares intent and resolves nothing on its own.
+
+        Scoped to matsci deliberately. Which units are missing is a property of
+        what a corpus reports, so a sibling project covering different
+        measurements mints its own module rather than growing this one."""@en .
+
+#################################################################
+# Energy
+#################################################################
+
+matsciunits:millielectronvolt a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
+    rdfs:label "millielectronvolt"@en ;
+    qudt:symbol "meV" ;
+    qudt:ucumCode "meV"^^qudt:UCUMcs ;
+    skos:notation "meV" ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:EV ;
+    qudt:conversionMultiplier 0.0000000000000000000001602176634 ;
+    qudt:conversionMultiplierSN 1.602176634E-22 ;
+    qudt:hasQuantityKind quantitykind:Energy ;
+    qudt:unitForQuantityKind quantitykind:Energy ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L2I0M1H0T-2D0> ;
+    qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
+    rdfs:comment
+        """0.001-fold of unit:EV. The working unit for exciton binding energies,
+        Urbach energies and band offsets. QUDT defines EV and its upward
+        multiples only."""@en .
+
+#################################################################
+# Areal power density (illumination intensity)
+#################################################################
+
+matsciunits:milliwattPerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
+    rdfs:label "milliwatt per square centimetre"@en ;
+    qudt:symbol "mW/cm²" ;
+    qudt:ucumCode "mW.cm-2"^^qudt:UCUMcs ;
+    skos:notation "mW/cm²", "mW/cm2", "mW·cm⁻²" ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:W-PER-CentiM2 ;
+    qudt:conversionMultiplier 10.0 ;
+    qudt:hasQuantityKind quantitykind:PowerPerArea ;
+    qudt:unitForQuantityKind quantitykind:PowerPerArea ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-3D0> ;
+    qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
+    rdfs:comment
+        """Illumination intensity for photovoltaic characterization; standard
+        AM1.5G one-sun illumination is 100 mW/cm². QUDT defines W/cm² but no
+        milli-prefixed form."""@en .
+
+matsciunits:sun a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
+    rdfs:label "sun"@en ;
+    qudt:symbol "sun" ;
+    skos:notation "sun", "suns" ;
+    skos:altLabel "one-sun equivalent"@en ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasQuantityKind quantitykind:PowerPerArea ;
+    qudt:unitForQuantityKind quantitykind:PowerPerArea ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-3D0> ;
+    rdfs:comment
+        """Illumination expressed as multiples of AM1.5G one-sun intensity,
+        1 sun = 100 mW/cm² = 1000 W/m². Absent from QUDT."""@en ;
+    skos:scopeNote
+        """A reporting convention rather than an SI unit: it presumes the AM1.5G
+        reference spectrum. Record the spectrum on the observation when the
+        source states one."""@en .
+
+#################################################################
+# Areal energy density (excitation fluence)
+#################################################################
+
+matsciunits:microjoulePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
+    rdfs:label "microjoule per square centimetre"@en ;
+    qudt:symbol "µJ/cm²" ;
+    qudt:ucumCode "uJ.cm-2"^^qudt:UCUMcs ;
+    skos:notation "µJ/cm²", "μJ/cm²", "uJ/cm2", "µJ·cm⁻²" ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:J-PER-CentiM2 ;
+    qudt:conversionMultiplier 0.01 ;
+    qudt:hasQuantityKind quantitykind:EnergyPerArea ;
+    qudt:unitForQuantityKind quantitykind:EnergyPerArea ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-2D0> ;
+    qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
+    rdfs:comment
+        """Excitation fluence in transient-absorption and superfluorescence
+        measurements. QUDT defines J/cm² but no micro-prefixed form."""@en .
+
+matsciunits:millijoulePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
+    rdfs:label "millijoule per square centimetre"@en ;
+    qudt:symbol "mJ/cm²" ;
+    qudt:ucumCode "mJ.cm-2"^^qudt:UCUMcs ;
+    skos:notation "mJ/cm²", "mJ/cm2", "mJ·cm⁻²" ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:J-PER-CentiM2 ;
+    qudt:conversionMultiplier 10.0 ;
+    qudt:hasQuantityKind quantitykind:EnergyPerArea ;
+    qudt:unitForQuantityKind quantitykind:EnergyPerArea ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-2D0> ;
+    qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
+    rdfs:comment
+        """Excitation fluence at the higher end of the pulsed-laser range. QUDT
+        defines J/cm² but no milli-prefixed form."""@en .
+
+#################################################################
+# Areal current density
+#################################################################
+
+matsciunits:milliamperePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
+    rdfs:label "milliampere per square centimetre"@en ;
+    qudt:symbol "mA/cm²" ;
+    qudt:ucumCode "mA.cm-2"^^qudt:UCUMcs ;
+    skos:notation "mA/cm²", "mA/cm2", "mA·cm⁻²" ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:A-PER-CentiM2 ;
+    qudt:conversionMultiplier 10.0 ;
+    qudt:hasQuantityKind quantitykind:ElectricCurrentDensity ;
+    qudt:unitForQuantityKind quantitykind:ElectricCurrentDensity ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E1L-2I0M0H0T0D0> ;
+    qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
+    rdfs:comment
+        """Current density for photovoltaic device reporting, the unit of
+        short-circuit current density (Jsc). QUDT defines A/cm² but no
+        milli-prefixed form."""@en .
+
+#################################################################
+# Dimensionless reporting conventions
+#################################################################
+
+matsciunits:arbitraryUnit a owl:NamedIndividual, qudt:Unit ;
+    rdfs:label "arbitrary unit"@en ;
+    qudt:symbol "a.u." ;
+    skos:notation "a.u.", "arb. unit", "arb. units" ;
+    skos:altLabel "arbitrary units"@en ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M0H0T0D1> ;
+    rdfs:comment
+        """Normalized intensity with no absolute scale, as spectra are routinely
+        plotted. Carries no conversion to SI."""@en ;
+    skos:scopeNote
+        """Not interconvertible with any other unit: two a.u. values are
+        comparable only within the same figure or measurement. QUDT's
+        unit:UNITLESS is not a substitute -- it means dimensionless-but-absolute
+        and its symbol is the CJK ideograph U+4E00."""@en .

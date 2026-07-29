@@ -15,33 +15,31 @@
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
         """Domain-independent scaffolding for processes, observations,
-        phenomena, and conditions. Grounded in SOSA/BFO. Quantitative
-        observation results are qudt:QuantityValue; optional tightening to
-        qqval-qualified values is asserted by pergres, not here.
+        phenomena and conditions, grounded in SOSA and BFO. Quantitative
+        results are qudt:QuantityValue."""@en ;
+    skos:scopeNote
+        """Optional tightening to qqval-qualified results is asserted by
+        pergres, not here.
 
-        Extraction convention: a result that was not extracted from source
-        is expressed by omitting the hasQuantityResult /
-        hasQualitativeResult triple entirely, not by asserting a
-        placeholder value.
+        Extraction convention: a result not extracted from source is expressed
+        by omitting the hasQuantityResult / hasQualitativeResult triple, never
+        by asserting a placeholder value.
 
         Provenance: link an observation to its source document via
-        dcterms:source (object property to an RDF resource). Compatible
-        full-PROV consumers may additionally use prov:wasDerivedFrom
-        (see rdfs:seeAlso on this ontology).
+        dcterms:source. Full-PROV consumers may additionally use
+        prov:wasDerivedFrom.
 
         Extension contract: obs:Process and obs:Phenomenon are the primary
-        extension points — domain ontologies subclass them. obs:ConditionFactor
-        and obs:QualitativeConditionValue are open controlled vocabularies.
-        obs:hasInputEntity / hasOutputEntity / hasObservation /
-        producedByProcess / hasQuantityResult / hasQualitativeResult are
-        meant to be subpropertied by domain ontologies that want a
-        narrower, domain-flavored property name."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.1.0> ;
+        extension points. obs:ConditionFactor and obs:QualitativeConditionValue
+        are open vocabularies. hasInputEntity, hasOutputEntity, hasObservation,
+        producedByProcess, hasQuantityResult and hasQualitativeResult are meant
+        to be subpropertied by domain ontologies wanting a narrower name."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.2.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
-        <http://qudt.org/2.1/schema/facade/qudt> ,
+        <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.1.0" ;
+    owl:versionInfo "5.2.0" ;
     rdfs:seeAlso
         <http://www.w3.org/ns/prov#wasDerivedFrom> ,
         <http://purl.org/dc/terms/source> .
@@ -65,21 +63,23 @@ obs:Process a owl:Class ;
 obs:Phenomenon a owl:Class ;
     rdfs:label "Phenomenon"@en ;
     rdfs:comment
-        """Any observable occurrence, state, or effect exhibited by a feature
-        of interest, without commitment to whether it is physical,
-        informational, or otherwise. Subclasses may be disposition, quality,
-        or process-typed; not disjoint with obs:Process. See
-        obs:PhysicalPhenomenon for the physically-anchored specialization."""@en .
+        """Any observable occurrence, state, or effect exhibited by a feature of
+        interest, physical or otherwise."""@en ;
+    skos:scopeNote
+        """Subclasses may be disposition-, quality- or process-typed, and this
+        class is not disjoint with obs:Process. See obs:PhysicalPhenomenon for
+        the physically-anchored specialization."""@en .
 
 obs:PhysicalPhenomenon a owl:Class ;
     rdfs:label "Physical phenomenon"@en ;
     rdfs:comment
-        """Physically-anchored specialization of obs:Phenomenon. Use this
-        when the phenomenon is physical; use obs:Phenomenon when it need
-        not be (e.g. time-dependent effects in lifecycle).
-        Subclasses are semantically heterogeneous (disposition, quality,
-        process) and should be anchored individually in BFO rather than
-        anchoring this superclass."""@en ;
+        """Physically-anchored specialization of obs:Phenomenon, for phenomena
+        that are physical rather than informational."""@en ;
+    skos:scopeNote
+        """Use obs:Phenomenon when the occurrence need not be physical, as with
+        time-dependent effects in lifecycle. Subclasses are semantically
+        heterogeneous (disposition, quality, process) and should be anchored
+        individually in BFO rather than anchoring this superclass."""@en ;
     rdfs:subClassOf obs:Phenomenon .
 
 #################################################################

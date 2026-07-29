@@ -4,6 +4,7 @@
 @prefix perovmat: <https://growgraph.dev/ontologies/perovskitemat#> .
 @prefix qqval:    <https://growgraph.dev/ontologies/qqval#> .
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
 @prefix sosa:     <http://www.w3.org/ns/sosa/> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
 
@@ -14,9 +15,9 @@
     rdfs:comment
         """Perovskite-specific ontology: composition sites, halide
         perovskites, named compounds. Imports matsci only."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.5.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.6.0> ;
     owl:imports <https://growgraph.dev/ontologies/matsci> ;
-    owl:versionInfo "1.5.0" .
+    owl:versionInfo "1.6.0" .
 
 #################################################################
 # Perovskite core
@@ -80,10 +81,13 @@ perovmat:HalideComponent a owl:Class ;
 perovmat:SiteOccupancy a owl:Class ;
     rdfs:label "Site occupancy"@en ;
     rdfs:comment
-        """Reified assignment of a fractional occupancy to a perovskite
-        site component. Use for mixed-halide compositions, partial A/B/X-site
-        substitution, and other stoichiometry series where the fraction is
-        reported as an exact value, range, or approximate quantity."""@en .
+        """Reified assignment of a fractional occupancy to a perovskite site
+        component."""@en ;
+    skos:altLabel "site substitution"@en, "stoichiometric occupancy"@en ;
+    skos:scopeNote
+        """Use for mixed-halide compositions, partial A/B/X-site substitution,
+        and other stoichiometry series where the fraction is reported as an
+        exact value, a range, or an approximate quantity."""@en .
 
 #################################################################
 # Perovskite object properties
@@ -129,11 +133,12 @@ perovmat:occupancyComponent a owl:ObjectProperty ;
 perovmat:occupancyFraction a owl:ObjectProperty ;
     rdfs:label "occupancy fraction"@en ;
     rdfs:comment
-        """Links a site occupancy to a qqval-qualified fraction of the site
-        occupied by the component (dimensionless value in [0, 1], or a
-        reported range/approximation thereof). Express the fraction with
-        qqval:QualifiedQuantityValue and qqval:Exact (or qqval:Approximate)
-        when the source states it."""@en ;
+        """The fraction of a site occupied by its component, a dimensionless
+        value in [0, 1]."""@en ;
+    skos:scopeNote
+        """Express the fraction with qqval:QualifiedQuantityValue, qualified
+        qqval:Exact or qqval:Approximate as the source states. Ranges and
+        approximations are carried by that value, not by this property."""@en ;
     rdfs:domain perovmat:SiteOccupancy ;
     rdfs:range qqval:QualifiedQuantityValue .
 
@@ -314,16 +319,20 @@ perovmat:PerovskitePhase a owl:Class ;
     rdfs:comment "Phase vocabulary specific to perovskite materials."@en .
 
 perovmat:AlphaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
-    rdfs:label "alpha phase"@en .
+    rdfs:label "alpha phase"@en ;
+    skos:altLabel "α-phase"@en, "α phase"@en .
 
 perovmat:BetaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
-    rdfs:label "beta phase"@en .
+    rdfs:label "beta phase"@en ;
+    skos:altLabel "β-phase"@en, "β phase"@en .
 
 perovmat:GammaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
-    rdfs:label "gamma phase"@en .
+    rdfs:label "gamma phase"@en ;
+    skos:altLabel "γ-phase"@en, "γ phase"@en .
 
 perovmat:DeltaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
-    rdfs:label "delta phase"@en .
+    rdfs:label "delta phase"@en ;
+    skos:altLabel "δ-phase"@en, "δ phase"@en, "yellow phase"@en .
 
 #################################################################
 # Perovskite component individuals
@@ -331,35 +340,42 @@ perovmat:DeltaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
 
 perovmat:Cs a owl:NamedIndividual, perovmat:InorganicASiteComponent ;
     rdfs:label "Cs"@en ;
-    dcterms:alternative "Cesium" .
+    skos:altLabel "cesium"@en, "caesium"@en ;
+    skos:notation "Cs" .
 
 perovmat:FA a owl:NamedIndividual, perovmat:OrganicASiteComponent ;
     rdfs:label "FA"@en ;
-    dcterms:alternative "Formamidinium" .
+    skos:altLabel "formamidinium"@en ;
+    skos:notation "FA" .
 
 perovmat:MA a owl:NamedIndividual, perovmat:OrganicASiteComponent ;
     rdfs:label "MA"@en ;
-    dcterms:alternative "Methylammonium" .
+    skos:altLabel "methylammonium"@en ;
+    skos:notation "MA" .
 
 perovmat:Pb a owl:NamedIndividual, perovmat:BSiteComponent ;
     rdfs:label "Pb"@en ;
-    dcterms:alternative "Lead" .
+    skos:altLabel "lead"@en ;
+    skos:notation "Pb" .
 
 perovmat:Sn a owl:NamedIndividual, perovmat:BSiteComponent ;
     rdfs:label "Sn"@en ;
-    dcterms:alternative "Tin" .
+    skos:altLabel "tin"@en ;
+    skos:notation "Sn" .
 
 perovmat:Br a owl:NamedIndividual, perovmat:HalideComponent ;
     rdfs:label "Br"@en ;
-    dcterms:alternative "Bromide" .
+    skos:altLabel "bromide"@en, "bromine"@en ;
+    skos:notation "Br" .
 
 perovmat:I a owl:NamedIndividual, perovmat:HalideComponent ;
     rdfs:label "I"@en ;
-    dcterms:alternative "Iodide" .
+    skos:altLabel "iodide"@en, "iodine"@en .
 
 perovmat:Cl a owl:NamedIndividual, perovmat:HalideComponent ;
     rdfs:label "Cl"@en ;
-    dcterms:alternative "Chloride" .
+    skos:altLabel "chloride"@en, "chlorine"@en ;
+    skos:notation "Cl" .
 
 [] a owl:AllDifferent ;
     owl:distinctMembers ( perovmat:Br perovmat:I perovmat:Cl ) .
@@ -376,7 +392,8 @@ perovmat:CsPbBr3 a
         perovmat:CesiumPerovskite ,
         perovmat:LeadHalidePerovskite ;
     rdfs:label "CsPbBr3"@en ;
-    dcterms:alternative "Cesium lead bromide" ;
+    skos:altLabel "cesium lead bromide"@en ;
+    skos:notation "CsPbBr3" ;
     perovmat:hasASiteComponent perovmat:Cs ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:Br .
@@ -386,7 +403,8 @@ perovmat:MAPbCl3 a
         perovmat:MethylammoniumPerovskite ,
         perovmat:LeadHalidePerovskite ;
     rdfs:label "MAPbCl3"@en ;
-    dcterms:alternative "Methylammonium lead chloride" ;
+    skos:altLabel "methylammonium lead chloride"@en ;
+    skos:notation "MAPbCl3" ;
     perovmat:hasASiteComponent perovmat:MA ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:Cl .
@@ -396,7 +414,8 @@ perovmat:FAPbI3 a
         perovmat:FormamidiniumPerovskite ,
         perovmat:LeadHalidePerovskite ;
     rdfs:label "FAPbI3"@en ;
-    dcterms:alternative "Formamidinium lead iodide" ;
+    skos:altLabel "formamidinium lead iodide"@en ;
+    skos:notation "FAPbI3" ;
     perovmat:hasASiteComponent perovmat:FA ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:I .

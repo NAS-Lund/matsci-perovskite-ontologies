@@ -1,0 +1,1448 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dimension: <http://qudt.org/vocab/dimensionvector/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prefix: <http://qudt.org/vocab/prefix/> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sou: <http://qudt.org/vocab/sou/> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+unit:A-PER-CentiM2 a qudt:Unit ;
+    rdfs:label "Ampere per Square CentiMetre"@en,
+        "Ampere per Square CentiMeter"@en-US ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 10000.0 ;
+    qudt:hasDimensionVector dimension:A0E1L-2I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricCurrentDensity ;
+    qudt:symbol "A/cm2",
+        "A/cm²" ;
+    qudt:ucumCode "A.cm-2"^^qudt:UCUMcs,
+        "A/cm2"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "A/cm2" .
+
+unit:ANGSTROM a qudt:Unit ;
+    rdfs:label "Angstrom"@en ;
+    qudt:conversionMultiplier 0.0000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Length ;
+    qudt:scalingOf unit:M ;
+    qudt:symbol "Angstrom",
+        "angstrom",
+        "Å" ;
+    qudt:ucumCode "Ao"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "Angstrom",
+        "angstrom" .
+
+unit:ATM a qudt:Unit ;
+    rdfs:label "Standard Atmosphere"@en ;
+    qudt:applicableSystem sou:CGS ;
+    qudt:conversionMultiplier 101325.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:VaporPressure ;
+    qudt:scalingOf unit:PA ;
+    qudt:symbol "atm" ;
+    qudt:ucumCode "atm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:CentiM a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "CentiMetre"@en,
+        "CentiMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.01 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Length ;
+    qudt:prefix prefix:Centi ;
+    qudt:scalingOf unit:M ;
+    qudt:symbol "cm" ;
+    qudt:ucumCode "cm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:CentiM2-PER-V-SEC a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Square CentiMetre per Volt Second"@en,
+        "Square CentiMeter per Volt Second"@en-US ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.0001 ;
+    qudt:expression "$cm^2/V-s$"^^qudt:LatexString ;
+    qudt:hasDimensionVector dimension:A0E1L0I0M-1H0T2D0 ;
+    qudt:hasQuantityKind quantitykind:Mobility ;
+    qudt:symbol "cm2/(V·s)",
+        "cm²/(V·s)",
+        "cm²V⁻¹s⁻¹" ;
+    qudt:ucumCode "cm2.V-1.s-1"^^qudt:UCUMcs,
+        "cm2/(V.s)"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "cm2/(V·s)",
+        "cm²V⁻¹s⁻¹" .
+
+unit:DAY a qudt:Unit ;
+    rdfs:label "Day"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 86400.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:BiodegredationHalfLife,
+        quantitykind:FishBiotransformationHalfLife,
+        quantitykind:Time ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "d" ;
+    qudt:ucumCode "d"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:DEG a qudt:Unit ;
+    rdfs:label "Degree"@en ;
+    qudt:applicableSystem sou:ASU,
+        sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-ESU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.0174532925 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    qudt:hasQuantityKind quantitykind:Angle,
+        quantitykind:PlaneAngle ;
+    qudt:scalingOf unit:RAD ;
+    qudt:symbol "deg",
+        "°" ;
+    qudt:ucumCode "deg"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "deg" .
+
+unit:DEG_C a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Degree Celsius"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:conversionOffset 273.15 ;
+    qudt:expression "$degC$"^^qudt:LatexString ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H1T0D0 ;
+    qudt:hasQuantityKind quantitykind:BoilingPoint,
+        quantitykind:FlashPoint,
+        quantitykind:MeltingPoint,
+        quantitykind:Temperature ;
+    qudt:scalingOf unit:K ;
+    qudt:symbol "Celsius",
+        "deg C",
+        "degC",
+        "°C" ;
+    qudt:ucumCode "Cel"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "Celsius",
+        "deg C",
+        "degC" .
+
+unit:FemtoSEC a qudt:Unit ;
+    rdfs:label "FemtoSecond"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 0.000000000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:prefix prefix:Femto ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "fs" ;
+    qudt:ucumCode "fs"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:GM-PER-CentiM3 a qudt:Unit ;
+    rdfs:label "Gram per Cubic CentiMetre"@en,
+        "Gram per Cubic CentiMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-3I0M1H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Density,
+        quantitykind:MassDensity ;
+    qudt:symbol "g/cm3",
+        "g/cm³" ;
+    qudt:ucumCode "g.cm-3"^^qudt:UCUMcs,
+        "g/cm3"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "g/cm3" .
+
+unit:GigaHZ a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "GigaHertz"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 1000000000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:Frequency ;
+    qudt:prefix prefix:Giga ;
+    qudt:scalingOf unit:HZ ;
+    qudt:symbol "GHz" ;
+    qudt:ucumCode "GHz"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:GigaPA a qudt:Unit ;
+    rdfs:label "GigaPascal"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1000000000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:ModulusOfElasticity,
+        quantitykind:ShearModulus,
+        quantitykind:VaporPressure ;
+    qudt:prefix prefix:Giga ;
+    qudt:scalingOf unit:PA ;
+    qudt:symbol "GPa" ;
+    qudt:ucumCode "GPa"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:HR a qudt:Unit ;
+    rdfs:label "Hour"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 3600.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "h" ;
+    qudt:ucumCode "h"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:J-PER-CentiM2 a qudt:Unit ;
+    rdfs:label "Joule per Square CentiMetre"@en,
+        "Joule per Square CentiMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 10000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:EnergyPerArea,
+        quantitykind:StrainEnergyReleaseRate ;
+    qudt:symbol "J/cm2",
+        "J/cm²" ;
+    qudt:ucumCode "J.cm-2"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "J/cm2" .
+
+unit:KiloEV a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Kilo Electron Volt"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.0000000000000001602176634 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Energy ;
+    qudt:prefix prefix:Kilo ;
+    qudt:scalingOf unit:EV ;
+    qudt:symbol "keV" ;
+    qudt:ucumCode "keV"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:KiloHZ a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "KiloHertz"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:Frequency ;
+    qudt:prefix prefix:Kilo ;
+    qudt:scalingOf unit:HZ ;
+    qudt:symbol "kHz" ;
+    qudt:ucumCode "kHz"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:KiloJ-PER-MOL a qudt:Unit ;
+    rdfs:label "KiloJoule per Mole"@en ;
+    qudt:applicableSystem sou:SI ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasDimensionVector dimension:A-1E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:MolarEnergy ;
+    qudt:symbol "kJ/mol" ;
+    qudt:ucumCode "kJ.mol-1"^^qudt:UCUMcs,
+        "kJ/mol"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:KiloPA a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "KiloPascal"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:ModulusOfElasticity,
+        quantitykind:ShearModulus,
+        quantitykind:VaporPressure ;
+    qudt:prefix prefix:Kilo ;
+    qudt:scalingOf unit:PA ;
+    qudt:symbol "kPa" ;
+    qudt:ucumCode "kPa"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MIN a qudt:Unit ;
+    rdfs:label "Minute"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 60.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "min" ;
+    qudt:ucumCode "min"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MOL a qudt:Unit ;
+    rdfs:label "Mole"@en ;
+    qudt:applicableSystem sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A1E0L0I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:AmountOfSubstance,
+        quantitykind:ExtentOfReaction ;
+    qudt:symbol "mol" ;
+    qudt:ucumCode "mol"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MOL-PER-L a qudt:Unit ;
+    rdfs:label "Mole per Litre"@en,
+        "Mole per Liter"@en-US ;
+    qudt:applicableSystem sou:SI ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasDimensionVector dimension:A1E0L-3I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Concentration,
+        quantitykind:WaterSolubility ;
+    qudt:symbol "mol/L",
+        "molar" ;
+    qudt:ucumCode "mol.L-1"^^qudt:UCUMcs,
+        "mol/L"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "molar" .
+
+unit:MegaEV a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Mega Electron Volt"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.0000000000001602176634 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Energy ;
+    qudt:prefix prefix:Mega ;
+    qudt:scalingOf unit:EV ;
+    qudt:symbol "MeV" ;
+    qudt:ucumCode "MeV"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MegaHZ a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "MegaHertz"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 1000000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:Frequency ;
+    qudt:prefix prefix:Mega ;
+    qudt:scalingOf unit:HZ ;
+    qudt:symbol "MHz" ;
+    qudt:ucumCode "MHz"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MegaPA a qudt:Unit ;
+    rdfs:label "MegaPascal"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1000000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:ModulusOfElasticity,
+        quantitykind:ShearModulus,
+        quantitykind:VaporPressure ;
+    qudt:prefix prefix:Mega ;
+    qudt:scalingOf unit:PA ;
+    qudt:symbol "MPa" ;
+    qudt:ucumCode "MPa"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MicroA a qudt:Unit ;
+    rdfs:label "MicroAmpere"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:hasDimensionVector dimension:A0E1L0I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:A ;
+    qudt:symbol "uA",
+        "µA",
+        "μA" ;
+    qudt:ucumCode "uA"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "uA",
+        "µA" .
+
+unit:MicroGM a qudt:Unit ;
+    rdfs:label "MicroGram"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Mass ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:GM ;
+    qudt:symbol "ug",
+        "µg",
+        "μg" ;
+    qudt:ucumCode "ug"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "ug",
+        "µg" .
+
+unit:MicroJ a qudt:Unit ;
+    rdfs:label "Micro Joule"@en,
+        "Micro Joule"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:conversionOffset 0.0 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Energy ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:J ;
+    qudt:symbol "uJ",
+        "µJ",
+        "μJ" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "uJ",
+        "µJ" .
+
+unit:MicroL a qudt:Unit ;
+    rdfs:label "MicroLitre"@en,
+        "MicroLitre"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L3I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Volume ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:L ;
+    qudt:symbol "uL",
+        "µL",
+        "μL" ;
+    qudt:ucumCode "uL"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "uL",
+        "µL" .
+
+unit:MicroM a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "MicroMetre"@en,
+        "MicroMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Length ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:M ;
+    qudt:symbol "micron",
+        "microns",
+        "µm",
+        "μm" ;
+    qudt:ucumCode "um"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "micron",
+        "microns",
+        "µm" .
+
+unit:MicroSEC a qudt:Unit ;
+    rdfs:label "MicroSecond"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "us",
+        "µs",
+        "μs" ;
+    qudt:ucumCode "us"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "us",
+        "µs" .
+
+unit:MicroW a qudt:Unit ;
+    rdfs:label "MicroWatt"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricPower,
+        quantitykind:Power ;
+    qudt:prefix prefix:Micro ;
+    qudt:scalingOf unit:W ;
+    qudt:symbol "uW",
+        "µW",
+        "μW" ;
+    qudt:ucumCode "uW"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "uW",
+        "µW" .
+
+unit:MilliA a qudt:Unit ;
+    rdfs:label "MilliAmpere"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E1L0I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:A ;
+    qudt:symbol "mA" ;
+    qudt:ucumCode "mA"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliBAR a qudt:Unit ;
+    rdfs:label "MilliBar"@en ;
+    qudt:applicableSystem sou:CGS ;
+    qudt:conversionMultiplier 100.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:VaporPressure ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:BAR ;
+    qudt:symbol "mbar" ;
+    qudt:ucumCode "mbar"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliGM a qudt:Unit ;
+    rdfs:label "MilliGram"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Mass ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:GM ;
+    qudt:symbol "mg" ;
+    qudt:ucumCode "mg"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliJ a qudt:Unit ;
+    rdfs:label "MilliJoule"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Energy ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:J ;
+    qudt:symbol "mJ" ;
+    qudt:ucumCode "mJ"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliL a qudt:Unit ;
+    rdfs:label "MilliLitre"@en,
+        "MilliLitre"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000001 ;
+    qudt:hasDimensionVector dimension:A0E0L3I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Volume ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:L ;
+    qudt:symbol "mL" ;
+    qudt:ucumCode "mL"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliM a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "MilliMetre"@en,
+        "MilliMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:expression "$mm$"^^qudt:LatexString ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Length ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:M ;
+    qudt:symbol "mm" ;
+    qudt:ucumCode "mm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliMOL-PER-L a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "MilliMoles per Litre"@en,
+        "MilliMoles per Litre"@en-US ;
+    qudt:applicableSystem sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:expression "$mmo/L$"^^qudt:LatexString ;
+    qudt:hasDimensionVector dimension:A1E0L-3I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:BloodGlucoseLevel,
+        quantitykind:Concentration,
+        quantitykind:WaterSolubility ;
+    qudt:symbol "mM",
+        "mmol/L" ;
+    qudt:ucumCode "mmol.L-1"^^qudt:UCUMcs,
+        "mmol/L"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "mM" .
+
+unit:MilliSEC a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "MilliSecond"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "ms" ;
+    qudt:ucumCode "ms"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliV a qudt:Unit ;
+    rdfs:label "MilliVolt"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E-1L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricPotential,
+        quantitykind:ElectricPotentialDifference,
+        quantitykind:EnergyPerElectricCharge,
+        quantitykind:Voltage ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:V ;
+    qudt:symbol "mV" ;
+    qudt:ucumCode "mV"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:MilliW a qudt:Unit ;
+    rdfs:label "MilliW"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricPower,
+        quantitykind:Power ;
+    qudt:prefix prefix:Milli ;
+    qudt:scalingOf unit:W ;
+    qudt:symbol "mW" ;
+    qudt:ucumCode "mW"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:N a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Newton"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Force ;
+    qudt:symbol "N" ;
+    qudt:ucumCode "N"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:NUM-PER-SEC a qudt:Unit ;
+    rdfs:label "Counts per Second"@en ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:CountRate,
+        quantitykind:Frequency ;
+    qudt:symbol "#/s",
+        "counts/s",
+        "cps" ;
+    qudt:ucumCode "/s"^^qudt:UCUMcs,
+        "{#}.s-1"^^qudt:UCUMcs,
+        "{#}/s"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "counts/s",
+        "cps" .
+
+unit:NanoM a qudt:Unit ;
+    rdfs:label "NanoMetre"@en,
+        "NanoMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Length ;
+    qudt:prefix prefix:Nano ;
+    qudt:scalingOf unit:M ;
+    qudt:symbol "nm" ;
+    qudt:ucumCode "nm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:NanoSEC a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "NanoSecond"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 0.000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:prefix prefix:Nano ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "ns" ;
+    qudt:ucumCode "ns"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:OHM a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Ohm"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E-2L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:Impedance,
+        quantitykind:ModulusOfImpedance,
+        quantitykind:Reactance,
+        quantitykind:Resistance ;
+    qudt:symbol "Ohm",
+        "ohm",
+        "Ω" ;
+    qudt:ucumCode "Ohm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "Ohm",
+        "ohm" .
+
+unit:OHM-CentiM a qudt:Unit ;
+    rdfs:label "Ohm CentiMetre"@en,
+        "Ohm CentiMeter"@en-US ;
+    qudt:conversionMultiplier 0.01 ;
+    qudt:hasDimensionVector dimension:A0E-2L3I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:Resistivity ;
+    qudt:symbol "Ohm·cm",
+        "Ω·cm" ;
+    qudt:ucumCode "Ohm.cm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "Ohm·cm" .
+
+unit:PER-CentiM a qudt:Unit ;
+    rdfs:label "Reciprocal CentiMetre"@en,
+        "Reciprocal CentiMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 100.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:InverseLength ;
+    qudt:symbol "/cm",
+        "1/cm",
+        "cm⁻¹" ;
+    qudt:ucumCode "/cm"^^qudt:UCUMcs,
+        "cm-1"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "1/cm",
+        "cm⁻¹" .
+
+unit:PERCENT a qudt:Unit ;
+    rdfs:label "Percent"@en ;
+    qudt:applicableSystem sou:ASU,
+        sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-ESU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 0.01 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio,
+        quantitykind:DutyCycle,
+        quantitykind:Emissivity,
+        quantitykind:LengthRatio,
+        quantitykind:LuminousFluxRatio,
+        quantitykind:OpeningRatio,
+        quantitykind:PressureRatio,
+        quantitykind:Prevalence,
+        quantitykind:Reflectance,
+        quantitykind:RelativeHumidity,
+        quantitykind:RelativePartialPressure,
+        quantitykind:ResistanceRatio,
+        quantitykind:ServiceFactor,
+        quantitykind:StateOfCharge,
+        quantitykind:TimeRatio,
+        quantitykind:VoltageRatio ;
+    qudt:scalingOf unit:NUM ;
+    qudt:symbol "%",
+        "pct",
+        "percent" ;
+    qudt:ucumCode "%"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "pct",
+        "percent" .
+
+unit:PicoM a qudt:Unit ;
+    rdfs:label "PicoMetre"@en,
+        "PicoMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.000000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Length ;
+    qudt:prefix prefix:Pico ;
+    qudt:scalingOf unit:M ;
+    qudt:symbol "pm" ;
+    qudt:ucumCode "pm"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:PicoSEC a qudt:Unit ;
+    rdfs:label "PicoSecond"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 0.000000000001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Time ;
+    qudt:prefix prefix:Pico ;
+    qudt:scalingOf unit:SEC ;
+    qudt:symbol "ps" ;
+    qudt:ucumCode "ps"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:REV-PER-MIN a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Revolution per Minute"@en ;
+    qudt:applicableSystem sou:IMPERIAL,
+        sou:SI ;
+    qudt:conversionMultiplier 0.1047197551666666666666666666666667 ;
+    qudt:expression "$rev/min$"^^qudt:LatexString ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:RotationalFrequency,
+        quantitykind:RotationalVelocity ;
+    qudt:symbol "rev/min",
+        "rpm" ;
+    qudt:ucumCode "{#}.min-1"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "rpm" .
+
+unit:SR a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Steradian"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    qudt:hasQuantityKind quantitykind:SolidAngle ;
+    qudt:symbol "sr" ;
+    qudt:ucumCode "sr"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:T a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Tesla"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E-1L0I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:MagneticField,
+        quantitykind:MagneticFluxDensity ;
+    qudt:symbol "T" ;
+    qudt:ucumCode "T"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:TORR a qudt:Unit ;
+    rdfs:label "Torr"@en ;
+    qudt:conversionMultiplier 133.322 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:VaporPressure ;
+    qudt:scalingOf unit:PA ;
+    qudt:symbol "Torr" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:TeraHZ a qudt:Unit ;
+    rdfs:label "TeraHertz"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 1000000000000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:Frequency ;
+    qudt:prefix prefix:Tera ;
+    qudt:scalingOf unit:HZ ;
+    qudt:symbol "THz" ;
+    qudt:ucumCode "THz"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:W-PER-CentiM2 a qudt:Unit ;
+    rdfs:label "Watt per Square CentiMetre"@en,
+        "Watt per Square CentiMeter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 10000.0 ;
+    qudt:expression "$W/ft^{2}$"^^qudt:LatexString ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:PowerPerArea ;
+    qudt:symbol "W/cm2",
+        "W/cm²",
+        "W·cm⁻²" ;
+    qudt:ucumCode "W.cm-2"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> ;
+    skos:notation "W/cm2",
+        "W·cm⁻²" .
+
+<https://growgraph.dev/ontologies/matsci-qudt-units> a owl:Ontology ;
+    rdfs:label "matsci-qudt-units (QUDT projection for matsci)"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:source <https://qudt.org/3.1.4/vocab/unit> ;
+    rdfs:comment "The matsci projection of QUDT: the units this corpus reports, vendored so they have real, retrievable identifiers."@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-qudt-units/1.0.0> ;
+    owl:versionInfo "1.0.0" ;
+    skos:scopeNote """OntoCast does not dereference owl:imports, so a declared dependency on QUDT
+delivers no terms: without this file the extraction pipeline is asked to cite
+QUDT unit IRIs it has never seen, and invents them. Only units this corpus
+reports are vendored, together with the quantity kinds they belong to -- the
+full vocabulary would swamp the atom and induced-subgraph budgets.
+
+Canonical, not authored: every term keeps its QUDT IRI and QUDT definition.
+Nothing is aliased, renamed or re-minted. The one addition is extra lexical
+surface forms, because QUDT's spellings do not match paper text -- QUDT writes
+micro as U+03BC (GREEK SMALL LETTER MU) where papers use U+00B5 (MICRO SIGN),
+and writes wavenumber as "/cm" where papers write cm with a superscript minus
+one. Those are extra qudt:symbol / skos:notation literals on the QUDT IRI
+itself, never a competing individual.
+
+Units genuinely absent from QUDT are minted locally in matsci-units.ttl.
+
+Which units belong here is a property of what the matsci corpus reports, so the
+module is project-scoped by name: another project vendors its own projection
+instead of widening this one.
+
+Generated by scripts/build_qudt_subset.py; edit that script, not this file."""@en .
+
+quantitykind:AmountOfSubstance a qudt:QuantityKind ;
+    rdfs:label "amount of substance"@en ;
+    qudt:hasDimensionVector dimension:A1E0L0I0M0H0T0D0 ;
+    qudt:symbol "n" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:CountRate a qudt:QuantityKind ;
+    rdfs:label "CountRate"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> ;
+    skos:broader quantitykind:Frequency .
+
+quantitykind:Density a qudt:QuantityKind ;
+    rdfs:label "Density"@en ;
+    qudt:hasDimensionVector dimension:A0E0L-3I0M1H0T0D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:ElectricCurrentDensity a qudt:QuantityKind ;
+    rdfs:label "electric current density"@en ;
+    qudt:hasDimensionVector dimension:A0E1L-2I0M0H0T0D0 ;
+    qudt:symbol "J" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:EnergyPerArea a qudt:QuantityKind ;
+    rdfs:label "Energy per Area"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T-2D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Force a qudt:QuantityKind ;
+    rdfs:label "force"@en ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M1H0T-2D0 ;
+    qudt:symbol "F" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:InverseLength a qudt:QuantityKind ;
+    rdfs:label "Inverse Length"@en ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M0H0T0D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:MagneticFluxDensity a qudt:QuantityKind ;
+    rdfs:label "magnetic flux density"@en,
+        "magnetic flux density"@en-US ;
+    qudt:hasDimensionVector dimension:A0E-1L0I0M1H0T-2D0 ;
+    qudt:symbol "B" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:MassDensity a qudt:QuantityKind ;
+    rdfs:label "mass density"@en ;
+    qudt:hasDimensionVector dimension:A0E0L-3I0M1H0T0D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Mobility a qudt:QuantityKind ;
+    rdfs:label "mobility"@en ;
+    qudt:hasDimensionVector dimension:A0E1L0I0M-1H0T2D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:MolarEnergy a qudt:QuantityKind ;
+    rdfs:label "Molar Energy"@en ;
+    qudt:hasDimensionVector dimension:A-1E0L2I0M1H0T-2D0 ;
+    qudt:symbol "U_M" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:PowerPerArea a qudt:QuantityKind ;
+    rdfs:label "Power Per Area"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T-3D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Resistance a qudt:QuantityKind ;
+    rdfs:label "Resistance"@en ;
+    qudt:hasDimensionVector dimension:A0E-2L2I0M1H0T-3D0 ;
+    qudt:symbol "R" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Resistivity a qudt:QuantityKind ;
+    rdfs:label "Resistivity"@en ;
+    qudt:hasDimensionVector dimension:A0E-2L3I0M1H0T-3D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:SolidAngle a qudt:QuantityKind ;
+    rdfs:label "solid angle"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> ;
+    skos:broader quantitykind:AreaRatio .
+
+quantitykind:ThermodynamicTemperature a qudt:QuantityKind ;
+    rdfs:label "thermodynamic temperature"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H1T0D0 ;
+    qudt:symbol "T" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> ;
+    skos:broader quantitykind:Temperature .
+
+unit:BAR a qudt:Unit ;
+    rdfs:label "Bar"@en ;
+    qudt:applicableSystem sou:CGS ;
+    qudt:conversionMultiplier 100000.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:ForcePerArea,
+        quantitykind:VaporPressure ;
+    qudt:scalingOf unit:PA ;
+    qudt:symbol "bar" ;
+    qudt:ucumCode "bar"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:K a qudt:Unit ;
+    rdfs:label "Kelvin"@en ;
+    qudt:applicableSystem sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H1T0D0 ;
+    qudt:hasQuantityKind quantitykind:BoilingPoint,
+        quantitykind:CorrelatedColorTemperature,
+        quantitykind:FlashPoint,
+        quantitykind:MeltingPoint,
+        quantitykind:Temperature,
+        quantitykind:ThermodynamicTemperature ;
+    qudt:symbol "K" ;
+    qudt:ucumCode "K"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:KiloGM a qudt:Unit ;
+    rdfs:label "KiloGram"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:CO2Equivalent,
+        quantitykind:Mass ;
+    qudt:symbol "kg" ;
+    qudt:ucumCode "kg"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:RAD a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Radian"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    qudt:hasQuantityKind quantitykind:Angle,
+        quantitykind:PlaneAngle ;
+    qudt:symbol "rad" ;
+    qudt:ucumCode "rad"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:V a qudt:Unit ;
+    rdfs:label "Volt"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E-1L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricPotential,
+        quantitykind:ElectricPotentialDifference,
+        quantitykind:EnergyPerElectricCharge,
+        quantitykind:Voltage ;
+    qudt:symbol "V" ;
+    qudt:ucumCode "V"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+quantitykind:Angle a qudt:QuantityKind ;
+    rdfs:label "Angle"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> ;
+    skos:broader quantitykind:DimensionlessRatio .
+
+quantitykind:Concentration a qudt:QuantityKind ;
+    rdfs:label "Concentration"@en ;
+    qudt:hasDimensionVector dimension:A1E0L-3I0M0H0T0D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:DimensionlessRatio a qudt:QuantityKind ;
+    rdfs:label "Dimensionless Ratio"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> ;
+    skos:broader quantitykind:Dimensionless .
+
+quantitykind:PlaneAngle a qudt:QuantityKind ;
+    rdfs:label "plane angle"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T0D1 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:RotationalFrequency a qudt:QuantityKind ;
+    rdfs:label "RotationalFrequency"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Voltage a qudt:QuantityKind ;
+    rdfs:label "Voltage"@en ;
+    qudt:hasDimensionVector dimension:A0E-1L2I0M1H0T-3D0 ;
+    qudt:symbol "U" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+unit:A a qudt:Unit ;
+    rdfs:label "Ampere"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E1L0I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:CurrentLinkage,
+        quantitykind:DisplacementCurrent,
+        quantitykind:ElectricCurrent,
+        quantitykind:ElectricCurrentPhasor,
+        quantitykind:MagneticTension,
+        quantitykind:MagnetomotiveForce,
+        quantitykind:TotalCurrent ;
+    qudt:symbol "A" ;
+    qudt:ucumCode "A"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:EV a qudt:Unit ;
+    rdfs:label "Electron Volt"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.0000000000000000001602176634 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Energy ;
+    qudt:scalingOf unit:J ;
+    qudt:symbol "eV" ;
+    qudt:ucumCode "eV"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:GM a qudt:Unit ;
+    rdfs:label "Gram"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:Mass ;
+    qudt:scalingOf unit:KiloGM ;
+    qudt:symbol "g" ;
+    qudt:ucumCode "g"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:L a qudt:Unit ;
+    rdfs:label "Litre"@en,
+        "Liter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 0.001 ;
+    qudt:hasDimensionVector dimension:A0E0L3I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:LiquidVolume,
+        quantitykind:Volume ;
+    qudt:symbol "L" ;
+    qudt:ucumCode "L"^^qudt:UCUMcs,
+        "l"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:W a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Watt"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:PLANCK,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricPower,
+        quantitykind:Power ;
+    qudt:symbol "W" ;
+    qudt:ucumCode "W"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+quantitykind:ElectricCurrent a qudt:QuantityKind ;
+    rdfs:label "electric current"@en ;
+    qudt:hasDimensionVector dimension:A0E1L0I0M0H0T0D0 ;
+    qudt:symbol "I" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Power a qudt:QuantityKind ;
+    rdfs:label "power"@en ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-3D0 ;
+    qudt:symbol "P" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Temperature a qudt:QuantityKind ;
+    rdfs:label "Temperature"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H1T0D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:Volume a qudt:QuantityKind ;
+    rdfs:label "Volume"@en ;
+    qudt:hasDimensionVector dimension:A0E0L3I0M0H0T0D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+unit:J a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Joule"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:Energy,
+        quantitykind:ExchangeIntegral,
+        quantitykind:HamiltonFunction,
+        quantitykind:LagrangeFunction,
+        quantitykind:LevelWidth,
+        quantitykind:ThermalEnergy ;
+    qudt:symbol "J" ;
+    qudt:ucumCode "J"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+quantitykind:Mass a qudt:QuantityKind ;
+    rdfs:label "mass"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M1H0T0D0 ;
+    qudt:symbol "m" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+unit:HZ a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Hertz"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    qudt:hasQuantityKind quantitykind:Frequency,
+        quantitykind:RotationalFrequency,
+        quantitykind:RotationalVelocity ;
+    qudt:symbol "Hz" ;
+    qudt:ucumCode "Hz"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+quantitykind:Energy a qudt:QuantityKind ;
+    rdfs:label "energy"@en ;
+    qudt:hasDimensionVector dimension:A0E0L2I0M1H0T-2D0 ;
+    qudt:symbol "E" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+unit:M a qudt:Unit ;
+    rdfs:label "Metre"@en,
+        "Meter"@en-US ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:hasQuantityKind quantitykind:ElevationRelativeToNAP,
+        quantitykind:Length ;
+    qudt:symbol "m" ;
+    qudt:ucumCode "m"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+unit:PA a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "Pascal"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:hasQuantityKind quantitykind:BulkModulus,
+        quantitykind:ForcePerArea,
+        quantitykind:Fugacity,
+        quantitykind:ModulusOfElasticity,
+        quantitykind:ShearModulus,
+        quantitykind:VaporPressure ;
+    qudt:symbol "Pa" ;
+    qudt:ucumCode "Pa"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+quantitykind:Frequency a qudt:QuantityKind ;
+    rdfs:label "frequency"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T-1D0 ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> ;
+    skos:broader quantitykind:InverseTime .
+
+quantitykind:Length a qudt:QuantityKind ;
+    rdfs:label "length"@en ;
+    qudt:hasDimensionVector dimension:A0E0L1I0M0H0T0D0 ;
+    qudt:symbol "l" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+quantitykind:ForcePerArea a qudt:QuantityKind ;
+    rdfs:label "Force Per Area"@en ;
+    qudt:hasDimensionVector dimension:A0E0L-1I0M1H0T-2D0 ;
+    qudt:symbol "p" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+
+unit:SEC a qudt:Unit ;
+    rdfs:label "Second"@en ;
+    qudt:applicableSystem sou:CGS,
+        sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:IMPERIAL,
+        sou:SI,
+        sou:USCS ;
+    qudt:conversionMultiplier 1.0 ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:hasQuantityKind quantitykind:Period,
+        quantitykind:Time ;
+    qudt:symbol "s" ;
+    qudt:ucumCode "s"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
+quantitykind:Time a qudt:QuantityKind ;
+    rdfs:label "time"@en ;
+    qudt:hasDimensionVector dimension:A0E0L0I0M0H0T1D0 ;
+    qudt:symbol "t" ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/quantitykind> .
+

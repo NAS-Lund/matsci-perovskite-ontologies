@@ -3,6 +3,7 @@
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix pergres: <https://growgraph.dev/ontologies/pergres#> .
 @prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
 @prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
@@ -13,27 +14,27 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """Bridge ontology for the Pergres project: asserts the cross-module
-        policy that quantitative observation results and temporal quantity
-        values are qqval-qualified.
+        """Bridge module asserting the cross-module policy that quantitative
+        observation results and temporal quantity values are
+        qqval-qualified."""@en ;
+    skos:scopeNote
+        """Keeps qqval, observation and lifecycle free of mutual coupling.
+        Consumers wanting qqval-qualified results (matsci) import this module;
+        those needing only bare qudt:QuantityValue results import observation
+        or lifecycle alone.
 
-        Leaves qqval, observation, and lifecycle
-        free of mutual coupling. Consumers that want qqval-qualified
-        results (e.g. matsci) import this module; consumers that
-        only need bare qudt:QuantityValue results import observation /
-        lifecycle alone.
-
-        Axioms:
-          • obs:hasQuantityResult range → qqval:QualifiedQuantityValue
-          • obs:QuantitativeObservation requires some sosa:hasResult that
-            is a qqval:QualifiedQuantityValue
-          • life:TimeQuantityValue ⊑ qqval:QualifiedQuantityValue"""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/pergres/1.1.0> ;
+        Declares no terms of its own -- it asserts three axioms over terms
+        defined elsewhere: obs:hasQuantityResult has range
+        qqval:QualifiedQuantityValue; obs:QuantitativeObservation requires some
+        sosa:hasResult that is a qqval:QualifiedQuantityValue; and
+        life:TimeQuantityValue is a subclass of
+        qqval:QualifiedQuantityValue."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/pergres/1.2.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/qqval> ,
         <https://growgraph.dev/ontologies/observation> ,
         <https://growgraph.dev/ontologies/lifecycle> ;
-    owl:versionInfo "1.1.0" .
+    owl:versionInfo "1.2.0" .
 
 #################################################################
 # qqval-qualification policy for observation results
