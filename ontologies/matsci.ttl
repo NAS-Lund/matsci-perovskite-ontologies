@@ -5,14 +5,12 @@
 @prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
-@prefix unit:    <http://qudt.org/vocab/unit/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
 @prefix ssn:     <http://www.w3.org/ns/ssn/> .
 @prefix obo:     <http://purl.obolibrary.org/obo/> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
-@prefix om:      <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
 
 <https://growgraph.dev/ontologies/matsci> a owl:Ontology ;
@@ -20,35 +18,31 @@
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
-        """General materials-science ontology: materials, samples,
-        synthesis, characterization, morphology, and properties.
-        Layers on observation and lifecycle; imports
-        qqval for qualified quantity values and pergres
-        for the policy that quantitative observation results are
-        qqval-qualified.
-
-        matsci:hasInputSample / hasOutputSample are sosa:Sample-narrowed
-        convenience subproperties of obs:hasInputEntity / hasOutputEntity.
-
-        Extension contract: matsci is the domain extension layer
-        for observation / lifecycle — it subclasses
-        obs:Process / obs:Phenomenon / life:LifecycleProcess /
-        life:ObservableTemporalProperty and subproperties the generic
-        entity-of-interest properties. matsci:Material, matsci:MaterialRole,
-        and the various *Method/*Process/*Value controlled vocabularies
-        here are open."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci/4.1.0> ;
+        """General materials-science vocabulary: materials, samples, synthesis,
+        characterization, morphology, and observable properties. Layers on
+        observation and lifecycle, with qqval-qualified quantitative results
+        via pergres."""@en ;
+    skos:scopeNote
+        """Domain extension layer for observation / lifecycle: subclasses
+        obs:Process, obs:PhysicalPhenomenon, life:LifecycleProcess and
+        life:ObservableTemporalProperty, and subproperties the generic
+        entity-of-interest properties. matsci:Material, matsci:MaterialRole and
+        the *Method / *Process / *Value controlled vocabularies are open for
+        extension."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci/4.3.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://growgraph.dev/ontologies/lifecycle> ,
         <https://growgraph.dev/ontologies/qqval> ,
+        <https://growgraph.dev/ontologies/matsci-units> ,
+        <https://growgraph.dev/ontologies/matsci-qudt-units> ,
         <https://growgraph.dev/ontologies/pergres> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://www.w3.org/ns/ssn/> ,
-        <http://qudt.org/2.1/schema/facade/qudt> ,
+        <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ,
-        <http://qudt.org/2.1/vocab/unit> ;
-    owl:versionInfo "4.1.0" .
+        <http://qudt.org/3.1.4/vocab/unit> ;
+    owl:versionInfo "4.3.0" .
 
 #################################################################
 # Core classes
@@ -225,13 +219,15 @@ matsci:BulkSample a owl:Class ;
 
 matsci:NanocrystalSample a owl:Class ;
     rdfs:label "Nanocrystal sample"@en ;
-    dcterms:alternative "NC", "QD", "nanocrystal", "quantum dot" ;
+    skos:altLabel "nanocrystal"@en, "quantum dot"@en ;
+    skos:notation "NC", "QD" ;
     rdfs:comment "Concrete nanocrystal sample."@en ;
     rdfs:subClassOf sosa:Sample .
 
 matsci:SuperlatticeSample a owl:Class ;
     rdfs:label "Superlattice sample"@en ;
-    dcterms:alternative "SL", "superlattice" ;
+    skos:altLabel "superlattice"@en ;
+    skos:notation "SL" ;
     rdfs:comment "Concrete superlattice sample."@en ;
     rdfs:subClassOf sosa:Sample .
 
@@ -399,11 +395,13 @@ matsci:hasThickness a owl:ObjectProperty ;
 matsci:hasValueRange a owl:ObjectProperty ;
     rdfs:label "has value range"@en ;
     rdfs:comment
-        """Links a morphology state to a quantitative interval represented as
-        a qqval:QuantityRange node (bounds are independent qudt:QuantityValue
-        nodes).  For compact same-unit ranges, prefer an observation result
-        typed as qqval:QualifiedQuantityValue with both numericLowerBound and
-        numericUpperBound populated."""@en ;
+        """Links a morphology state to a quantitative interval, represented as a
+        qqval:QuantityRange whose bounds are independent qudt:QuantityValue
+        nodes."""@en ;
+    skos:scopeNote
+        """For compact same-unit ranges prefer a qqval:QualifiedQuantityValue
+        result with numericLowerBound and numericUpperBound populated; reserve
+        QuantityRange for bounds carrying independent units or provenance."""@en ;
     rdfs:domain matsci:MorphologyState ;
     rdfs:range qqval:QuantityRange .
 
@@ -516,11 +514,12 @@ matsci:transformsSample a owl:ObjectProperty ;
 matsci:derivedFromSample a owl:ObjectProperty ;
     rdfs:label "derived from sample"@en ;
     rdfs:comment
-        """Links a sample to an earlier sample from which it was physically
-        derived, such as an aliquot, aged specimen, post-treatment product,
-        or other lineage continuation of the same experimental material.
-        Use this to connect observations on different time points or
-        processing stages to a shared physical specimen rather than minting
+        """Links a sample to an earlier sample it was physically derived from --
+        an aliquot, aged specimen, or post-treatment product of the same
+        experimental material."""@en ;
+    skos:scopeNote
+        """Use this to connect observations at different time points or
+        processing stages to a shared physical specimen, rather than minting
         unrelated sample instances."""@en ;
     rdfs:domain sosa:Sample ;
     rdfs:range sosa:Sample .
@@ -561,49 +560,59 @@ matsci:hasLuminescentImpurity a owl:ObjectProperty ;
 
 matsci:Absorption a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
     rdfs:label "UV-vis absorption"@en ;
-    dcterms:alternative "Absorption", "absorption" .
+    skos:altLabel "absorption"@en, "UV-visible absorption spectroscopy"@en ;
+    skos:notation "UV-vis" .
 
 matsci:Ellipsometry a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "ellipsometry"@en .
+    rdfs:label "ellipsometry"@en ;
+    skos:altLabel "spectroscopic ellipsometry"@en .
 
 matsci:PLE a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "photoluminescence excitation (PLE)"@en .
+    rdfs:label "photoluminescence excitation"@en ;
+    skos:notation "PLE" .
 
 matsci:Photoluminescence a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "photoluminescence (PL)"@en ;
-    dcterms:alternative "PL", "Photoluminescence" ;
-    rdfs:comment "Photoluminescence is emission of light after photon absorption."@en .
+    rdfs:label "photoluminescence"@en ;
+    skos:notation "PL" ;
+    rdfs:comment "Emission of light following photon absorption."@en .
 
 matsci:PolarizationResolvedPL a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "polarization-resolved PL"@en .
+    rdfs:label "polarization-resolved photoluminescence"@en ;
+    skos:altLabel "polarization-resolved PL"@en .
 
 matsci:Raman a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "Raman spectroscopy"@en .
+    rdfs:label "Raman spectroscopy"@en ;
+    skos:altLabel "Raman scattering"@en .
 
 matsci:Reflectance a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
     rdfs:label "reflectance"@en .
 
 matsci:TA a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "transient absorption (pump-probe)"@en ;
-    dcterms:alternative "pump-probe" .
+    rdfs:label "transient absorption"@en ;
+    skos:altLabel "pump-probe spectroscopy"@en, "pump-probe"@en ;
+    skos:notation "TA" .
 
 matsci:TRPL a owl:NamedIndividual, matsci:OpticalCharacterizationMethod ;
-    rdfs:label "time-resolved PL (TRPL)"@en .
+    rdfs:label "time-resolved photoluminescence"@en ;
+    skos:altLabel "time-resolved PL"@en ;
+    skos:notation "TRPL" .
 
 matsci:XRD a owl:NamedIndividual, matsci:StructuralCharacterizationMethod ;
-    rdfs:label "X-ray diffraction (XRD)"@en .
+    rdfs:label "X-ray diffraction"@en ;
+    skos:notation "XRD" .
 
 matsci:LARP a owl:NamedIndividual, matsci:SynthesisMethod ;
     rdfs:label "ligand-assisted reprecipitation"@en ;
-    dcterms:alternative "LARP", "anti-solvent reprecipitation" .
+    skos:altLabel "anti-solvent reprecipitation"@en ;
+    skos:notation "LARP" .
 
 matsci:hot_injection a owl:NamedIndividual, matsci:SynthesisMethod ;
     rdfs:label "hot-injection synthesis"@en ;
-    dcterms:alternative "hot injection" .
+    skos:altLabel "hot injection"@en .
 
 matsci:mechanochemical a owl:NamedIndividual, matsci:SynthesisMethod ;
     rdfs:label "mechanochemical synthesis"@en ;
-    dcterms:alternative "ball-milling" .
+    skos:altLabel "ball-milling"@en, "ball milling"@en .
 
 matsci:solvothermal a owl:NamedIndividual, matsci:SynthesisMethod ;
     rdfs:label "solvothermal synthesis"@en .
@@ -634,53 +643,55 @@ matsci:Memristor a owl:NamedIndividual, matsci:Application ;
 
 matsci:acetone a owl:NamedIndividual, matsci:Material ;
     rdfs:label "acetone"@en ;
-    dcterms:alternative "2-propanone", "Dimethyl ketone", "propanone" .
+    skos:altLabel "propanone"@en, "2-propanone"@en, "dimethyl ketone"@en .
 
 matsci:isopropanol a owl:NamedIndividual, matsci:Material ;
     rdfs:label "isopropanol"@en ;
-    dcterms:alternative "IPA" .
+    skos:notation "IPA" .
 
 matsci:acetonitrile a owl:NamedIndividual, matsci:Material ;
     rdfs:label "acetonitrile"@en ;
-    dcterms:alternative "ACN" .
+    skos:notation "ACN" .
 
 matsci:dmf a owl:NamedIndividual, matsci:Material ;
     rdfs:label "DMF"@en ;
-    dcterms:alternative "Dimethylformamide" .
+    skos:altLabel "dimethylformamide"@en ;
+    skos:notation "DMF" .
 
 matsci:dmso a owl:NamedIndividual, matsci:Material ;
     rdfs:label "DMSO"@en ;
-    dcterms:alternative "Dimethyl sulfoxide" .
+    skos:altLabel "dimethyl sulfoxide"@en ;
+    skos:notation "DMSO" .
 
 matsci:hexane a owl:NamedIndividual, matsci:Material ;
     rdfs:label "hexane"@en ;
-    dcterms:alternative "n-hexane" .
+    skos:altLabel "n-hexane"@en .
 
 matsci:octadecene a owl:NamedIndividual, matsci:Material ;
     rdfs:label "octadecene"@en .
 
 matsci:toluene a owl:NamedIndividual, matsci:Material ;
     rdfs:label "toluene"@en ;
-    dcterms:alternative "PhCH3" .
+    skos:notation "PhCH3" .
 
 matsci:hexylamine a owl:NamedIndividual, matsci:Material ;
     rdfs:label "hexylamine"@en .
 
 matsci:octylamine a owl:NamedIndividual, matsci:Material ;
     rdfs:label "octylamine"@en ;
-    dcterms:alternative "1-Aminooctane", "N-OCTYLAMINE", "octan-1-amine" .
+    skos:altLabel "1-aminooctane"@en, "octan-1-amine"@en .
 
 matsci:oleicAcid a owl:NamedIndividual, matsci:Material ;
     rdfs:label "oleic acid"@en ;
-    dcterms:alternative "OA" .
+    skos:notation "OA" .
 
 matsci:oleylamine a owl:NamedIndividual, matsci:Material ;
     rdfs:label "oleylamine"@en ;
-    dcterms:alternative "OLA" .
+    skos:notation "OLA", "OAm" .
 
 matsci:oleylammoniumBromide a owl:NamedIndividual, matsci:Material ;
     rdfs:label "oleylammonium bromide"@en ;
-    dcterms:alternative "C18H38BrN" .
+    skos:notation "C18H38BrN", "OABr" .
 
 #################################################################
 # Condition factor and condition-value individuals
@@ -736,24 +747,30 @@ matsci:wire a owl:NamedIndividual, matsci:ShapeValue ;
     rdfs:label "wire"@en .
 
 matsci:facet100 a owl:NamedIndividual, matsci:FacetExposureValue ;
-    rdfs:label "{100}"@en .
+    rdfs:label "{100} facet"@en ;
+    skos:notation "{100}", "(100)" .
 
 matsci:facet110 a owl:NamedIndividual, matsci:FacetExposureValue ;
-    rdfs:label "{110}"@en .
+    rdfs:label "{110} facet"@en ;
+    skos:notation "{110}", "(110)" .
 
 matsci:facet111 a owl:NamedIndividual, matsci:FacetExposureValue ;
-    rdfs:label "{111}"@en .
+    rdfs:label "{111} facet"@en ;
+    skos:notation "{111}", "(111)" .
 
 #################################################################
 # Observable property vocabulary
 #################################################################
 
 matsci:absorptionCoefficientProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "absorption coefficient"@en .
+    rdfs:label "absorption coefficient"@en ;
+    skos:altLabel "optical absorption coefficient"@en .
 
 matsci:bandgapProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "bandgap"@en ;
-    rdfs:comment "The bandgap of a material, treated as an observable property in an observation."@en .
+    skos:altLabel "band gap"@en, "optical bandgap"@en ;
+    skos:notation "Eg" ;
+    rdfs:comment "The bandgap of a material, as an observable property of an observation."@en .
 
 matsci:biexcitonBindingEnergyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "biexciton binding energy"@en .
@@ -768,27 +785,32 @@ matsci:fineStructureSplittingProperty a owl:NamedIndividual, matsci:ObservableMa
     rdfs:label "fine-structure splitting"@en .
 
 matsci:fwhmProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "FWHM"@en .
+    rdfs:label "full width at half maximum"@en ;
+    skos:altLabel "linewidth"@en, "emission linewidth"@en ;
+    skos:notation "FWHM" .
 
 matsci:gFactorProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "exciton g-factor"@en .
+    rdfs:label "exciton g-factor"@en ;
+    skos:altLabel "Lande g-factor"@en, "g factor"@en .
 
 matsci:lifetimeProperty a owl:NamedIndividual,
         matsci:ObservableMaterialProperty ;
     rdfs:label "lifetime"@en ;
-    dcterms:alternative "PL lifetime", "photoluminescence lifetime" .
+    skos:altLabel "PL lifetime"@en, "photoluminescence lifetime"@en .
 matsci:oscillatorStrengthProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "oscillator strength"@en .
 
 matsci:plPeakWavelengthProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "PL peak wavelength"@en ;
-    dcterms:alternative "PL peak energy" .
+    skos:altLabel "PL peak energy"@en, "emission peak wavelength"@en .
 
 matsci:polarizationAnisotropyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "polarization anisotropy"@en .
 
 matsci:quantumYieldProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "quantum yield"@en .
+    rdfs:label "quantum yield"@en ;
+    skos:altLabel "photoluminescence quantum yield"@en, "PL quantum yield"@en ;
+    skos:notation "PLQY", "QY" .
 
 matsci:refractiveIndexProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
     rdfs:label "refractive index"@en .
@@ -797,10 +819,12 @@ matsci:stimulatedEmissionCrossSectionProperty a owl:NamedIndividual, matsci:Obse
     rdfs:label "stimulated emission cross-section"@en .
 
 matsci:stokesShiftProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "Stokes shift"@en .
+    rdfs:label "Stokes shift"@en ;
+    skos:altLabel "Stokes-shifted emission"@en .
 
 matsci:urbachEnergyProperty a owl:NamedIndividual, matsci:ObservableMaterialProperty ;
-    rdfs:label "Urbach energy"@en .
+    rdfs:label "Urbach energy"@en ;
+    skos:altLabel "Urbach tail energy"@en .
 
 matsci:dimensionalityProperty a owl:NamedIndividual, matsci:ObservableMorphologyProperty ;
     rdfs:label "dimensionality"@en .
@@ -841,13 +865,15 @@ matsci:CollectiveEmissionPhenomenon a owl:Class ;
 
 matsci:Superfluorescence a owl:Class ;
     rdfs:label "Superfluorescence"@en ;
-    dcterms:alternative "SF", "superfluorescent emission" ;
+    skos:altLabel "superfluorescent emission"@en ;
+    skos:notation "SF" ;
     rdfs:comment "A collective emission phenomenon characterized by delayed, correlated, burst-like emission from an ensemble of excited emitters."@en ;
     rdfs:subClassOf matsci:CollectiveEmissionPhenomenon .
 
 matsci:Superradiance a owl:Class ;
     rdfs:label "Superradiance"@en ;
-    dcterms:alternative "SR", "superradiant emission" ;
+    skos:altLabel "superradiant emission"@en ;
+    skos:notation "SR" ;
     rdfs:comment "A collective emission phenomenon characterized by enhanced radiative emission caused by coherent or cooperative coupling between emitters."@en ;
     rdfs:subClassOf matsci:CollectiveEmissionPhenomenon .
 
@@ -863,30 +889,30 @@ matsci:ObservableCollectiveEmissionProperty a owl:Class ;
 
 matsci:superfluorescenceIntensityProperty a owl:NamedIndividual, matsci:ObservableCollectiveEmissionProperty ;
     rdfs:label "superfluorescence intensity"@en ;
-    dcterms:alternative "SF intensity" ;
+    skos:altLabel "SF intensity"@en ;
     matsci:associatedWithPhenomenon matsci:Superfluorescence .
 
 matsci:superfluorescenceDelayTimeProperty a owl:NamedIndividual,
         matsci:ObservableCollectiveEmissionProperty ;
     rdfs:label "superfluorescence delay time"@en ;
-    dcterms:alternative "SF delay time", "burst delay time" ;
+    skos:altLabel "SF delay time"@en, "burst delay time"@en ;
     matsci:associatedWithPhenomenon matsci:Superfluorescence .
 
 matsci:superfluorescenceLifetimeProperty a owl:NamedIndividual,
         matsci:ObservableCollectiveEmissionProperty ;
     rdfs:label "superfluorescence lifetime"@en ;
-    dcterms:alternative "SF lifetime" ;
+    skos:altLabel "SF lifetime"@en ;
     matsci:associatedWithPhenomenon matsci:Superfluorescence .
 
 matsci:superradianceIntensityProperty a owl:NamedIndividual, matsci:ObservableCollectiveEmissionProperty ;
     rdfs:label "superradiance intensity"@en ;
-    dcterms:alternative "SR intensity" ;
+    skos:altLabel "SR intensity"@en ;
     matsci:associatedWithPhenomenon matsci:Superradiance .
 
 matsci:superradianceLifetimeProperty a owl:NamedIndividual,
         matsci:ObservableCollectiveEmissionProperty ;
     rdfs:label "superradiance lifetime"@en ;
-    dcterms:alternative "SR lifetime" ;
+    skos:altLabel "SR lifetime"@en ;
     matsci:associatedWithPhenomenon matsci:Superradiance .
 
 matsci:AgingInfluenceOnSuperfluorescence a owl:Class ;
@@ -958,29 +984,30 @@ matsci:measurementDelayTimeProperty a owl:NamedIndividual ;
 
 matsci:pumpProbeDelayTimeProperty a owl:NamedIndividual ;
     rdfs:label "pump-probe delay time"@en ;
-    dcterms:alternative "pump-probe delay", "delay time", "Δt" .
+    skos:altLabel "pump-probe delay"@en, "delay time"@en .
 
 matsci:pulseDurationProperty a owl:NamedIndividual ;
     rdfs:label "pulse duration"@en .
 
 matsci:radiativeDurationProperty a owl:NamedIndividual ;
     rdfs:label "radiative duration"@en ;
-    dcterms:alternative "radiative time" .
+    skos:altLabel "radiative time"@en .
 
 matsci:decayTimeProperty a owl:NamedIndividual ;
     rdfs:label "decay time"@en ;
-    dcterms:alternative "decay lifetime", "decay component" .
+    skos:altLabel "decay lifetime"@en, "decay component"@en .
 
 matsci:relaxationTimeProperty a owl:NamedIndividual ;
     rdfs:label "relaxation time"@en .
 
 matsci:coherenceTimeProperty a owl:NamedIndividual ;
     rdfs:label "coherence time"@en ;
-    dcterms:alternative "temporal coherence time" .
+    skos:altLabel "temporal coherence time"@en .
 
 matsci:energyTransferTimeProperty a owl:NamedIndividual ;
     rdfs:label "energy transfer time"@en ;
-    dcterms:alternative "FRET time", "FRET lifetime" .
+    skos:altLabel "FRET time"@en, "FRET lifetime"@en ;
+    skos:notation "FRET" .
 
 matsci:carrierCoolingTimeProperty a owl:NamedIndividual ;
     rdfs:label "carrier cooling time"@en .
