@@ -1,0 +1,613 @@
+# SYNTHESIS
+
+# 1. Which material was synthesised?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+
+SELECT DISTINCT ?synthesisProcess ?material ?sample
+WHERE {
+    ?synthesisProcess a matsci:SynthesisProcess .
+
+    OPTIONAL {
+        ?synthesisProcess matsci:hasOutputMaterial ?material .
+    }
+
+    OPTIONAL {
+        ?synthesisProcess matsci:hasOutputSample ?sample .
+    }
+
+    FILTER(BOUND(?material) || BOUND(?sample))
+}
+
+# 2. What is the type of material?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?material ?materialType
+WHERE {
+    ?synthesisProcess matsci:hasOutputMaterial ?material .
+    ?material a ?materialType .
+
+    ?materialType rdfs:subClassOf* matsci:Material .
+
+    FILTER(?materialType != matsci:Material)
+}
+
+# 3. What is the size of the studied sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?sample
+    ?sizeProperty
+    ?numericValue
+    ?lowerBound
+    ?upperBound
+    ?unit
+WHERE {
+    ?sample ?morphologyRelation ?morphology .
+    ?morphologyRelation rdfs:subPropertyOf* matsci:hasMorphology .
+
+    VALUES (?sizeRelation ?sizeProperty) {
+        (matsci:hasEdgeLength matsci:edgeLengthProperty)
+        (matsci:hasThickness matsci:thicknessProperty)
+    }
+
+    ?morphology ?sizeRelation ?value .
+
+    OPTIONAL { ?value qudt:numericValue ?numericValue . }
+    OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
+    OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
+    OPTIONAL { ?value qudt:unit ?unit . }
+
+    FILTER(
+        BOUND(?numericValue) ||
+        BOUND(?lowerBound) ||
+        BOUND(?upperBound)
+    )
+}
+
+# 4. What is the shape of the studied sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?sample ?shape
+WHERE {
+    ?sample ?morphologyRelation ?morphology .
+    ?morphologyRelation rdfs:subPropertyOf* matsci:hasMorphology .
+
+    ?morphology matsci:hasShapeValue ?shape .
+}
+
+# 5. What is the dimensionality of the studied sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?sample ?dimensionality
+WHERE {
+    ?sample ?morphologyRelation ?morphology .
+    ?morphologyRelation rdfs:subPropertyOf* matsci:hasMorphology .
+
+    ?morphology matsci:hasDimensionalityValue ?dimensionality .
+}
+
+# 6. What is the packing structure of the studied sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?sample ?packingStructure
+WHERE {
+    ?sample ?morphologyRelation ?morphology .
+    ?morphologyRelation rdfs:subPropertyOf* matsci:hasMorphology .
+
+    ?morphology matsci:hasPackingMotifValue ?packingStructure .
+}
+
+# 7. What is the symmetry of the studied sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?sample ?symmetry
+WHERE {
+    ?sample ?morphologyRelation ?morphology .
+    ?morphologyRelation rdfs:subPropertyOf* matsci:hasMorphology .
+
+    ?morphology matsci:hasSuperlatticeSymmetryValue ?symmetry .
+}
+
+# 8. What synthesis method was used?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+
+SELECT DISTINCT ?synthesisProcess ?method
+WHERE {
+    ?synthesisProcess a matsci:SynthesisProcess .
+    ?synthesisProcess obs:usesMethod ?method .
+}
+
+
+# 9. Which ligand was used in this synthesis?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+
+SELECT DISTINCT ?synthesisProcess ?ligand
+WHERE {
+    ?synthesisProcess a matsci:SynthesisProcess .
+    ?synthesisProcess matsci:usedLigand ?ligand .
+}
+
+# 10. Which solvent was used in this synthesis?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+
+SELECT DISTINCT ?synthesisProcess ?solvent
+WHERE {
+    ?synthesisProcess a matsci:SynthesisProcess .
+    ?synthesisProcess matsci:usedSolvent ?solvent .
+}
+
+# 11. Which antisolvent was used in this synthesis?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+
+SELECT DISTINCT ?synthesisProcess ?antisolvent
+WHERE {
+    ?synthesisProcess a matsci:SynthesisProcess .
+    ?synthesisProcess matsci:usedAntisolvent ?antisolvent .
+}
+
+# 12. What is the general time of the synthesis process?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?synthesisProcess
+    ?duration
+    ?lowerBound
+    ?upperBound
+    ?unit
+WHERE {
+    ?synthesisProcess a matsci:SynthesisProcess .
+    ?synthesisProcess life:hasDuration ?value .
+
+    OPTIONAL { ?value qudt:numericValue ?duration . }
+    OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
+    OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
+    OPTIONAL { ?value qudt:unit ?unit . }
+
+    FILTER(
+        BOUND(?duration) ||
+        BOUND(?lowerBound) ||
+        BOUND(?upperBound)
+    )
+}
+
+# 13. What is the duration of the solvent evaporation?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?observation
+    ?evaporationDuration
+    ?lowerBound
+    ?upperBound
+    ?unit
+WHERE {
+    ?observation a life:TemporalObservation .
+    ?observation sosa:observedProperty matsci:solventEvaporationTimeProperty .
+    ?observation life:hasTemporalQuantityResult ?value .
+
+    OPTIONAL { ?value qudt:numericValue ?evaporationDuration . }
+    OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
+    OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
+    OPTIONAL { ?value qudt:unit ?unit . }
+
+    FILTER(
+        BOUND(?evaporationDuration) ||
+        BOUND(?lowerBound) ||
+        BOUND(?upperBound)
+    )
+}
+
+# 14. What is the duration of the sample storage after fabrication?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?sample
+    ?storageProcess
+    ?duration
+    ?lowerBound
+    ?upperBound
+    ?unit
+WHERE {
+    ?storageProcess a ?storageProcessType .
+    ?storageProcessType rdfs:subClassOf* life:StorageProcess .
+
+    OPTIONAL {
+        ?storageProcess matsci:hasInputSample ?sample .
+    }
+
+    ?storageProcess life:hasDuration ?value .
+
+    OPTIONAL { ?value qudt:numericValue ?duration . }
+    OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
+    OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
+    OPTIONAL { ?value qudt:unit ?unit . }
+
+    FILTER(
+        BOUND(?duration) ||
+        BOUND(?lowerBound) ||
+        BOUND(?upperBound)
+    )
+}
+
+# 15. What temperature was used during synthesis or self-assembly?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?process
+    ?temperature
+    ?lowerBound
+    ?upperBound
+    ?unit
+WHERE {
+    VALUES ?processType {
+        matsci:SynthesisProcess
+        matsci:AssemblyProcess
+    }
+
+    ?process a ?processType .
+    ?process obs:hasProcessCondition ?condition .
+
+    ?condition obs:conditionFactor matsci:temperature .
+    ?condition obs:conditionValue ?value .
+
+    OPTIONAL { ?value qudt:numericValue ?temperature . }
+    OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
+    OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
+    OPTIONAL { ?value qudt:unit ?unit . }
+
+    FILTER(
+        BOUND(?temperature) ||
+        BOUND(?lowerBound) ||
+        BOUND(?upperBound)
+    )
+}
+
+# 16. What humidity was used during synthesis or self-assembly?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?process ?humidity ?unit
+WHERE {
+    VALUES ?processType {
+        matsci:SynthesisProcess
+        matsci:AssemblyProcess
+    }
+
+    ?process a ?processType .
+    ?process obs:hasProcessCondition ?condition .
+
+    ?condition obs:conditionFactor matsci:humidity .
+    ?condition obs:conditionValue ?value .
+
+    ?value qudt:numericValue ?humidity .
+    ?value qudt:unit ?unit .
+}
+
+# 17. What atmosphere was used during synthesis or self-assembly?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+
+SELECT DISTINCT ?process ?atmosphere
+WHERE {
+    VALUES ?processType {
+        matsci:SynthesisProcess
+        matsci:AssemblyProcess
+    }
+
+    ?process a ?processType .
+    ?process obs:hasProcessCondition ?condition .
+
+    ?condition obs:conditionFactor matsci:atmosphere .
+    ?condition obs:conditionValue ?atmosphere .
+}
+
+
+# SPECTROSCOPY
+
+# 18. What is the absorption peak wavelength of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX unit:   <http://qudt.org/vocab/unit/>
+
+SELECT DISTINCT ?sample ?observedProperty ?wavelength ?unit
+WHERE {
+    ?characterizationProcess a matsci:CharacterizationProcess ;
+        obs:usesMethod matsci:Absorption ;
+        matsci:generatedObservation ?observation .
+
+    ?observation sosa:hasFeatureOfInterest ?sample ;
+        sosa:observedProperty ?observedProperty ;
+        obs:hasQuantityResult ?value .
+
+    ?value qudt:numericValue ?wavelength ;
+        qudt:unit ?unit .
+
+    VALUES ?unit {
+        unit:NanoM
+    }
+}
+
+# 19. What is the emission peak wavelength of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?wavelength ?unit
+WHERE {
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:plPeakWavelengthProperty .
+    ?observation obs:hasQuantityResult ?value .
+
+    ?value qudt:numericValue ?wavelength .
+    ?value qudt:unit ?unit .
+}
+
+# 20. What characterization method was used?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+
+SELECT DISTINCT ?characterizationProcess ?method
+WHERE {
+    ?characterizationProcess a matsci:CharacterizationProcess .
+    ?characterizationProcess obs:usesMethod ?method .
+}
+
+# 21. What is the bandgap of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?bandgap ?unit
+WHERE {
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:bandgapProperty .
+    ?observation obs:hasQuantityResult ?value .
+
+    ?value qudt:numericValue ?bandgap .
+    ?value qudt:unit ?unit .
+}
+
+# 22. What is the PL QY of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?plqy ?unit
+WHERE {
+    ?characterizationProcess a matsci:CharacterizationProcess .
+    ?characterizationProcess obs:usesMethod matsci:Photoluminescence .
+    ?characterizationProcess matsci:generatedObservation ?observation .
+
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:quantumYieldProperty .
+    ?observation obs:hasQuantityResult ?value .
+
+    ?value qudt:numericValue ?plqy .
+    ?value qudt:unit ?unit .
+}
+
+# 23. What is the PL lifetime of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?method ?lifetime ?unit
+WHERE {
+    VALUES ?method {
+        matsci:Photoluminescence
+        matsci:TRPL
+    }
+
+    ?characterizationProcess a matsci:CharacterizationProcess .
+    ?characterizationProcess obs:usesMethod ?method .
+    ?characterizationProcess matsci:generatedObservation ?observation .
+
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:lifetimeProperty .
+    ?observation life:hasTemporalQuantityResult ?value .
+
+    ?value qudt:numericValue ?lifetime .
+    ?value qudt:unit ?unit .
+}
+
+# 24. What is the FWHM of the PL peak?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?fwhm ?unit
+WHERE {
+    ?characterizationProcess a matsci:CharacterizationProcess .
+    ?characterizationProcess obs:usesMethod matsci:Photoluminescence .
+    ?characterizationProcess matsci:generatedObservation ?observation .
+
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:fwhmProperty .
+    ?observation obs:hasQuantityResult ?value .
+
+    ?value qudt:numericValue ?fwhm .
+    ?value qudt:unit ?unit .
+}
+
+
+# 25. What is carrier cooling time?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?carrierCoolingTime ?unit
+WHERE {
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:carrierCoolingTimeProperty .
+    ?observation life:hasTemporalQuantityResult ?value .
+
+    ?value qudt:numericValue ?carrierCoolingTime .
+    ?value qudt:unit ?unit .
+}
+
+# 26. What is the exciton recombination time (decays)?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?decayTime ?unit
+WHERE {
+    ?characterizationProcess a matsci:CharacterizationProcess ;
+        obs:usesMethod matsci:TRPL ;
+        matsci:generatedObservation ?observation .
+
+    ?observation sosa:hasFeatureOfInterest ?sample ;
+        sosa:observedProperty matsci:decayTimeProperty ;
+        life:hasTemporalQuantityResult ?value .
+
+    ?value qudt:numericValue ?decayTime ;
+        qudt:unit ?unit .
+}
+
+# 27. What is the energy transfer time into the material?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?energyTransferTime ?unit
+WHERE {
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:energyTransferTimeProperty .
+    ?observation life:hasTemporalQuantityResult ?value .
+
+    ?value qudt:numericValue ?energyTransferTime .
+    ?value qudt:unit ?unit .
+}
+
+# 28. Do we have collective optical phenomena in the paper? If yes, what is the collective phenomenon there?
+
+PREFIX matsci:  <https://growgraph.dev/ontologies/matsci#>
+PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?paper ?sample ?phenomenon ?phenomenonLabel
+WHERE {
+    VALUES ?phenomenon {
+        matsci:Superfluorescence
+        matsci:Superradiance
+    }
+
+    {
+        ?sample matsci:exhibitsPhenomenon ?phenomenon .
+
+        OPTIONAL {
+            ?observation sosa:hasFeatureOfInterest ?sample .
+            ?observation dcterms:source ?paper .
+        }
+    }
+    UNION
+    {
+        ?observation dcterms:source ?paper .
+        ?observation sosa:hasFeatureOfInterest ?sample .
+        ?observation sosa:observedProperty ?property .
+
+        ?property matsci:associatedWithPhenomenon ?phenomenon .
+    }
+
+    OPTIONAL {
+        ?phenomenon rdfs:label ?phenomenonLabel .
+    }
+}
+
+# 29. What is the superfluorescence lifetime of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?lifetime ?unit
+WHERE {
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:superfluorescenceLifetimeProperty .
+    ?observation life:hasTemporalQuantityResult ?value .
+
+    ?value qudt:numericValue ?lifetime .
+    ?value qudt:unit ?unit .
+}
+
+
+# 30. What is the superradiance lifetime of the sample?
+
+PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+
+SELECT DISTINCT ?sample ?lifetime ?unit
+WHERE {
+    ?observation sosa:hasFeatureOfInterest ?sample .
+    ?observation sosa:observedProperty matsci:superradianceLifetimeProperty .
+    ?observation life:hasTemporalQuantityResult ?value .
+
+    ?value qudt:numericValue ?lifetime .
+    ?value qudt:unit ?unit .
+}
