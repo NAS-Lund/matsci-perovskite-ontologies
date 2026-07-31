@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-31
+
+### Removed
+
+- **matsci 5.0.0 (breaking)** — four `owl:imports` that `matsci` referenced no
+  term from are gone: `pergres`, `matsci-units`, `matsci-qudt-units` and QUDT's
+  `3.1.4/vocab/unit`. The collection now follows one rule — *a module imports
+  exactly the modules whose terms it references* — so every arrow in the
+  dependency graph means the same thing.
+
+  None of the four did anything for `matsci`. `pergres` declares no terms, and
+  the three it constrains (`obs:hasQuantityResult`,
+  `obs:QuantitativeObservation`, `life:TimeQuantityValue`) occur nowhere in
+  `matsci.ttl` — its observation classes moved to `observation` — while
+  matsci's own `hasEdgeLength` / `hasThickness` keep a permissive
+  `qudt:QuantityValue` range. Nothing constrains unit values' *type* either
+  (`qqval`'s restriction on `qudt:unit` is `owl:minCardinality 1`, and its shape
+  `sh:minCount 1` with no `sh:class`), so the unit imports bought availability
+  that nothing verifies; `matsci-qudt-units` was redundant twice over, since
+  `matsci-units` imports it and matsci imported QUDT's real unit vocabulary
+  directly. matsci references zero `unit:` terms, so that one went too.
+
+  Breaking for anyone resolving `owl:imports` over `matsci` alone: the
+  qqval-qualification policy and the locally minted units are no longer pulled
+  in, and must be loaded alongside. No effect on OntoCast, which never
+  dereferences `owl:imports`, nor on the `pyshacl` recipe in the README, which
+  concatenates every file in `ontologies/` and `shapes/`.
+
+### Changed
+
+- **pergres 1.3.0** — `skos:scopeNote` no longer names `matsci` as the module
+  that imports it. States instead that nothing in the collection imports it by
+  design: a module declaring no terms cannot be a vocabulary dependency, so
+  loading it is a deployment choice made wherever reasoning or SHACL validation
+  is configured. Axioms unchanged.
+
+- **Change history removed from ontology and shapes annotations**, which carry
+  current-state descriptions only — history belongs in this file.
+  `observation-shapes` 2.1.0 → **2.2.0**, `lifecycle-shapes` 2.0.0 → **2.1.0**
+  and `matsci-shapes` 1.1.0 → **1.2.0** drop the per-version rename logs from
+  their `rdfs:comment`; `matsci` loses six Turtle section comments that narrated
+  where classes used to live ("now lives in observation as …", "moved out of
+  lifecycle 3.0.0", "that workaround is no longer needed"), restated as what the
+  layering is. No axiom or term changed in any of them.
+
+- **README dependency graph** — redrawn top-down (`graph TD`) so that arrows
+  importer → importee now run downward and the base layer sits at the *bottom*,
+  as the surrounding prose has always claimed; the previous `graph BT` rendered
+  the collection upside-down, with `perovskitemat` at the bottom. `qqval`,
+  `observation` and `matsci-qudt-units` are grouped in a `base layer` subgraph
+  so they share one rank. With the imports above removed, `pergres` and
+  `matsci-units` are now roots rather than dependants of `matsci`; the
+  dependency-order list is restated by level to match.
+
+### Added
+
+- README section for the 30 competency queries in
+  `queries/sparql_queries.rq`, which were previously undocumented.
+
+- `perovskitemat` is now noted as having no shapes graph, and its transitive
+  reliance on `qqval` / `sosa` through `matsci` is spelled out.
+
 ## 2026-07-30
 
 ### Added
