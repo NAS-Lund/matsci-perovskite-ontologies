@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Initial SPARQL queries for retrieving synthesis and spectroscopy information with these queries.
+
 - **matsci-units 3.0.0** (`ontologies/matsci-units.ttl`, was `units` 1.0.0) — a
   QUDT *gap-filler* module, not a unit vocabulary. QUDT is canonical: units it already defines are used under
   their own QUDT IRIs, with no local alias and no `owl:sameAs` bridge. The module
