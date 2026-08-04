@@ -35,11 +35,9 @@
         disjointness mirror (ObservableMaterialProperty /
         ObservableMorphologyProperty), plus a curated closed-world
         type-sanity net for MorphologyState's value properties and the
-        matsci:hasInputSample/hasOutputSample convenience subproperties.
-
-        1.0.0: initial version."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.1.0> ;
-    owl:versionInfo "1.1.0" .
+        matsci:hasInputSample/hasOutputSample convenience subproperties."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.2.0> ;
+    owl:versionInfo "1.2.0" .
 
 #################################################################
 # ObservableMaterialProperty / ObservableMorphologyProperty — disjoint

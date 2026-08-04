@@ -26,16 +26,9 @@
     rdfs:comment
         """SHACL shapes mirroring the OWL cardinality/qualifier
         restrictions declared on obs:Condition, obs:QuantitativeObservation,
-        and obs:QualitativeObservation in observation (>= 4.0.0).
-
-        1.0.0: initial version.
-
-        2.0.0 (breaking): renamed obs:EnvironmentConditionShape to
-        obs:ConditionShape and retargeted it at obs:Condition /
-        obs:ConditionFactor, following observation 4.0.0's
-        rename of those classes."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.1.0> ;
-    owl:versionInfo "2.1.0" .
+        and obs:QualitativeObservation in observation (>= 4.0.0)."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.2.0> ;
+    owl:versionInfo "2.2.0" .
 
 #################################################################
 # Condition — exactly one factor, exactly one value

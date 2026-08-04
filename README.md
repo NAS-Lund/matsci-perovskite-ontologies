@@ -7,47 +7,58 @@ quantities) sit below the materials-science and perovskite-specific layers;
 
 ## Ontology graph
 
-`owl:imports` between the ontologies in this collection (arrows point from
-importer → importee). External dependencies (SOSA, BFO, SSN, and QUDT's schema
-facade and unit vocabulary) are omitted.
+`owl:imports` between the ontologies in this collection, drawn top-down:
+arrows point from importer → importee, so the **base layer** — the three
+modules that import nothing from this collection — forms the bottom row.
+External dependencies (SOSA, BFO, SSN, and QUDT's schema facade) are omitted.
 
 ```mermaid
-graph BT
+graph TD
     perov["perovskitemat<br/>1.6.0"]
-    matsci["matsci<br/>4.3.0"]
-    pergres["pergres<br/>1.2.0"]
+    matsci["matsci<br/>5.0.0"]
+    pergres["pergres<br/>1.3.0"]
     life["lifecycle<br/>6.1.0"]
-    obs["observation<br/>5.2.0"]
-    qqval["qqval<br/>2.2.0"]
     units["matsci-units<br/>3.0.0"]
-    qudtunits["matsci-qudt-units<br/>1.0.0"]
+
+    subgraph base["base layer"]
+        obs["observation<br/>5.2.0"]
+        qqval["qqval<br/>2.2.0"]
+        qudtunits["matsci-qudt-units<br/>1.0.0"]
+    end
 
     perov --> matsci
     matsci --> life
     matsci --> obs
     matsci --> qqval
-    matsci --> pergres
-    matsci --> units
-    matsci --> qudtunits
-    units --> qudtunits
     life --> obs
-    pergres --> qqval
-    pergres --> obs
     pergres --> life
+    pergres --> obs
+    pergres --> qqval
+    units --> qudtunits
 ```
 
-**Dependency order** (load or reason over ontologies in this sequence):
+**A module imports exactly the modules whose terms it references.** Two
+modules are therefore roots, loaded by the consumer rather than reached
+through an import:
 
-1. `qqval`
-2. `observation`
-3. `lifecycle`
-4. `pergres`
-5. `matsci-qudt-units`
-6. `matsci-units`
-7. `matsci`
-8. `perovskitemat`
+- **`pergres`** declares no terms. Loading it applies the qqval-qualification
+  policy to extracted data; omitting it leaves results as bare
+  `qudt:QuantityValue`. See [Pergres bridge](#pergres-bridge-pergres).
+- **`matsci-units` / `matsci-qudt-units`** supply unit individuals cited by
+  extracted *instances*, never by any schema here.
 
-`qqval`, `observation` and `matsci-qudt-units` are independent of each other.
+The [Validation](#validation) recipe loads every file, so this matters only
+when resolving `owl:imports` over `matsci` alone.
+
+**Dependency order** (load or reason over ontologies in this sequence; modules
+on the same line are independent of each other):
+
+1. `qqval`, `observation`, `matsci-qudt-units`
+2. `lifecycle` (→ observation), `matsci-units` (→ matsci-qudt-units)
+3. `pergres` (→ qqval, observation, lifecycle)
+4. `matsci` (→ qqval, observation, lifecycle)
+5. `perovskitemat`
+
 `lifecycle` specializes observation only (not qqval). Cross-module
 qqval-qualification policy lives exclusively in `pergres`.
 
@@ -115,12 +126,35 @@ Specializes `observation`. `life:TimeQuantityValue` is a bare
 | **File** | [`pergres.ttl`](ontologies/pergres.ttl) |
 | **Shapes** | [`pergres-shapes.ttl`](shapes/pergres-shapes.ttl) |
 | **Prefix** | `pergres:` → `https://growgraph.dev/ontologies/pergres#` |
-| **Version** | 1.2.0 |
+| **Version** | 1.3.0 |
 
 Opinionated bridge that makes qqval-qualification mandatory for quantitative
 observation results and temporal quantity values. Imports qqval, observation,
-and lifecycle. Domain consumers that want that policy (e.g. matsci) import
-this module; others can omit it.
+and lifecycle.
+
+**It declares no terms.** It asserts three axioms over terms owned by other
+modules:
+
+- `obs:hasQuantityResult` `rdfs:range` `qqval:QualifiedQuantityValue`
+- `obs:QuantitativeObservation` ⊑ ∃ `sosa:hasResult` `qqval:QualifiedQuantityValue`
+- `life:TimeQuantityValue` ⊑ `qqval:QualifiedQuantityValue`
+
+That is the whole point: `observation` and `lifecycle` keep permissive
+`qudt:QuantityValue` results so they remain usable without `qqval`, and the
+strict policy is quarantined in one opt-in module. `qqval` and `observation`
+therefore never reference each other.
+
+Because the axioms target `observation` / `lifecycle` terms, the module binds
+**data, not schema**, and nothing in this collection imports it: a module that
+declares no terms cannot be a vocabulary dependency, so loading it is a
+deployment choice made wherever reasoning or SHACL validation is configured.
+
+The axioms reach no `matsci` definition — none of `obs:hasQuantityResult`,
+`obs:QuantitativeObservation` or `life:TimeQuantityValue` occurs in
+`matsci.ttl`, and matsci's own `hasEdgeLength` / `hasThickness` carry a
+permissive `qudt:QuantityValue` range. Under OntoCast the module reaches the
+pipeline only because `pergres.ttl` is indexed as an ontology in its own right;
+`owl:imports` is never dereferenced.
 
 ### Units (`matsci-units`)
 
@@ -217,24 +251,33 @@ nothing, and any term kept without a label, so the curation stays auditable.
 | **File** | [`matsci.ttl`](ontologies/matsci.ttl) |
 | **Shapes** | [`matsci-shapes.ttl`](shapes/matsci-shapes.ttl) |
 | **Prefix** | `matsci:` → `https://growgraph.dev/ontologies/matsci#` |
-| **Version** | 4.3.0 |
+| **Version** | 5.0.0 |
 
 General materials-science vocabulary (materials, samples, synthesis,
-characterization, morphology, properties). Imports observation, lifecycle,
-qqval, pergres, matsci-units, and matsci-qudt-units. `matsci:hasInputSample`/`hasOutputSample` are
+characterization, morphology, properties). Imports `observation`, `lifecycle`
+and `qqval`. `matsci:hasInputSample`/`hasOutputSample` are
 `sosa:Sample`-narrowed convenience subproperties of
 `observation`'s `hasInputEntity`/`hasOutputEntity`.
+
+Quantitative results are bare `qudt:QuantityValue`; load `pergres` alongside
+matsci to require qqval qualification, and the unit modules to resolve the unit
+individuals extracted data cites.
 
 ### Perovskite (`perovskitemat`)
 
 | | |
 |---|---|
 | **File** | [`perovskitemat.ttl`](ontologies/perovskitemat.ttl) |
+| **Shapes** | — (no shapes graph yet) |
 | **Prefix** | `perovmat:` → `https://growgraph.dev/ontologies/perovskitemat#` |
 | **Version** | 1.6.0 |
 
 Perovskite-specific classes and individuals (composition sites, halide
-perovskites, named compounds). Imports `matsci` only.
+perovskites, named compounds). Imports `matsci` only; the `qqval` and `sosa`
+terms it references (`perovmat:occupancyFraction` ranges over
+`qqval:QualifiedQuantityValue`, `perovmat:PerovskiteSample` subclasses
+`sosa:Sample`) arrive through matsci's own imports, since `owl:imports` is
+transitive.
 
 ## Validation
 
@@ -245,7 +288,8 @@ corresponding ontology (plus, for `matsci-shapes.ttl`, a small curated
 closed-world type-sanity net), for closed-world validation of extracted
 data. `matsci-units` has no shapes graph: it declares named individuals only,
 so there are no constraints to mirror, and `matsci-qudt-units` vendors
-third-party terms verbatim.
+third-party terms verbatim. `perovskitemat` has none yet — its restrictions
+are currently checked only open-world, by a reasoner.
 
 Validate a data graph with [`pyshacl`](https://github.com/RDFLib/pySHACL). It
 takes one shapes graph and one data graph, so concatenate each set first
@@ -266,6 +310,24 @@ constraints rely on. `-i rdfs` is required: `lifecycle`'s
 — the extraction-pipeline-expected behavior — otherwise fails
 `observation-shapes.ttl`'s class-level checks, since SHACL does not follow
 `rdfs:subPropertyOf` without an inference pass.)
+
+Both `cat`s cover the whole directory, which is what puts `pergres` and the
+unit modules in play. A run that names files individually enforces the
+qqval-qualification policy only if it lists `pergres.ttl` and
+`pergres-shapes.ttl` explicitly.
+
+## Competency queries
+
+[`queries/sparql_queries.rq`](queries/sparql_queries.rq) holds 30 competency
+queries in two groups — **synthesis** (material, morphology, method, ligand /
+solvent / antisolvent, durations, temperature, humidity, atmosphere) and
+**spectroscopy** (absorption and emission peaks, bandgap, PL QY, lifetimes,
+FWHM, carrier cooling, energy transfer, collective phenomena). They double as
+the acceptance test for extraction output: a question that cannot be answered
+by these ontologies is a gap in the vocabulary, not in the query.
+
+Each query carries its own `PREFIX` block, so a single query can be copied out
+and run on its own against a store holding extracted data.
 
 ## Consuming these ontologies
 

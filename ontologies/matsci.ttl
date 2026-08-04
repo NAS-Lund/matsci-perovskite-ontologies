@@ -20,8 +20,8 @@
     rdfs:comment
         """General materials-science vocabulary: materials, samples, synthesis,
         characterization, morphology, and observable properties. Layers on
-        observation and lifecycle, with qqval-qualified quantitative results
-        via pergres."""@en ;
+        observation and lifecycle; quantitative results are bare
+        qudt:QuantityValue."""@en ;
     skos:scopeNote
         """Domain extension layer for observation / lifecycle: subclasses
         obs:Process, obs:PhysicalPhenomenon, life:LifecycleProcess and
@@ -29,20 +29,16 @@
         entity-of-interest properties. matsci:Material, matsci:MaterialRole and
         the *Method / *Process / *Value controlled vocabularies are open for
         extension."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci/4.3.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci/5.0.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://growgraph.dev/ontologies/lifecycle> ,
         <https://growgraph.dev/ontologies/qqval> ,
-        <https://growgraph.dev/ontologies/matsci-units> ,
-        <https://growgraph.dev/ontologies/matsci-qudt-units> ,
-        <https://growgraph.dev/ontologies/pergres> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
-        <http://purl.obolibrary.org/obo/bfo.owl> ,
-        <http://qudt.org/3.1.4/vocab/unit> ;
-    owl:versionInfo "4.3.0" .
+        <http://purl.obolibrary.org/obo/bfo.owl> ;
+    owl:versionInfo "5.0.0" .
 
 #################################################################
 # Core classes
@@ -180,10 +176,8 @@ matsci:ChemicalTransformationType a owl:Class ;
 #################################################################
 # Process execution layer
 #
-# matsci:Process itself (and the generic Observation/PhysicalPhenomenon
-# scaffolding it participates in) now lives in observation as
-# obs:Process. The concrete process types below are the
-# materials-science-specific subclasses of obs:Process.
+# The generic process class is obs:Process, in observation. The concrete
+# process types below are its materials-science-specific subclasses.
 #################################################################
 
 matsci:SynthesisProcess a owl:Class ;
@@ -260,9 +254,8 @@ matsci:AssemblyStructure a owl:Class ;
 #################################################################
 # Qualitative result vocabulary
 #
-# matsci:QualitativeResult itself now lives in observation as
-# obs:QualitativeResult. The classes below are its
-# materials-science-specific subclasses.
+# The generic result class is obs:QualitativeResult, in observation. The
+# classes below are its materials-science-specific subclasses.
 #################################################################
 
 matsci:DimensionalityValue a owl:Class ;
@@ -288,10 +281,9 @@ matsci:ShapeValue a owl:Class ;
 #################################################################
 # Observation model
 #
-# matsci:Observation, QuantitativeObservation, and QualitativeObservation
-# now live in observation (obs:Observation, obs:QuantitativeObservation,
-# obs:QualitativeObservation). Only the materials-science-specific
-# ObservableProperty subclasses remain here.
+# The observation classes are obs:Observation, obs:QuantitativeObservation
+# and obs:QualitativeObservation, in observation. This module declares only
+# the materials-science-specific ObservableProperty subclasses.
 #################################################################
 
 matsci:ObservableMaterialProperty a owl:Class ;
@@ -696,13 +688,12 @@ matsci:oleylammoniumBromide a owl:NamedIndividual, matsci:Material ;
 #################################################################
 # Condition factor and condition-value individuals
 #
-# matsci:ConditionFactor / matsci:QualitativeConditionValue classes now
-# live in observation (obs:ConditionFactor / obs:QualitativeConditionValue).
-# These concrete controlled-vocabulary individuals stay minted in the
-# matsci namespace since they are domain vocabulary choices, not generic
-# infrastructure. (The one exception, "time", moved to observation as
-# obs:time, since lifecycle -- which must not import matsci --
-# needs to reference it directly as a skos:broader target.)
+# The classes are obs:ConditionFactor / obs:QualitativeConditionValue, in
+# observation. The concrete controlled-vocabulary individuals below are
+# minted in the matsci namespace: they are domain vocabulary choices, not
+# generic infrastructure. "time" is the exception and is minted as obs:time,
+# because lifecycle -- which must not import matsci -- references it
+# directly as a skos:broader target.
 #################################################################
 
 matsci:atmosphere a owl:NamedIndividual, obs:ConditionFactor ;
@@ -726,9 +717,8 @@ matsci:nitrogenAtmosphere a owl:NamedIndividual, obs:QualitativeConditionValue ;
 #################################################################
 # Entity lifecycle state individuals (matsci-specific)
 #
-# Domain-specific storage/aging states, moved out of lifecycle
-# 3.1.0. Siblings of the universal fresh/aged/stored trio defined on
-# life:EntityLifecycleState.
+# Domain-specific storage/aging states. Siblings of the universal
+# fresh/aged/stored trio defined on life:EntityLifecycleState.
 #################################################################
 
 matsci:airAgedEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
@@ -854,8 +844,7 @@ matsci:thicknessProperty a owl:NamedIndividual, matsci:ObservableMorphologyPrope
 #################################################################
 # Collective optical phenomena
 #
-# matsci:PhysicalPhenomenon itself now lives in observation as
-# obs:PhysicalPhenomenon.
+# The generic phenomenon class is obs:PhysicalPhenomenon, in observation.
 #################################################################
 
 matsci:CollectiveEmissionPhenomenon a owl:Class ;
@@ -926,8 +915,8 @@ matsci:AgingInfluenceOnSuperradiance a owl:Class ;
 #################################################################
 # Temporal condition factors (matsci-specific)
 #
-# Domain-specific temporal factors moved out of lifecycle 3.0.0.
-# They chain up to life:duration or obs:time via skos:broader.
+# Domain-specific temporal factors. They chain up to life:duration or
+# obs:time via skos:broader.
 #################################################################
 
 matsci:processDuration a owl:NamedIndividual, obs:ConditionFactor ;
@@ -953,9 +942,8 @@ matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
 #################################################################
 # Temporal observable properties (matsci-specific)
 #
-# Domain-specific temporal observable properties moved out of
-# lifecycle 3.0.0. Temporal typing against life: classes is
-# asserted in the section below.
+# Domain-specific temporal observable properties. Temporal typing against
+# life: classes is asserted in the section below.
 #################################################################
 
 matsci:processDurationProperty a owl:NamedIndividual ;
@@ -1017,12 +1005,9 @@ matsci:carrierCoolingTimeProperty a owl:NamedIndividual ;
 #
 # These individuals and classes are minted and primarily typed above, in
 # matsci's own namespace. The triples below add their temporal
-# typing/subclassing here, now that matsci imports
-# lifecycle (lifecycle depends only on observation, so
-# this direction keeps the dependency graph acyclic). Previously (temporal
-# 1.0.0 / matsci 1.4.0), this typing lived in lifecycle as
-# "supplementary assertions" on matsci IRIs, to avoid matsci importing
-# temporal; that workaround is no longer needed.
+# typing/subclassing. It belongs here rather than in lifecycle because
+# matsci imports lifecycle and lifecycle depends only on observation, which
+# keeps the dependency graph acyclic.
 #################################################################
 
 matsci:processDurationProperty a life:ObservableProcessTemporalProperty .

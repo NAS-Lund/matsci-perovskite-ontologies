@@ -42,17 +42,9 @@
         """SHACL shapes mirroring the OWL someValuesFrom restrictions
         declared on life:TemporalObservation and
         life:QualitativeEntityLifecycleObservation in lifecycle
-        (>= 4.0.0).
-
-        1.0.0: initial version.
-
-        1.1.0: renamed life:EntityTemporalObservationShape ->
-        QualitativeEntityLifecycleObservationShape, following
-        lifecycle 4.1.0's life:EntityTemporalObservation ->
-        QualitativeEntityLifecycleObservation / hasEntityTemporalResult ->
-        hasEntityLifecycleStateResult rename."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle-shapes/2.0.0> ;
-    owl:versionInfo "2.0.0" .
+        (>= 4.0.0)."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle-shapes/2.1.0> ;
+    owl:versionInfo "2.1.0" .
 
 #################################################################
 # TemporalObservation — observed property and result must be temporal
