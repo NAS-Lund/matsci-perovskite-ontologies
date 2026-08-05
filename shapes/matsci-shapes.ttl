@@ -1,9 +1,11 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix matsci:  <https://growgraph.dev/ontologies/matsci#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 #################################################################
 # Shapes graph header
@@ -36,8 +38,8 @@
         ObservableMorphologyProperty), plus a curated closed-world
         type-sanity net for MorphologyState's value properties and the
         matsci:hasInputSample/hasOutputSample convenience subproperties."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.2.0> ;
-    owl:versionInfo "1.2.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-shapes/1.3.0> ;
+    owl:versionInfo "1.3.0" .
 
 #################################################################
 # ObservableMaterialProperty / ObservableMorphologyProperty — disjoint
@@ -90,4 +92,31 @@ matsci:ProcessSampleShape a sh:NodeShape ;
         [ sh:path matsci:hasOutputSample ;
             sh:class sosa:Sample ;
             sh:message "matsci:hasOutputSample must be a sosa:Sample."@en
+        ] .
+
+#################################################################
+# MaterialPortion — recipe-level portion sanity
+#################################################################
+
+matsci:MaterialPortionShape a sh:NodeShape ;
+    sh:targetClass matsci:MaterialPortion ;
+    sh:property
+        [ sh:path matsci:isPortionOfMaterial ;
+            sh:class matsci:Material ;
+            sh:maxCount 1 ;
+            sh:message "matsci:isPortionOfMaterial must point at exactly one matsci:Material kind."@en
+        ] ,
+        [ sh:path matsci:hasAmount ;
+            sh:class qudt:QuantityValue ;
+            sh:message "matsci:hasAmount must be a qudt:QuantityValue (verbatim source value and unit)."@en
+        ] ,
+        [ sh:path matsci:hasPurity ;
+            sh:class qudt:QuantityValue ;
+            sh:maxCount 1 ;
+            sh:message "matsci:hasPurity must be a single qudt:QuantityValue."@en
+        ] ,
+        [ sh:path matsci:hasSupplierName ;
+            sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message "matsci:hasSupplierName must be a single xsd:string."@en
         ] .

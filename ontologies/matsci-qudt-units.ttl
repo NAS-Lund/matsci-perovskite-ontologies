@@ -320,6 +320,24 @@ unit:KiloPA a qudt:DerivedUnit,
     qudt:ucumCode "kPa"^^qudt:UCUMcs ;
     rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
 
+unit:KiloV a qudt:DerivedUnit,
+        qudt:Unit ;
+    rdfs:label "KiloVolt"@en ;
+    qudt:applicableSystem sou:CGS-EMU,
+        sou:CGS-GAUSS,
+        sou:SI ;
+    qudt:conversionMultiplier 1000.0 ;
+    qudt:hasDimensionVector dimension:A0E-1L2I0M1H0T-3D0 ;
+    qudt:hasQuantityKind quantitykind:ElectricPotential,
+        quantitykind:ElectricPotentialDifference,
+        quantitykind:EnergyPerElectricCharge,
+        quantitykind:Voltage ;
+    qudt:prefix prefix:Kilo ;
+    qudt:scalingOf unit:V ;
+    qudt:symbol "kV" ;
+    qudt:ucumCode "kV"^^qudt:UCUMcs ;
+    rdfs:isDefinedBy <http://qudt.org/3.1.4/vocab/unit> .
+
 unit:MIN a qudt:Unit ;
     rdfs:label "Minute"@en ;
     qudt:applicableSystem sou:CGS,
@@ -1002,8 +1020,8 @@ unit:W-PER-CentiM2 a qudt:Unit ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:source <https://qudt.org/3.1.4/vocab/unit> ;
     rdfs:comment "The matsci projection of QUDT: the units this corpus reports, vendored so they have real, retrievable identifiers."@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-qudt-units/1.0.0> ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-qudt-units/1.1.0> ;
+    owl:versionInfo "1.1.0" ;
     skos:scopeNote """OntoCast does not dereference owl:imports, so a declared dependency on QUDT
 delivers no terms: without this file the extraction pipeline is asked to cite
 QUDT unit IRIs it has never seen, and invents them. Only units this corpus

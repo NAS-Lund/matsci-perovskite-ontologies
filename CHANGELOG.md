@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-05
+
+### Added
+
+- **perovskitemat-shapes 1.0.0** — the module was the only authored one with
+  OWL restrictions but no SHACL companion, so extracted perovskite data was
+  checked open-world only. Shapes mirror the `PerovskiteSample`
+  some/allValuesFrom pair on `matsci:describesMaterial`, close the
+  site-component property ranges (`hasASiteComponent` /
+  `hasBSiteComponent` / `hasXSiteComponent` / `hasPhase` /
+  `hasSiteOccupancy`), require exactly one `occupancyComponent` and one
+  `occupancyFraction` per reified `SiteOccupancy`, and bound occupancy
+  fractions (nominal value and range bounds) to [0, 1]. Validated with
+  pyshacl: the module's own individuals conform; missing components and
+  out-of-range fractions are rejected.
+
+## 2026-08-04
+
+### Added
+
+- **observation 5.3.0** — instrument-configuration pattern:
+  `obs:InstrumentSettingFactor` (an `obs:ConditionFactor` specialization),
+  `obs:InstrumentConfiguration`, `obs:hasInstrumentConfiguration`,
+  `obs:configuredEquipment`, `obs:hasSetting`. Methods-section instrument
+  settings (excitation wavelength, repetition rate, NA, resolutions,
+  accelerating voltage) now have a landing zone instead of being dropped.
+  Also the reported-value pattern: `obs:ReportedObservation` +
+  `obs:reportedIn`, keeping literature-cited values distinct from this-work
+  measurements (pairs with OntoCast's citation-metadata extraction of
+  reference lists).
+- **matsci 5.1.0** — material-portion pattern: `matsci:MaterialPortion`
+  (subclass of `sosa:FeatureOfInterest`) with `matsci:isPortionOfMaterial`,
+  `matsci:hasAmount`, `matsci:hasPurity`, `matsci:hasSupplierName`, and
+  `matsci:hasInputPortion` (subproperty of `obs:hasInputEntity`) — recipe
+  quantities ("2 mL oleic acid, 90%, Sigma-Aldrich") become structured.
+  Seven instrument-setting factor individuals (`matsci:excitationWavelength`,
+  `excitationFluence`, `repetitionRate`, `numericalAperture`,
+  `spectralResolution`, `temporalResolution`, `acceleratingVoltage`).
+- **matsci-qudt-units 1.1.0** — vendored `unit:KiloV` (symbol "kV",
+  `scalingOf unit:V`, multiplier 1000): TEM accelerating voltages can now be
+  transcribed verbatim instead of being force-converted to volts.
+- **observation-shapes 2.3.0** — `obs:InstrumentConfigurationShape` (one
+  equipment per configuration, settings must be reified `obs:Condition`s).
+- **matsci-shapes 1.3.0** — `matsci:MaterialPortionShape` (one material kind
+  per portion, quantity-typed amount/purity, string supplier).
+
 ## 2026-07-31
 
 ### Removed
