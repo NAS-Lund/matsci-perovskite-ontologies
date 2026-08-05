@@ -29,7 +29,7 @@
         entity-of-interest properties. matsci:Material, matsci:MaterialRole and
         the *Method / *Process / *Value controlled vocabularies are open for
         extension."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci/5.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci/5.1.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://growgraph.dev/ontologies/lifecycle> ,
@@ -38,7 +38,7 @@
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.0.0" .
+    owl:versionInfo "5.1.0" .
 
 #################################################################
 # Core classes
@@ -55,6 +55,16 @@ matsci:Impurity a owl:Class ;
 matsci:LuminescentImpurity a owl:Class ;
     rdfs:label "Luminescent impurity"@en ;
     rdfs:subClassOf matsci:Impurity .
+
+matsci:MaterialPortion a owl:Class ;
+    rdfs:label "Material portion"@en ;
+    rdfs:comment
+        """A concrete quantified portion of a material used or produced in a
+        process, as stated in a recipe or methods section (e.g. "2 mL of oleic
+        acid, 90%, Sigma-Aldrich"). Carries amount, purity and supplier via
+        matsci:hasAmount / matsci:hasPurity / matsci:hasSupplierName; the
+        material kind is linked via matsci:isPortionOfMaterial."""@en ;
+    rdfs:subClassOf sosa:FeatureOfInterest .
 
 matsci:MaterialRole a owl:Class ;
     rdfs:label "Material role"@en ;
@@ -421,6 +431,41 @@ matsci:hasOutputMaterial a owl:ObjectProperty ;
         "Links a process to the abstract material kind it targets as output.  For the concrete produced sample use matsci:hasOutputSample."@en ;
     rdfs:domain obs:Process ;
     rdfs:range matsci:Material .
+
+matsci:hasInputPortion a owl:ObjectProperty ;
+    rdfs:label "has input portion"@en ;
+    rdfs:comment
+        "Links a process to a quantified material portion it consumes. Complements matsci:hasInputMaterial (abstract kind) with recipe-level amounts."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range matsci:MaterialPortion ;
+    rdfs:subPropertyOf obs:hasInputEntity .
+
+matsci:isPortionOfMaterial a owl:ObjectProperty ;
+    rdfs:label "is portion of material"@en ;
+    rdfs:comment "The material kind this portion is a quantified amount of."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range matsci:Material .
+
+matsci:hasAmount a owl:ObjectProperty ;
+    rdfs:label "has amount"@en ;
+    rdfs:comment
+        "Quantified amount of the portion (mass, volume, or amount of substance) as a qudt:QuantityValue with verbatim source value and unit."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range qudt:QuantityValue .
+
+matsci:hasPurity a owl:ObjectProperty ;
+    rdfs:label "has purity"@en ;
+    rdfs:comment
+        "Stated purity of the portion (e.g. 99.9 %) as a qudt:QuantityValue."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range qudt:QuantityValue .
+
+matsci:hasSupplierName a owl:DatatypeProperty ;
+    rdfs:label "has supplier name"@en ;
+    rdfs:comment
+        "Vendor or brand the portion was sourced from, transcribed as stated (e.g. \"Sigma-Aldrich\")."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range xsd:string .
 
 matsci:hasInputSample a owl:ObjectProperty ;
     rdfs:label "has input sample"@en ;
@@ -938,6 +983,41 @@ matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "pulse duration"@en ;
     rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
     skos:broader life:duration .
+
+#################################################################
+# Instrument-setting factor individuals (matsci-specific)
+#
+# The class is obs:InstrumentSettingFactor, in observation. These are the
+# settings the corpus's methods sections actually state; open vocabulary,
+# mint siblings as needed.
+#################################################################
+
+matsci:excitationWavelength a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "excitation wavelength"@en ;
+    skos:altLabel "pump wavelength"@en , "laser wavelength"@en .
+
+matsci:excitationFluence a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "excitation fluence"@en ;
+    skos:altLabel "pump fluence"@en , "laser fluence"@en .
+
+matsci:repetitionRate a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "repetition rate"@en ;
+    skos:altLabel "laser repetition rate"@en .
+
+matsci:numericalAperture a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "numerical aperture"@en ;
+    skos:notation "NA" .
+
+matsci:spectralResolution a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "spectral resolution"@en .
+
+matsci:temporalResolution a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "temporal resolution"@en ;
+    skos:altLabel "time resolution"@en .
+
+matsci:acceleratingVoltage a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "accelerating voltage"@en ;
+    rdfs:comment "Electron-beam accelerating voltage of a microscope (e.g. 200 kV)."@en .
 
 #################################################################
 # Temporal observable properties (matsci-specific)

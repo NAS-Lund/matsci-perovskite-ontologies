@@ -1,0 +1,121 @@
+@prefix dcterms:  <http://purl.org/dc/terms/> .
+@prefix matsci:   <https://growgraph.dev/ontologies/matsci#> .
+@prefix owl:      <http://www.w3.org/2002/07/owl#> .
+@prefix perovmat: <https://growgraph.dev/ontologies/perovskitemat#> .
+@prefix qqval:    <https://growgraph.dev/ontologies/qqval#> .
+@prefix qudt:     <http://qudt.org/schema/qudt/> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Shapes graph header
+#
+# Closed-world validation companion to perovskitemat. The OWL
+# restrictions on PerovskiteSample, the site-component property
+# ranges, and the occupancyFraction contract are open-world;
+# these SHACL shapes reject non-conforming data outright.
+#################################################################
+
+<https://growgraph.dev/ontologies/perovskitemat-shapes> a owl:Ontology ;
+    rdfs:label "perovskitemat shapes"@en ;
+    dcterms:creator "growgraph.dev" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment
+        """SHACL shapes mirroring the OWL restrictions on
+        perovmat:PerovskiteSample and the reified
+        perovmat:SiteOccupancy pattern, plus range checks for the
+        perovskite site-component properties and the [0, 1] bound on
+        occupancy fractions. Aligns with perovskitemat >= 1.6.0."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat-shapes/1.0.0> ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+# PerovskiteSample — structural shape
+#
+# Mirrors the some/allValuesFrom pair on matsci:describesMaterial:
+# a perovskite sample must describe at least one material, and
+# every described material must be a perovskite.
+#################################################################
+
+perovmat:PerovskiteSampleShape a sh:NodeShape ;
+    sh:targetClass perovmat:PerovskiteSample ;
+    sh:property
+        [ sh:path matsci:describesMaterial ;
+            sh:minCount 1 ;
+            sh:class perovmat:Perovskite ;
+            sh:message "PerovskiteSample must describe at least one material, and every described material must be a perovmat:Perovskite."@en
+        ] .
+
+#################################################################
+# Perovskite — site-component property ranges
+#
+# rdfs:range declarations are open-world; closed-world, a value in
+# the wrong site class is a data error, not an inference license.
+#################################################################
+
+perovmat:PerovskiteShape a sh:NodeShape ;
+    sh:targetClass perovmat:Perovskite ;
+    sh:property
+        [ sh:path perovmat:hasASiteComponent ;
+            sh:class perovmat:ASiteComponent ;
+            sh:message "perovmat:hasASiteComponent values must be perovmat:ASiteComponent individuals."@en
+        ] ,
+        [ sh:path perovmat:hasBSiteComponent ;
+            sh:class perovmat:BSiteComponent ;
+            sh:message "perovmat:hasBSiteComponent values must be perovmat:BSiteComponent individuals."@en
+        ] ,
+        [ sh:path perovmat:hasXSiteComponent ;
+            sh:class perovmat:XSiteComponent ;
+            sh:message "perovmat:hasXSiteComponent values must be perovmat:XSiteComponent individuals."@en
+        ] ,
+        [ sh:path perovmat:hasPhase ;
+            sh:class perovmat:PerovskitePhase ;
+            sh:message "perovmat:hasPhase values must be perovmat:PerovskitePhase individuals."@en
+        ] ,
+        [ sh:path perovmat:hasSiteOccupancy ;
+            sh:class perovmat:SiteOccupancy ;
+            sh:message "perovmat:hasSiteOccupancy values must be perovmat:SiteOccupancy individuals."@en
+        ] .
+
+#################################################################
+# SiteOccupancy — structural shape
+#
+# A reified fractional-occupancy assignment carries exactly one
+# occupied component and exactly one qualified fraction value.
+#################################################################
+
+perovmat:SiteOccupancyShape a sh:NodeShape ;
+    sh:targetClass perovmat:SiteOccupancy ;
+    sh:property
+        [ sh:path perovmat:occupancyComponent ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
+            sh:class matsci:Material ;
+            sh:message "SiteOccupancy requires exactly one perovmat:occupancyComponent (a matsci:Material)."@en
+        ] ,
+        [ sh:path perovmat:occupancyFraction ;
+            sh:minCount 1 ;
+            sh:maxCount 1 ;
+            sh:class qqval:QualifiedQuantityValue ;
+            sh:message "SiteOccupancy requires exactly one perovmat:occupancyFraction (a qqval:QualifiedQuantityValue)."@en
+        ] ;
+    sh:sparql
+        [ a sh:SPARQLConstraint ;
+            rdfs:comment "Occupancy fractions are dimensionless values in [0, 1]; the bound applies to the nominal value and to declared range bounds."@en ;
+            sh:message "perovmat:occupancyFraction values (qudt:numericValue, qqval:numericLowerBound, qqval:numericUpperBound) must lie in [0, 1]."@en ;
+            sh:select
+                """
+                PREFIX perovmat: <https://growgraph.dev/ontologies/perovskitemat#>
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
+                PREFIX qudt: <http://qudt.org/schema/qudt/>
+                SELECT $this
+                WHERE {
+                    $this perovmat:occupancyFraction ?qv .
+                    { ?qv qudt:numericValue ?n }
+                    UNION { ?qv qqval:numericLowerBound ?n }
+                    UNION { ?qv qqval:numericUpperBound ?n }
+                    FILTER ( ?n < 0 || ?n > 1 )
+                }
+                """ ;
+        ] .

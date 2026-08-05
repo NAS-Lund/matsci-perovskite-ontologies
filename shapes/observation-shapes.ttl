@@ -27,8 +27,8 @@
         """SHACL shapes mirroring the OWL cardinality/qualifier
         restrictions declared on obs:Condition, obs:QuantitativeObservation,
         and obs:QualitativeObservation in observation (>= 4.0.0)."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.2.0> ;
-    owl:versionInfo "2.2.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.3.0> ;
+    owl:versionInfo "2.3.0" .
 
 #################################################################
 # Condition — exactly one factor, exactly one value
@@ -82,3 +82,20 @@ obs:QualitativeObservationShape a sh:NodeShape ;
             sh:message "QualitativeObservation requires at least one obs:hasQualitativeResult whose value is an obs:QualitativeResult."@en
         ] ;
     sh:not [ sh:class obs:QuantitativeObservation ] .
+
+#################################################################
+# InstrumentConfiguration — one instrument, condition-typed settings
+#################################################################
+
+obs:InstrumentConfigurationShape a sh:NodeShape ;
+    sh:targetClass obs:InstrumentConfiguration ;
+    sh:property
+        [ sh:path obs:configuredEquipment ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:message "An InstrumentConfiguration applies to at most one equipment individual; use one configuration node per instrument."@en
+        ] ,
+        [ sh:path obs:hasSetting ;
+            sh:class obs:Condition ;
+            sh:message "obs:hasSetting must point at a reified obs:Condition (factor = instrument-setting factor, value = condition value)."@en
+        ] .

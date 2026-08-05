@@ -15,15 +15,15 @@ External dependencies (SOSA, BFO, SSN, and QUDT's schema facade) are omitted.
 ```mermaid
 graph TD
     perov["perovskitemat<br/>1.6.0"]
-    matsci["matsci<br/>5.0.0"]
+    matsci["matsci<br/>5.1.0"]
     pergres["pergres<br/>1.3.0"]
     life["lifecycle<br/>6.1.0"]
     units["matsci-units<br/>3.0.0"]
 
     subgraph base["base layer"]
-        obs["observation<br/>5.2.0"]
+        obs["observation<br/>5.3.0"]
         qqval["qqval<br/>2.2.0"]
-        qudtunits["matsci-qudt-units<br/>1.0.0"]
+        qudtunits["matsci-qudt-units<br/>1.1.0"]
     end
 
     perov --> matsci
@@ -88,12 +88,19 @@ QUDT schema facade and QUDT's unit vocabulary (not `matsci-units` or
 | **File** | [`observation.ttl`](ontologies/observation.ttl) |
 | **Shapes** | [`observation-shapes.ttl`](shapes/observation-shapes.ttl) |
 | **Prefix** | `obs:` → `https://growgraph.dev/ontologies/observation#` |
-| **Version** | 5.2.0 |
+| **Version** | 5.3.0 |
 
 Domain-independent scaffolding for processes, observations, phenomena, and
 conditions. Grounded in SOSA/BFO. Quantitative results are
 `qudt:QuantityValue`; optional qqval tightening is in `pergres`.
 Does not import qqval. Provenance: use `dcterms:source` to an RDF resource.
+
+Two reified patterns extend the condition machinery: instrument
+configurations (`obs:InstrumentConfiguration` bundling `obs:Condition`
+settings whose factor is an `obs:InstrumentSettingFactor`, linked from a
+process via `obs:hasInstrumentConfiguration`) and literature values
+(`obs:ReportedObservation` + `obs:reportedIn`, keeping cited values distinct
+from this-work measurements).
 
 ### Lifecycle (`lifecycle`)
 
@@ -208,7 +215,7 @@ corpus measures* — a sibling project reporting different quantities adds its o
 | **Generator** | [`scripts/build_qudt_subset.py`](scripts/build_qudt_subset.py) |
 | **Shapes** | — (vendored third-party terms; nothing to constrain) |
 | **Prefix** | `unit:`, `quantitykind:` → QUDT's own namespaces (mints none of its own) |
-| **Version** | 1.0.0 (from QUDT 3.1.4) |
+| **Version** | 1.1.0 (from QUDT 3.1.4) |
 
 The matsci projection of QUDT: **72 units** this corpus reports plus the **32
 quantity kinds** they belong to. Terms keep their QUDT IRIs and definitions —
@@ -251,13 +258,16 @@ nothing, and any term kept without a label, so the curation stays auditable.
 | **File** | [`matsci.ttl`](ontologies/matsci.ttl) |
 | **Shapes** | [`matsci-shapes.ttl`](shapes/matsci-shapes.ttl) |
 | **Prefix** | `matsci:` → `https://growgraph.dev/ontologies/matsci#` |
-| **Version** | 5.0.0 |
+| **Version** | 5.1.0 |
 
 General materials-science vocabulary (materials, samples, synthesis,
 characterization, morphology, properties). Imports `observation`, `lifecycle`
 and `qqval`. `matsci:hasInputSample`/`hasOutputSample` are
 `sosa:Sample`-narrowed convenience subproperties of
-`observation`'s `hasInputEntity`/`hasOutputEntity`.
+`observation`'s `hasInputEntity`/`hasOutputEntity`. Recipe-level inputs use
+the material-portion pattern: `matsci:hasInputPortion` →
+`matsci:MaterialPortion` (amount, purity, supplier) →
+`matsci:isPortionOfMaterial` → the material kind.
 
 Quantitative results are bare `qudt:QuantityValue`; load `pergres` alongside
 matsci to require qqval qualification, and the unit modules to resolve the unit
