@@ -29,7 +29,7 @@
         entity-of-interest properties. matsci:Material, matsci:MaterialRole and
         the *Method / *Process / *Value controlled vocabularies are open for
         extension."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci/5.1.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci/6.0.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://growgraph.dev/ontologies/lifecycle> ,
@@ -38,7 +38,7 @@
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.1.0" .
+    owl:versionInfo "6.0.0" .
 
 #################################################################
 # Core classes
@@ -958,31 +958,13 @@ matsci:AgingInfluenceOnSuperradiance a owl:Class ;
     rdfs:comment "A time-dependent effect in which sample aging affects superradiance-related observable properties, such as intensity, lifetime, emission rate, or cooperative emission behavior."@en .
 
 #################################################################
-# Temporal condition factors (matsci-specific)
+# Temporal facts
 #
-# Domain-specific temporal factors. They chain up to life:duration or
-# obs:time via skos:broader.
+# A process duration is not a condition: use life:hasDuration. The only
+# temporal condition factors are instrument settings (matsci:pulseDuration,
+# matsci:temporalResolution), declared with the other instrument-setting
+# factors below.
 #################################################################
-
-matsci:processDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "process duration"@en ;
-    rdfs:comment "Duration of a materials-science process."@en ;
-    skos:broader life:duration .
-
-matsci:synthesisDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "synthesis duration"@en ;
-    rdfs:comment "Duration of a synthesis process or synthesis step."@en ;
-    skos:broader matsci:processDuration .
-
-matsci:assemblyDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "assembly duration"@en ;
-    rdfs:comment "Duration of an assembly or self-assembly process."@en ;
-    skos:broader matsci:processDuration .
-
-matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "pulse duration"@en ;
-    rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
-    skos:broader life:duration .
 
 #################################################################
 # Instrument-setting factor individuals (matsci-specific)
@@ -1013,7 +995,14 @@ matsci:spectralResolution a owl:NamedIndividual, obs:InstrumentSettingFactor ;
 
 matsci:temporalResolution a owl:NamedIndividual, obs:InstrumentSettingFactor ;
     rdfs:label "temporal resolution"@en ;
-    skos:altLabel "time resolution"@en .
+    skos:altLabel "time resolution"@en ;
+    skos:broader obs:time .
+
+matsci:pulseDuration a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "pulse duration"@en ;
+    rdfs:comment "Temporal width of an excitation, pump, or probe pulse, as configured on the source."@en ;
+    skos:altLabel "pulse width"@en ;
+    skos:broader obs:time .
 
 matsci:acceleratingVoltage a owl:NamedIndividual, obs:InstrumentSettingFactor ;
     rdfs:label "accelerating voltage"@en ;
@@ -1026,36 +1015,10 @@ matsci:acceleratingVoltage a owl:NamedIndividual, obs:InstrumentSettingFactor ;
 # life: classes is asserted in the section below.
 #################################################################
 
-matsci:processDurationProperty a owl:NamedIndividual ;
-    rdfs:label "process duration"@en .
-
-matsci:synthesisDurationProperty a owl:NamedIndividual ;
-    rdfs:label "synthesis duration"@en .
-
-matsci:assemblyDurationProperty a owl:NamedIndividual ;
-    rdfs:label "assembly duration"@en .
-
-matsci:reactionTimeProperty a owl:NamedIndividual ;
-    rdfs:label "reaction time"@en .
-
-matsci:solventEvaporationTimeProperty a owl:NamedIndividual ;
-    rdfs:label "solvent evaporation time"@en .
-
-matsci:dryingTimeProperty a owl:NamedIndividual ;
-    rdfs:label "drying time"@en .
-
-matsci:centrifugationTimeProperty a owl:NamedIndividual ;
-    rdfs:label "centrifugation time"@en .
-
-matsci:measurementDelayTimeProperty a owl:NamedIndividual ;
-    rdfs:label "measurement delay time"@en .
-
-matsci:pumpProbeDelayTimeProperty a owl:NamedIndividual ;
-    rdfs:label "pump-probe delay time"@en ;
-    skos:altLabel "pump-probe delay"@en, "delay time"@en .
-
-matsci:pulseDurationProperty a owl:NamedIndividual ;
-    rdfs:label "pulse duration"@en .
+# Measured temporal quantities only. A stated protocol parameter is not an
+# observed property: a process duration takes life:hasDuration, a measurement
+# delay takes life:hasObservationDelay, and a configured pulse width is the
+# instrument-setting factor matsci:pulseDuration.
 
 matsci:radiativeDurationProperty a owl:NamedIndividual ;
     rdfs:label "radiative duration"@en ;
@@ -1089,26 +1052,6 @@ matsci:carrierCoolingTimeProperty a owl:NamedIndividual ;
 # matsci imports lifecycle and lifecycle depends only on observation, which
 # keeps the dependency graph acyclic.
 #################################################################
-
-matsci:processDurationProperty a life:ObservableProcessTemporalProperty .
-
-matsci:synthesisDurationProperty a life:ObservableProcessTemporalProperty .
-
-matsci:assemblyDurationProperty a life:ObservableProcessTemporalProperty .
-
-matsci:reactionTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:solventEvaporationTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:dryingTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:centrifugationTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:measurementDelayTimeProperty a life:ObservableTransientTemporalProperty .
-
-matsci:pumpProbeDelayTimeProperty a life:ObservableTransientTemporalProperty .
-
-matsci:pulseDurationProperty a life:ObservableTransientTemporalProperty .
 
 matsci:radiativeDurationProperty a life:ObservableTransientTemporalProperty .
 

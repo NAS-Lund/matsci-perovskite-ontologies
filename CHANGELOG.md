@@ -2,7 +2,87 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2026-08-05
+## 2026-08-07 — temporal routes
+
+A temporal fact takes one route, determined by what the fact is: process
+duration → `life:hasDuration`, entity age → `life:hasEntityAge`, observation
+delay → `life:hasObservationDelay`, instrument setting → `obs:hasSetting`,
+measured temporal quantity → `life:hasTemporalQuantityResult`. A temporal fact
+is not a process condition. Previously the condition route was equally
+available, with nothing to select between the two; extraction split across
+both, and the competency queries — which read only the property route —
+returned nothing for Q12 on every extraction output in the benchmark corpus.
+
+### Removed
+
+- **lifecycle 7.0.0 (breaking)** — temporal `obs:ConditionFactor` individuals
+  `life:duration`, `life:storageDuration`, `life:agingTime`,
+  `life:exposureDuration`, `life:entityAge`, `life:measurementDelayTime`.
+  Observed-property individuals naming stated parameters:
+  `life:storageDurationProperty`, `life:agingTimeProperty`,
+  `life:entityAgeProperty`, `life:exposureDurationProperty`. Each of the latter
+  carried an `rdfs:label` identical to the condition factor of the same name.
+- **matsci 6.0.0 (breaking)** — condition factors `matsci:processDuration`,
+  `matsci:synthesisDuration`, `matsci:assemblyDuration`. Observed-property
+  individuals `processDurationProperty`, `synthesisDurationProperty`,
+  `assemblyDurationProperty`, `reactionTimeProperty`,
+  `solventEvaporationTimeProperty`, `dryingTimeProperty`,
+  `centrifugationTimeProperty`, `measurementDelayTimeProperty`,
+  `pumpProbeDelayTimeProperty`, `pulseDurationProperty`, with their temporal
+  typing triples. Measured-quantity properties (`lifetimeProperty`,
+  `decayTimeProperty`, `coherenceTimeProperty`, the superfluorescence and
+  superradiance set, …) are unchanged.
+
+### Changed
+
+- **matsci 6.0.0** — `matsci:pulseDuration` retyped `obs:InstrumentSettingFactor`
+  and re-parented `skos:broader obs:time`; `matsci:temporalResolution` given
+  `skos:broader obs:time` (it had no broader factor).
+- **observation 5.4.0** — `obs:time` narrowed to instrument settings in
+  `rdfs:comment`, with a `skos:scopeNote` naming the property route.
+  `obs:ConditionFactor` gains a `skos:scopeNote` and drops `"time"` from
+  `skos:example`.
+- **lifecycle 7.0.0** — `skos:scopeNote` on `life:hasDuration`,
+  `life:hasEntityAge`, `life:hasObservationDelay` and
+  `life:hasTemporalQuantityResult` stating which fact kind each takes.
+  `life:hasStorageCondition` and `life:StorageAgingProcess` no longer list
+  storage duration among conditions. `life:TimeConditionValue` scoped to
+  instrument settings. `life:ObservableProcessTemporalProperty` declares no
+  individuals and is documented as an extension point for measured process
+  times.
+- **Competency queries** — Q13 reads `life:hasDuration` on the step, keyed on
+  method or label, replacing `matsci:solventEvaporationTimeProperty`.
+
+### Added
+
+- **observation-shapes 2.4.0** — `obs:NoTemporalProcessConditionConstraint`
+  rejects a condition reached via `obs:hasProcessCondition` /
+  `obs:hasObservationCondition` whose factor is `skos:broader*` `obs:time`.
+  `obs:hasSetting` is exempt.
+- **Competency queries 31 and 32** — `life:hasEntityAge` and
+  `life:hasObservationDelay`, neither previously read by any query.
+- **`fixtures/`, `scripts/check_competency.py`** — acceptance gate.
+  `fixtures/exemplar.ttl` is a synthetic data graph covering the competency
+  surface and all five temporal routes; `fixtures/negative-temporal-condition.ttl`
+  states a duration as a process condition. The script asserts that all 32
+  queries return rows, that the exemplar conforms, that the negative fixture is
+  rejected by the named constraint, and that no condition factor shares an
+  `rdfs:label` with an observable property.
+
+## 2026-08-07
+
+### Changed
+
+- **qqval-shapes 2.2.0** — enforce the qqval numeric-form contract
+  ("scalar → `qudt:numericValue` only", qqval scope note) that a benchmark
+  run showed extraction violating: two new `sh:sparql` constraints on
+  `QualifiedQuantityValueShape` reject (1) equal
+  `numericLowerBound`/`numericUpperBound` (an exact scalar encoded as
+  bounds) and (2) `epistemicQualifier qqval:Exact` without
+  `qudt:numericValue` or with any bound property present (also catches an
+  exact value asserted as a lone lower bound, which reads as "≥ x").
+  Validated with pyshacl against conforming scalar/range fixtures and both
+  observed failure patterns.
 
 ### Added
 

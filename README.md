@@ -15,13 +15,13 @@ External dependencies (SOSA, BFO, SSN, and QUDT's schema facade) are omitted.
 ```mermaid
 graph TD
     perov["perovskitemat<br/>1.6.0"]
-    matsci["matsci<br/>5.1.0"]
+    matsci["matsci<br/>6.0.0"]
     pergres["pergres<br/>1.3.0"]
-    life["lifecycle<br/>6.1.0"]
+    life["lifecycle<br/>7.0.0"]
     units["matsci-units<br/>3.0.0"]
 
     subgraph base["base layer"]
-        obs["observation<br/>5.3.0"]
+        obs["observation<br/>5.4.0"]
         qqval["qqval<br/>2.2.0"]
         qudtunits["matsci-qudt-units<br/>1.1.0"]
     end
@@ -88,7 +88,7 @@ QUDT schema facade and QUDT's unit vocabulary (not `matsci-units` or
 | **File** | [`observation.ttl`](ontologies/observation.ttl) |
 | **Shapes** | [`observation-shapes.ttl`](shapes/observation-shapes.ttl) |
 | **Prefix** | `obs:` → `https://growgraph.dev/ontologies/observation#` |
-| **Version** | 5.3.0 |
+| **Version** | 5.4.0 |
 
 Domain-independent scaffolding for processes, observations, phenomena, and
 conditions. Grounded in SOSA/BFO. Quantitative results are
@@ -109,7 +109,7 @@ from this-work measurements).
 | **File** | [`lifecycle.ttl`](ontologies/lifecycle.ttl) |
 | **Shapes** | [`lifecycle-shapes.ttl`](shapes/lifecycle-shapes.ttl) |
 | **Prefix** | `life:` → `https://growgraph.dev/ontologies/lifecycle#` |
-| **Version** | 6.1.0 |
+| **Version** | 7.0.0 |
 
 Domain-independent module with two orthogonal concerns under one namespace:
 
@@ -125,6 +125,36 @@ Specializes `observation`. `life:TimeQuantityValue` is a bare
 `qqval:QualifiedQuantityValue` is asserted by `pergres`. The prefix
 `life:` names the module, not every term's semantic category
 (so `life:TemporalObservation` is intentional).
+
+#### Temporal routes
+
+**A temporal fact is not a process condition.** A duration is constitutive of a
+process, not a condition imposed on it. Each fact kind has one route:
+
+| Kind of temporal fact | Route |
+|---|---|
+| Stated extent of a process | `life:hasDuration` on the process |
+| Stated age / elapsed time of an entity | `life:hasEntityAge` |
+| Stated delay at which an observation was taken | `life:hasObservationDelay` |
+| Temporal **instrument setting** (pulse width, temporal resolution) | `obs:InstrumentConfiguration` + `obs:hasSetting` → `obs:Condition` |
+| **Measured** temporal quantity (lifetime, decay, coherence, cooling) | `life:TemporalObservation` + `life:hasTemporalQuantityResult` |
+
+The first three rows differ from the last by **stated protocol parameter vs.
+measured result**: "stirred for 2 h" is not a measurement; a carrier lifetime
+is.
+
+`observation-shapes.ttl` rejects a condition on `obs:hasProcessCondition` /
+`obs:hasObservationCondition` whose factor is `skos:broader*` `obs:time`, so
+the rule is checkable rather than conventional.
+
+Time and imposed conditions coexist on one process node:
+
+```turtle
+ex:storageAging a life:StorageAgingProcess ;
+    life:hasDuration         ex:agingDuration ;   # 4–15 days
+    life:hasStorageCondition ex:storageTemperature ,
+                             ex:storageHumidity .
+```
 
 ### Pergres bridge (`pergres`)
 
@@ -258,7 +288,7 @@ nothing, and any term kept without a label, so the curation stays auditable.
 | **File** | [`matsci.ttl`](ontologies/matsci.ttl) |
 | **Shapes** | [`matsci-shapes.ttl`](shapes/matsci-shapes.ttl) |
 | **Prefix** | `matsci:` → `https://growgraph.dev/ontologies/matsci#` |
-| **Version** | 5.1.0 |
+| **Version** | 6.0.0 |
 
 General materials-science vocabulary (materials, samples, synthesis,
 characterization, morphology, properties). Imports `observation`, `lifecycle`
@@ -326,9 +356,28 @@ unit modules in play. A run that names files individually enforces the
 qqval-qualification policy only if it lists `pergres.ttl` and
 `pergres-shapes.ttl` explicitly.
 
+### Acceptance gate
+
+```bash
+uv run --with rdflib --with pyshacl python scripts/check_competency.py
+```
+
+Four assertions:
+
+| Check | Guards against |
+|---|---|
+| every competency query returns ≥ 1 row against [`fixtures/exemplar.ttl`](fixtures/exemplar.ttl) | a query answering nothing because the data took another route |
+| no `obs:ConditionFactor` shares an `rdfs:label` with an observable property | two routes indistinguishable to label- and embedding-based retrieval |
+| `fixtures/exemplar.ttl` conforms to every shapes graph | the exemplar drifting out of conformance as shapes tighten |
+| [`fixtures/negative-temporal-condition.ttl`](fixtures/negative-temporal-condition.ttl) is **rejected** | the temporal-route rule regressing |
+
+`fixtures/exemplar.ttl` is a synthetic data graph covering the competency
+surface and all five temporal routes. It is not extraction output, so the gate
+runs without a pipeline.
+
 ## Competency queries
 
-[`queries/sparql_queries.rq`](queries/sparql_queries.rq) holds 30 competency
+[`queries/sparql_queries.rq`](queries/sparql_queries.rq) holds 32 competency
 queries in two groups — **synthesis** (material, morphology, method, ligand /
 solvent / antisolvent, durations, temperature, humidity, atmosphere) and
 **spectroscopy** (absorption and emission peaks, bandgap, PL QY, lifetimes,
@@ -338,6 +387,11 @@ by these ontologies is a gap in the vocabulary, not in the query.
 
 Each query carries its own `PREFIX` block, so a single query can be copied out
 and run on its own against a store holding extracted data.
+
+Run them as a gate, not by hand:
+[`scripts/check_competency.py`](scripts/check_competency.py) executes all 32
+against a fixture and fails on any that returns no rows — see
+[Acceptance gate](#acceptance-gate).
 
 ## Consuming these ontologies
 
@@ -377,8 +431,13 @@ annotations, so these are not stylistic preferences:
 | `skos:scopeNote` | usage and normative rules | reaches the extraction prompt but is never embedded |
 | this README | design rationale, module contracts | reaches neither |
 
-Three rules worth stating explicitly:
+Four rules worth stating explicitly:
 
+- **Two terms that mean different things must not share an `rdfs:label`** —
+  most sharply, an `obs:ConditionFactor` and an observable-property individual.
+  A shared label leaves the IRI suffix as the only distinguishing feature,
+  which neither the dense nor the lexical lane reads.
+  `scripts/check_competency.py` asserts this.
 - **Never use `dcterms:alternative`.** It is not a label predicate anywhere in
   the consuming pipeline; values are silently discarded.
 - **Front-load `rdfs:comment`** with the discriminating noun phrase, in the words

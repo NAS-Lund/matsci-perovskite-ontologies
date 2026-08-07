@@ -27,8 +27,8 @@
         """SHACL shapes mirroring the OWL cardinality/qualifier
         restrictions declared on obs:Condition, obs:QuantitativeObservation,
         and obs:QualitativeObservation in observation (>= 4.0.0)."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.3.0> ;
-    owl:versionInfo "2.3.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/observation-shapes/2.4.0> ;
+    owl:versionInfo "2.4.0" .
 
 #################################################################
 # Condition — exactly one factor, exactly one value
@@ -48,7 +48,37 @@ obs:ConditionShape a sh:NodeShape ;
             sh:maxCount 1 ;
             sh:class obs:ConditionValue ;
             sh:message "Condition requires exactly one obs:conditionValue of type obs:ConditionValue."@en
-        ] .
+        ] ;
+    sh:sparql obs:NoTemporalProcessConditionConstraint .
+
+#################################################################
+# A temporal fact is not a process condition
+#
+# A duration is constitutive of a process, not a condition imposed on it, and
+# takes life:hasDuration. Temporal factors are reachable only through
+# obs:hasSetting, where a pulse width or temporal resolution is a configured
+# instrument parameter.
+#################################################################
+
+obs:NoTemporalProcessConditionConstraint a sh:SPARQLConstraint ;
+    rdfs:comment "A temporal factor is reachable only via obs:hasSetting (instrument configuration), never as a process or observation condition."@en ;
+    sh:message "Temporal facts are not conditions: this condition is attached to a process or observation but its factor is temporal (skos:broader* obs:time). Use life:hasDuration on the process, life:hasEntityAge on the entity, or life:hasObservationDelay on the observation. Temporal instrument settings are exempt but must be reached via obs:hasSetting."@en ;
+    sh:select
+        """
+        PREFIX obs:  <https://growgraph.dev/ontologies/observation#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT $this ?factor
+        WHERE {
+            { ?rel rdfs:subPropertyOf* obs:hasProcessCondition . }
+            UNION
+            { ?rel rdfs:subPropertyOf* obs:hasObservationCondition . }
+            ?subject ?rel $this .
+            $this obs:conditionFactor ?factor .
+            ?factor skos:broader* obs:time .
+            FILTER NOT EXISTS { ?config obs:hasSetting $this . }
+        }
+        """ .
 
 #################################################################
 # QuantitativeObservation — result must be a qualified quantity value

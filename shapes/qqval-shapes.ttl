@@ -22,8 +22,8 @@
         qqval:QualifiedQuantityValue and qqval:QuantityRange, plus
         property-presence rules for numeric form and uncertainty
         mutual exclusion. Aligns with qqval >= 2.0.0."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval-shapes/2.1.0> ;
-    owl:versionInfo "2.1.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval-shapes/2.2.0> ;
+    owl:versionInfo "2.2.0" .
 
 #################################################################
 # QualifiedQuantityValue — structural shape
@@ -149,6 +149,38 @@ qqval:QualifiedQuantityValueShape a sh:NodeShape ;
                         ( EXISTS { $this qqval:numericUncertainty ?u }
                           || EXISTS { $this qqval:numericRelativeUncertainty ?r } )
                         && NOT EXISTS { $this qudt:numericValue ?v }
+                    )
+                }
+                """ ;
+        ] ,
+        [ a sh:SPARQLConstraint ;
+            rdfs:comment "Equal bounds encode an exact scalar; scalars use qudt:numericValue only."@en ;
+            sh:message "Equal qqval:numericLowerBound and qqval:numericUpperBound encode an exact scalar; use qudt:numericValue with qqval:epistemicQualifier qqval:Exact instead of bounds."@en ;
+            sh:select
+                """
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
+                SELECT $this
+                WHERE {
+                    $this qqval:numericLowerBound ?lb .
+                    $this qqval:numericUpperBound ?ub .
+                    FILTER ( ?lb = ?ub )
+                }
+                """ ;
+        ] ,
+        [ a sh:SPARQLConstraint ;
+            rdfs:comment "Exact values carry the scalar form: numericValue present, no bounds."@en ;
+            sh:message "qqval:epistemicQualifier qqval:Exact requires qudt:numericValue and forbids qqval:numericLowerBound / qqval:numericUpperBound (scalar -> qudt:numericValue only)."@en ;
+            sh:select
+                """
+                PREFIX qqval: <https://growgraph.dev/ontologies/qqval#>
+                PREFIX qudt: <http://qudt.org/schema/qudt/>
+                SELECT $this
+                WHERE {
+                    $this qqval:epistemicQualifier qqval:Exact .
+                    FILTER (
+                        NOT EXISTS { $this qudt:numericValue ?v }
+                        || EXISTS { $this qqval:numericLowerBound ?lb }
+                        || EXISTS { $this qqval:numericUpperBound ?ub }
                     )
                 }
                 """ ;

@@ -34,12 +34,12 @@
         are open vocabularies. hasInputEntity, hasOutputEntity, hasObservation,
         producedByProcess, hasQuantityResult and hasQualitativeResult are meant
         to be subpropertied by domain ontologies wanting a narrower name."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.3.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.4.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.3.0" ;
+    owl:versionInfo "5.4.0" ;
     rdfs:seeAlso
         <http://www.w3.org/ns/prov#wasDerivedFrom> ,
         <http://purl.org/dc/terms/source> .
@@ -167,7 +167,12 @@ obs:ConditionFactor a owl:Class ;
     rdfs:comment
         "A dimension or aspect of a process's or observation's context being specified. Open vocabulary: domain ontologies mint further individuals as siblings; use skos:broader to relate a narrower factor to a broader one."@en ;
     skos:example
-        "atmosphere"@en , "humidity"@en , "temperature"@en , "time"@en .
+        "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en ;
+    skos:scopeNote
+        """A factor is imposed on a process or observation from outside. A
+        duration, elapsed time, delay or age is not: lifecycle gives each a
+        dedicated property. The one temporal factor is the instrument setting
+        -- see obs:time."""@en .
 
 #################################################################
 # Object properties
@@ -265,17 +270,28 @@ obs:producedByProcess a owl:ObjectProperty ;
 
 obs:time a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "time"@en ;
-    rdfs:comment "A temporal factor, including duration, elapsed time, delay time, entity age, storage time, aging time, exposure time, or process time."@en .
+    rdfs:comment "A temporal factor of an instrument configuration, such as pulse width or temporal resolution."@en ;
+    skos:scopeNote
+        """Narrower than the label suggests: a temporal setting of an
+        instrument, reached via obs:InstrumentConfiguration and
+        obs:hasSetting. A duration, elapsed time, delay, entity age, storage
+        time, aging time, exposure time or process time is not a condition but
+        a property of the process, entity or observation it belongs to --
+        see lifecycle's life:hasDuration, life:hasEntityAge and
+        life:hasObservationDelay.
+
+        obs:ConditionShape rejects a condition on obs:hasProcessCondition or
+        obs:hasObservationCondition whose factor is skos:broader* obs:time.
+        Narrower factors hung off this one inherit that restriction."""@en .
 
 #################################################################
 # Instrument configuration
 #
-# Methods sections state instrument settings (excitation wavelength,
+# Instrument settings stated in methods sections (excitation wavelength,
 # repetition rate, numerical aperture, spectral resolution, accelerating
-# voltage, ...) that previously had no landing zone and were dropped.
-# Settings reuse the generic condition reification; the configuration
-# node bundles them per instrument so multi-instrument processes stay
-# unambiguous.
+# voltage, ...). Settings reuse the generic condition reification; the
+# configuration node bundles them per instrument so multi-instrument
+# processes stay unambiguous.
 #################################################################
 
 obs:InstrumentSettingFactor a owl:Class ;
