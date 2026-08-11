@@ -194,32 +194,45 @@ WHERE {
     )
 }
 
-# 13. What is the duration of the solvent evaporation?
+# 13. How long did each synthesis or assembly step take (solvent evaporation,
+#     drying, centrifugation, reaction, ...)?
+#
+# Reads life:hasDuration on the step, identifying the step by its method or
+# label rather than by a per-step observed-property individual.
 
 PREFIX matsci: <https://growgraph.dev/ontologies/matsci#>
 PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
-PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX qudt:   <http://qudt.org/schema/qudt/>
 PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
 
 SELECT DISTINCT
-    ?observation
-    ?evaporationDuration
+    ?process
+    ?stepLabel
+    ?stepDuration
     ?lowerBound
     ?upperBound
     ?unit
 WHERE {
-    ?observation a life:TemporalObservation .
-    ?observation sosa:observedProperty matsci:solventEvaporationTimeProperty .
-    ?observation life:hasTemporalQuantityResult ?value .
+    VALUES ?processType { matsci:SynthesisProcess matsci:AssemblyProcess }
+    ?process a ?processType .
+    ?process life:hasDuration ?value .
 
-    OPTIONAL { ?value qudt:numericValue ?evaporationDuration . }
+    OPTIONAL {
+        ?process obs:usesMethod ?method .
+        ?method rdfs:label ?methodLabel .
+    }
+    OPTIONAL { ?process rdfs:label ?processLabel . }
+    BIND(COALESCE(?methodLabel, ?processLabel) AS ?stepLabel)
+
+    OPTIONAL { ?value qudt:numericValue ?stepDuration . }
     OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
     OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
     OPTIONAL { ?value qudt:unit ?unit . }
 
     FILTER(
-        BOUND(?evaporationDuration) ||
+        BOUND(?stepDuration) ||
         BOUND(?lowerBound) ||
         BOUND(?upperBound)
     )
@@ -610,4 +623,77 @@ WHERE {
 
     ?value qudt:numericValue ?lifetime .
     ?value qudt:unit ?unit .
+}
+
+
+# 31. How old was the sample when it was measured (elapsed time since
+#     synthesis / fabrication)?
+#
+# The entity-scoped half of the sample-history question that Q14 answers
+# process-side.
+
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?entity
+    ?age
+    ?lowerBound
+    ?upperBound
+    ?unit
+    ?referenceProcess
+WHERE {
+    ?entity life:hasEntityAge ?value .
+
+    OPTIONAL { ?value life:hasTemporalReferenceProcess ?referenceProcess . }
+
+    OPTIONAL { ?value qudt:numericValue ?age . }
+    OPTIONAL { ?value qqval:numericLowerBound ?lowerBound . }
+    OPTIONAL { ?value qqval:numericUpperBound ?upperBound . }
+    OPTIONAL { ?value qudt:unit ?unit . }
+
+    FILTER(
+        BOUND(?age) ||
+        BOUND(?lowerBound) ||
+        BOUND(?upperBound)
+    )
+}
+
+
+# 32. At what delay after excitation was each transient result recorded?
+#
+# The delay is the coordinate at which the result was taken, so it is returned
+# alongside the observation's own result rather than as a result itself.
+
+PREFIX life:   <https://growgraph.dev/ontologies/lifecycle#>
+PREFIX obs:    <https://growgraph.dev/ontologies/observation#>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX qudt:   <http://qudt.org/schema/qudt/>
+PREFIX qqval:  <https://growgraph.dev/ontologies/qqval#>
+
+SELECT DISTINCT
+    ?observation
+    ?observedProperty
+    ?delay
+    ?delayUnit
+    ?resultValue
+    ?resultUnit
+WHERE {
+    ?observation life:hasObservationDelay ?delayValue .
+
+    OPTIONAL { ?observation sosa:observedProperty ?observedProperty . }
+
+    OPTIONAL { ?delayValue qudt:numericValue ?delay . }
+    OPTIONAL { ?delayValue qqval:numericLowerBound ?delay . }
+    OPTIONAL { ?delayValue qudt:unit ?delayUnit . }
+
+    OPTIONAL {
+        ?observation obs:hasQuantityResult ?result .
+        OPTIONAL { ?result qudt:numericValue ?resultValue . }
+        OPTIONAL { ?result qudt:unit ?resultUnit . }
+    }
+
+    FILTER(BOUND(?delay))
 }

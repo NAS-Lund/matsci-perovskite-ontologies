@@ -1,0 +1,37 @@
+#################################################################
+# Negative fixture -- must be rejected by observation-shapes
+#
+# An aging duration reified as a process condition instead of attached with
+# life:hasDuration. scripts/check_competency.py asserts that pyshacl reports
+# a violation here; if this graph ever conforms, the rule has regressed.
+#
+# The factor is obs:time itself, the general case the constraint matches on
+# via skos:broader* rather than by enumerating IRIs.
+#################################################################
+
+@prefix ex:      <https://growgraph.dev/fixtures/negative#> .
+@prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+ex:agingProcess a life:StorageAgingProcess ;
+    rdfs:label "aging with duration modelled as a condition"@en ;
+    life:hasStorageCondition ex:agingDurationCondition .
+
+# The violation: a temporal factor reached via a process condition.
+ex:agingDurationCondition a obs:Condition ;
+    rdfs:label "aging duration 4-15 days"@en ;
+    obs:conditionFactor obs:time ;
+    obs:conditionValue ex:agingDurationValue .
+
+ex:agingDurationValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "4-15 days"@en ;
+    qudt:unit unit:DAY ;
+    qqval:numericLowerBound "4"^^xsd:decimal ;
+    qqval:numericUpperBound "15"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .

@@ -29,7 +29,7 @@
         entity-of-interest properties. matsci:Material, matsci:MaterialRole and
         the *Method / *Process / *Value controlled vocabularies are open for
         extension."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci/5.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci/6.0.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://growgraph.dev/ontologies/lifecycle> ,
@@ -38,7 +38,7 @@
         <http://www.w3.org/ns/ssn/> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.0.0" .
+    owl:versionInfo "6.0.0" .
 
 #################################################################
 # Core classes
@@ -55,6 +55,16 @@ matsci:Impurity a owl:Class ;
 matsci:LuminescentImpurity a owl:Class ;
     rdfs:label "Luminescent impurity"@en ;
     rdfs:subClassOf matsci:Impurity .
+
+matsci:MaterialPortion a owl:Class ;
+    rdfs:label "Material portion"@en ;
+    rdfs:comment
+        """A concrete quantified portion of a material used or produced in a
+        process, as stated in a recipe or methods section (e.g. "2 mL of oleic
+        acid, 90%, Sigma-Aldrich"). Carries amount, purity and supplier via
+        matsci:hasAmount / matsci:hasPurity / matsci:hasSupplierName; the
+        material kind is linked via matsci:isPortionOfMaterial."""@en ;
+    rdfs:subClassOf sosa:FeatureOfInterest .
 
 matsci:MaterialRole a owl:Class ;
     rdfs:label "Material role"@en ;
@@ -421,6 +431,41 @@ matsci:hasOutputMaterial a owl:ObjectProperty ;
         "Links a process to the abstract material kind it targets as output.  For the concrete produced sample use matsci:hasOutputSample."@en ;
     rdfs:domain obs:Process ;
     rdfs:range matsci:Material .
+
+matsci:hasInputPortion a owl:ObjectProperty ;
+    rdfs:label "has input portion"@en ;
+    rdfs:comment
+        "Links a process to a quantified material portion it consumes. Complements matsci:hasInputMaterial (abstract kind) with recipe-level amounts."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range matsci:MaterialPortion ;
+    rdfs:subPropertyOf obs:hasInputEntity .
+
+matsci:isPortionOfMaterial a owl:ObjectProperty ;
+    rdfs:label "is portion of material"@en ;
+    rdfs:comment "The material kind this portion is a quantified amount of."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range matsci:Material .
+
+matsci:hasAmount a owl:ObjectProperty ;
+    rdfs:label "has amount"@en ;
+    rdfs:comment
+        "Quantified amount of the portion (mass, volume, or amount of substance) as a qudt:QuantityValue with verbatim source value and unit."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range qudt:QuantityValue .
+
+matsci:hasPurity a owl:ObjectProperty ;
+    rdfs:label "has purity"@en ;
+    rdfs:comment
+        "Stated purity of the portion (e.g. 99.9 %) as a qudt:QuantityValue."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range qudt:QuantityValue .
+
+matsci:hasSupplierName a owl:DatatypeProperty ;
+    rdfs:label "has supplier name"@en ;
+    rdfs:comment
+        "Vendor or brand the portion was sourced from, transcribed as stated (e.g. \"Sigma-Aldrich\")."@en ;
+    rdfs:domain matsci:MaterialPortion ;
+    rdfs:range xsd:string .
 
 matsci:hasInputSample a owl:ObjectProperty ;
     rdfs:label "has input sample"@en ;
@@ -913,31 +958,55 @@ matsci:AgingInfluenceOnSuperradiance a owl:Class ;
     rdfs:comment "A time-dependent effect in which sample aging affects superradiance-related observable properties, such as intensity, lifetime, emission rate, or cooperative emission behavior."@en .
 
 #################################################################
-# Temporal condition factors (matsci-specific)
+# Temporal facts
 #
-# Domain-specific temporal factors. They chain up to life:duration or
-# obs:time via skos:broader.
+# A process duration is not a condition: use life:hasDuration. The only
+# temporal condition factors are instrument settings (matsci:pulseDuration,
+# matsci:temporalResolution), declared with the other instrument-setting
+# factors below.
 #################################################################
 
-matsci:processDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "process duration"@en ;
-    rdfs:comment "Duration of a materials-science process."@en ;
-    skos:broader life:duration .
+#################################################################
+# Instrument-setting factor individuals (matsci-specific)
+#
+# The class is obs:InstrumentSettingFactor, in observation. These are the
+# settings the corpus's methods sections actually state; open vocabulary,
+# mint siblings as needed.
+#################################################################
 
-matsci:synthesisDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "synthesis duration"@en ;
-    rdfs:comment "Duration of a synthesis process or synthesis step."@en ;
-    skos:broader matsci:processDuration .
+matsci:excitationWavelength a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "excitation wavelength"@en ;
+    skos:altLabel "pump wavelength"@en , "laser wavelength"@en .
 
-matsci:assemblyDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "assembly duration"@en ;
-    rdfs:comment "Duration of an assembly or self-assembly process."@en ;
-    skos:broader matsci:processDuration .
+matsci:excitationFluence a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "excitation fluence"@en ;
+    skos:altLabel "pump fluence"@en , "laser fluence"@en .
 
-matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
+matsci:repetitionRate a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "repetition rate"@en ;
+    skos:altLabel "laser repetition rate"@en .
+
+matsci:numericalAperture a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "numerical aperture"@en ;
+    skos:notation "NA" .
+
+matsci:spectralResolution a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "spectral resolution"@en .
+
+matsci:temporalResolution a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "temporal resolution"@en ;
+    skos:altLabel "time resolution"@en ;
+    skos:broader obs:time .
+
+matsci:pulseDuration a owl:NamedIndividual, obs:InstrumentSettingFactor ;
     rdfs:label "pulse duration"@en ;
-    rdfs:comment "Temporal width of an excitation, pump, or probe pulse."@en ;
-    skos:broader life:duration .
+    rdfs:comment "Temporal width of an excitation, pump, or probe pulse, as configured on the source."@en ;
+    skos:altLabel "pulse width"@en ;
+    skos:broader obs:time .
+
+matsci:acceleratingVoltage a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "accelerating voltage"@en ;
+    rdfs:comment "Electron-beam accelerating voltage of a microscope (e.g. 200 kV)."@en .
 
 #################################################################
 # Temporal observable properties (matsci-specific)
@@ -946,36 +1015,10 @@ matsci:pulseDuration a owl:NamedIndividual, obs:ConditionFactor ;
 # life: classes is asserted in the section below.
 #################################################################
 
-matsci:processDurationProperty a owl:NamedIndividual ;
-    rdfs:label "process duration"@en .
-
-matsci:synthesisDurationProperty a owl:NamedIndividual ;
-    rdfs:label "synthesis duration"@en .
-
-matsci:assemblyDurationProperty a owl:NamedIndividual ;
-    rdfs:label "assembly duration"@en .
-
-matsci:reactionTimeProperty a owl:NamedIndividual ;
-    rdfs:label "reaction time"@en .
-
-matsci:solventEvaporationTimeProperty a owl:NamedIndividual ;
-    rdfs:label "solvent evaporation time"@en .
-
-matsci:dryingTimeProperty a owl:NamedIndividual ;
-    rdfs:label "drying time"@en .
-
-matsci:centrifugationTimeProperty a owl:NamedIndividual ;
-    rdfs:label "centrifugation time"@en .
-
-matsci:measurementDelayTimeProperty a owl:NamedIndividual ;
-    rdfs:label "measurement delay time"@en .
-
-matsci:pumpProbeDelayTimeProperty a owl:NamedIndividual ;
-    rdfs:label "pump-probe delay time"@en ;
-    skos:altLabel "pump-probe delay"@en, "delay time"@en .
-
-matsci:pulseDurationProperty a owl:NamedIndividual ;
-    rdfs:label "pulse duration"@en .
+# Measured temporal quantities only. A stated protocol parameter is not an
+# observed property: a process duration takes life:hasDuration, a measurement
+# delay takes life:hasObservationDelay, and a configured pulse width is the
+# instrument-setting factor matsci:pulseDuration.
 
 matsci:radiativeDurationProperty a owl:NamedIndividual ;
     rdfs:label "radiative duration"@en ;
@@ -1009,26 +1052,6 @@ matsci:carrierCoolingTimeProperty a owl:NamedIndividual ;
 # matsci imports lifecycle and lifecycle depends only on observation, which
 # keeps the dependency graph acyclic.
 #################################################################
-
-matsci:processDurationProperty a life:ObservableProcessTemporalProperty .
-
-matsci:synthesisDurationProperty a life:ObservableProcessTemporalProperty .
-
-matsci:assemblyDurationProperty a life:ObservableProcessTemporalProperty .
-
-matsci:reactionTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:solventEvaporationTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:dryingTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:centrifugationTimeProperty a life:ObservableProcessTemporalProperty .
-
-matsci:measurementDelayTimeProperty a life:ObservableTransientTemporalProperty .
-
-matsci:pumpProbeDelayTimeProperty a life:ObservableTransientTemporalProperty .
-
-matsci:pulseDurationProperty a life:ObservableTransientTemporalProperty .
 
 matsci:radiativeDurationProperty a life:ObservableTransientTemporalProperty .
 

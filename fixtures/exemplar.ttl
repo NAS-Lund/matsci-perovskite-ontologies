@@ -1,0 +1,563 @@
+#################################################################
+# Conformant exemplar data graph
+#
+# One synthetic paper covering the competency surface: every query in
+# queries/sparql_queries.rq returns at least one row against this graph, and
+# the graph conforms to every shapes graph under `pyshacl -i rdfs`.
+#
+# All five temporal routes appear, each on the fact kind it takes:
+#
+#   life:hasDuration              -> ex:synthesisProcess, ex:assemblyProcess,
+#                                    ex:storageAging
+#   life:hasEntityAge             -> ex:sample
+#   life:hasObservationDelay      -> ex:transientAbsorptionObservation
+#   obs:hasSetting (instrument)   -> ex:pumpProbeConfiguration
+#   life:hasTemporalQuantityResult-> the measured lifetimes and decay times
+#
+# Synthetic data, not extraction output: values are invented and the goal is
+# structural coverage, not physics.
+#################################################################
+
+@prefix ex:      <https://growgraph.dev/fixtures/exemplar#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix life:    <https://growgraph.dev/ontologies/lifecycle#> .
+@prefix matsci:  <https://growgraph.dev/ontologies/matsci#> .
+@prefix obs:     <https://growgraph.dev/ontologies/observation#> .
+@prefix perovmat: <https://growgraph.dev/ontologies/perovskitemat#> .
+@prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Source document
+#################################################################
+
+ex:paper a dcterms:BibliographicResource ;
+    rdfs:label "Exemplar paper for competency-query coverage"@en .
+
+#################################################################
+# Material and sample
+#################################################################
+
+# Typed with a class whose rdfs:subClassOf chain to matsci:Material is
+# asserted rather than entailed by an owl:equivalentClass intersection: Q2
+# walks rdfs:subClassOf* and assumes no OWL reasoner.
+ex:cspbbr3 a perovmat:ThreeDimensionalPerovskite ;
+    rdfs:label "CsPbBr3"@en ;
+    perovmat:hasASiteComponent perovmat:Cs ;
+    perovmat:hasBSiteComponent perovmat:Pb ;
+    perovmat:hasXSiteComponent perovmat:Br .
+
+ex:sample a perovmat:PerovskiteSample ;
+    rdfs:label "CsPbBr3 nanocrystal superlattice"@en ;
+    matsci:describesMaterial ex:cspbbr3 ;
+    matsci:hasMorphology ex:morphology ;
+    matsci:exhibitsPhenomenon matsci:Superfluorescence ;
+    life:hasEntityAge ex:sampleAge .
+
+# Entity age (Q31).
+ex:sampleAge a life:TimeQuantityValue ;
+    rdfs:label "3 days after synthesis"@en ;
+    qudt:unit unit:DAY ;
+    qudt:numericValue "3"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact ;
+    life:hasTemporalReferenceProcess ex:synthesisProcess .
+
+#################################################################
+# Morphology (Q3-Q7)
+#################################################################
+
+ex:morphology a matsci:MorphologyState ;
+    rdfs:label "cubic nanocrystals in a simple-cubic superlattice"@en ;
+    matsci:hasEdgeLength ex:edgeLength ;
+    matsci:hasThickness ex:thickness ;
+    matsci:hasShapeValue matsci:cube ;
+    matsci:hasDimensionalityValue matsci:threeDimensional ;
+    matsci:hasPackingMotifValue matsci:simpleCubicPacking ;
+    matsci:hasSuperlatticeSymmetryValue matsci:cubicSymmetry .
+
+ex:edgeLength a qqval:QualifiedQuantityValue ;
+    rdfs:label "edge length 9.2 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qudt:numericValue "9.2"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:thickness a qqval:QualifiedQuantityValue ;
+    rdfs:label "film thickness 120-180 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qqval:numericLowerBound "120"^^xsd:decimal ;
+    qqval:numericUpperBound "180"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Approximate .
+
+#################################################################
+# Synthesis (Q1, Q2, Q8-Q12, Q15-Q17)
+#
+# Temperature, humidity and atmosphere are imposed on the process and are
+# reified obs:Condition nodes; the duration takes life:hasDuration.
+#################################################################
+
+ex:synthesisProcess a matsci:SynthesisProcess ;
+    rdfs:label "hot-injection synthesis of CsPbBr3 nanocrystals"@en ;
+    obs:usesMethod ex:hotInjection ;
+    matsci:hasOutputMaterial ex:cspbbr3 ;
+    matsci:hasOutputSample ex:sample ;
+    matsci:usedLigand ex:oleicAcid ;
+    matsci:usedSolvent ex:octadecene ;
+    matsci:usedAntisolvent ex:methylAcetate ;
+    matsci:hasInputPortion ex:oleicAcidPortion ;
+    life:hasDuration ex:synthesisDuration ;
+    obs:hasProcessCondition ex:synthesisTemperature ,
+                            ex:synthesisHumidity ,
+                            ex:synthesisAtmosphere ;
+    dcterms:source ex:paper .
+
+ex:hotInjection a matsci:SynthesisMethod ;
+    rdfs:label "hot injection"@en .
+
+ex:oleicAcid a matsci:Material ;
+    rdfs:label "oleic acid"@en .
+
+ex:octadecene a matsci:Material ;
+    rdfs:label "1-octadecene"@en .
+
+ex:methylAcetate a matsci:Material ;
+    rdfs:label "methyl acetate"@en .
+
+ex:oleicAcidPortion a matsci:MaterialPortion ;
+    rdfs:label "2 mL oleic acid, 90%, Sigma-Aldrich"@en ;
+    matsci:isPortionOfMaterial ex:oleicAcid ;
+    matsci:hasAmount ex:oleicAcidAmount ;
+    matsci:hasPurity ex:oleicAcidPurity ;
+    matsci:hasSupplierName "Sigma-Aldrich" .
+
+ex:oleicAcidAmount a qqval:QualifiedQuantityValue ;
+    rdfs:label "2 mL"@en ;
+    qudt:unit unit:MilliL ;
+    qudt:numericValue "2"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:oleicAcidPurity a qqval:QualifiedQuantityValue ;
+    rdfs:label "90%"@en ;
+    qudt:unit unit:PERCENT ;
+    qudt:numericValue "90"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+# Synthesis duration (Q12).
+ex:synthesisDuration a life:TimeQuantityValue ;
+    rdfs:label "60 min"@en ;
+    qudt:unit unit:MIN ;
+    qudt:numericValue "60"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:synthesisTemperature a obs:Condition ;
+    rdfs:label "170 C"@en ;
+    obs:conditionFactor matsci:temperature ;
+    obs:conditionValue ex:synthesisTemperatureValue .
+
+ex:synthesisTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "170 C"@en ;
+    qudt:unit unit:DEG_C ;
+    qudt:numericValue "170"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:synthesisHumidity a obs:Condition ;
+    rdfs:label "relative humidity 15%"@en ;
+    obs:conditionFactor matsci:humidity ;
+    obs:conditionValue ex:synthesisHumidityValue .
+
+ex:synthesisHumidityValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "15%"@en ;
+    qudt:unit unit:PERCENT ;
+    qudt:numericValue "15"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:synthesisAtmosphere a obs:Condition ;
+    rdfs:label "nitrogen atmosphere"@en ;
+    obs:conditionFactor matsci:atmosphere ;
+    obs:conditionValue ex:nitrogenValue .
+
+ex:nitrogenValue a obs:QualitativeConditionValue ;
+    rdfs:label "nitrogen"@en .
+
+#################################################################
+# Assembly step (Q13)
+#################################################################
+
+ex:assemblyProcess a matsci:AssemblyProcess ;
+    rdfs:label "solvent evaporation self-assembly"@en ;
+    obs:usesMethod ex:solventEvaporation ;
+    matsci:hasInputSample ex:sample ;
+    matsci:hasOutputSample ex:sample ;
+    life:hasDuration ex:evaporationDuration ;
+    obs:hasProcessCondition ex:assemblyTemperature ;
+    dcterms:source ex:paper .
+
+ex:solventEvaporation a matsci:AssemblyMethod ;
+    rdfs:label "solvent evaporation"@en .
+
+ex:evaporationDuration a life:TimeQuantityValue ;
+    rdfs:label "12-24 h"@en ;
+    qudt:unit unit:HR ;
+    qqval:numericLowerBound "12"^^xsd:decimal ;
+    qqval:numericUpperBound "24"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Approximate .
+
+ex:assemblyTemperature a obs:Condition ;
+    rdfs:label "room temperature"@en ;
+    obs:conditionFactor matsci:temperature ;
+    obs:conditionValue ex:assemblyTemperatureValue .
+
+ex:assemblyTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "22 C"@en ;
+    qudt:unit unit:DEG_C ;
+    qudt:numericValue "22"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Approximate .
+
+#################################################################
+# Storage aging (Q14)
+#
+# Duration, temperature, humidity and atmosphere, linked to the sample. The
+# duration takes life:hasDuration; only the imposed factors take
+# life:hasStorageCondition.
+#################################################################
+
+ex:storageAging a life:StorageAgingProcess ;
+    rdfs:label "low-temperature storage aging"@en ;
+    matsci:hasInputSample ex:sample ;
+    obs:hasOutputEntity ex:sample ;
+    life:hasDuration ex:agingDuration ;
+    life:hasStorageCondition ex:storageTemperature ,
+                             ex:storageHumidity ,
+                             ex:storageAtmosphere ;
+    life:hasTimeDependentEffect ex:agingEffect ;
+    life:follows ex:assemblyProcess ;
+    dcterms:source ex:paper .
+
+# A range takes qqval:Approximate; qqval:Exact is the scalar form.
+ex:agingDuration a life:TimeQuantityValue ;
+    rdfs:label "4-15 days"@en ;
+    qudt:unit unit:DAY ;
+    qqval:numericLowerBound "4"^^xsd:decimal ;
+    qqval:numericUpperBound "15"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Approximate .
+
+ex:storageTemperature a obs:Condition ;
+    rdfs:label "10 C"@en ;
+    obs:conditionFactor matsci:temperature ;
+    obs:conditionValue ex:storageTemperatureValue .
+
+ex:storageTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "10 C"@en ;
+    qudt:unit unit:DEG_C ;
+    qudt:numericValue "10"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:storageHumidity a obs:Condition ;
+    rdfs:label "relative humidity 30%"@en ;
+    obs:conditionFactor matsci:humidity ;
+    obs:conditionValue ex:storageHumidityValue .
+
+ex:storageHumidityValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "30%"@en ;
+    qudt:unit unit:PERCENT ;
+    qudt:numericValue "30"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Approximate .
+
+ex:storageAtmosphere a obs:Condition ;
+    rdfs:label "nitrogen glovebox"@en ;
+    obs:conditionFactor matsci:atmosphere ;
+    obs:conditionValue ex:nitrogenValue .
+
+ex:agingEffect a life:AgingEffect ;
+    rdfs:label "photoluminescence brightening over storage"@en ;
+    life:affectsObservableProperty matsci:quantumYieldProperty .
+
+#################################################################
+# Instrument configuration -- the only temporal conditions
+#
+# A pulse width and a temporal resolution are configured on the source, so
+# they are conditions, reached via obs:hasSetting.
+#################################################################
+
+ex:pumpProbeConfiguration a obs:InstrumentConfiguration ;
+    rdfs:label "pump-probe setup"@en ;
+    obs:configuredEquipment ex:femtosecondLaser ;
+    obs:hasSetting ex:pulseDurationSetting ,
+                   ex:temporalResolutionSetting ,
+                   ex:excitationWavelengthSetting .
+
+ex:femtosecondLaser a matsci:ProcessingEquipment ;
+    rdfs:label "femtosecond Ti:sapphire laser"@en .
+
+ex:pulseDurationSetting a obs:Condition ;
+    rdfs:label "100 fs pulse width"@en ;
+    obs:conditionFactor matsci:pulseDuration ;
+    obs:conditionValue ex:pulseDurationValue .
+
+ex:pulseDurationValue a life:TimeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "100 fs"@en ;
+    qudt:unit unit:FemtoSEC ;
+    qudt:numericValue "100"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:temporalResolutionSetting a obs:Condition ;
+    rdfs:label "temporal resolution 200 fs"@en ;
+    obs:conditionFactor matsci:temporalResolution ;
+    obs:conditionValue ex:temporalResolutionValue .
+
+ex:temporalResolutionValue a life:TimeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "200 fs"@en ;
+    qudt:unit unit:FemtoSEC ;
+    qudt:numericValue "200"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:excitationWavelengthSetting a obs:Condition ;
+    rdfs:label "400 nm excitation"@en ;
+    obs:conditionFactor matsci:excitationWavelength ;
+    obs:conditionValue ex:excitationWavelengthValue .
+
+ex:excitationWavelengthValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
+    rdfs:label "400 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qudt:numericValue "400"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+#################################################################
+# Characterization: absorption (Q18, Q20)
+#################################################################
+
+ex:absorptionProcess a matsci:CharacterizationProcess ;
+    rdfs:label "UV-vis absorption"@en ;
+    obs:usesMethod matsci:Absorption ;
+    matsci:generatedObservation ex:absorptionObservation ;
+    dcterms:source ex:paper .
+
+ex:absorptionObservation a obs:QuantitativeObservation ;
+    rdfs:label "absorption peak 512 nm"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:absorptionPeakWavelengthProperty ;
+    obs:hasQuantityResult ex:absorptionPeak ;
+    dcterms:source ex:paper .
+
+ex:absorptionPeak a qqval:QualifiedQuantityValue ;
+    rdfs:label "512 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qudt:numericValue "512"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+#################################################################
+# Characterization: photoluminescence (Q19, Q21, Q22, Q24)
+#################################################################
+
+ex:plProcess a matsci:CharacterizationProcess ;
+    rdfs:label "steady-state photoluminescence"@en ;
+    obs:usesMethod matsci:Photoluminescence ;
+    matsci:generatedObservation ex:plPeakObservation ,
+                                ex:plqyObservation ,
+                                ex:fwhmObservation ,
+                                ex:bandgapObservation ,
+                                ex:plLifetimeObservation ;
+    dcterms:source ex:paper .
+
+ex:plPeakObservation a obs:QuantitativeObservation ;
+    rdfs:label "PL peak 520 nm"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:plPeakWavelengthProperty ;
+    obs:hasQuantityResult ex:plPeak ;
+    dcterms:source ex:paper .
+
+ex:plPeak a qqval:QualifiedQuantityValue ;
+    rdfs:label "520 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qudt:numericValue "520"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:plqyObservation a obs:QuantitativeObservation ;
+    rdfs:label "PLQY 78%"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:quantumYieldProperty ;
+    obs:hasQuantityResult ex:plqy ;
+    dcterms:source ex:paper .
+
+ex:plqy a qqval:QualifiedQuantityValue ;
+    rdfs:label "78%"@en ;
+    qudt:unit unit:PERCENT ;
+    qudt:numericValue "78"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:fwhmObservation a obs:QuantitativeObservation ;
+    rdfs:label "PL FWHM 18 nm"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:fwhmProperty ;
+    obs:hasQuantityResult ex:fwhm ;
+    dcterms:source ex:paper .
+
+ex:fwhm a qqval:QualifiedQuantityValue ;
+    rdfs:label "18 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qudt:numericValue "18"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:bandgapObservation a obs:QuantitativeObservation ;
+    rdfs:label "bandgap 2.39 eV"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:bandgapProperty ;
+    obs:hasQuantityResult ex:bandgap ;
+    dcterms:source ex:paper .
+
+ex:bandgap a qqval:QualifiedQuantityValue ;
+    rdfs:label "2.39 eV"@en ;
+    qudt:unit unit:EV ;
+    qudt:numericValue "2.39"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+#################################################################
+# Measured temporal quantities (Q23, Q25-Q27, Q29, Q30)
+#
+# The life:TemporalObservation route: the time is the measurement outcome.
+#################################################################
+
+ex:plLifetimeObservation a life:TemporalObservation ;
+    rdfs:label "PL lifetime 12.4 ns"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:lifetimeProperty ;
+    life:hasTemporalQuantityResult ex:plLifetime ;
+    dcterms:source ex:paper .
+
+ex:plLifetime a life:TimeQuantityValue ;
+    rdfs:label "12.4 ns"@en ;
+    qudt:unit unit:NanoSEC ;
+    qudt:numericValue "12.4"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:trplProcess a matsci:CharacterizationProcess ;
+    rdfs:label "time-resolved photoluminescence"@en ;
+    obs:usesMethod matsci:TRPL ;
+    matsci:generatedObservation ex:decayTimeObservation ,
+                                ex:trplLifetimeObservation ;
+    dcterms:source ex:paper .
+
+ex:trplLifetimeObservation a life:TemporalObservation ;
+    rdfs:label "TRPL lifetime 9.8 ns"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:lifetimeProperty ;
+    life:hasTemporalQuantityResult ex:trplLifetime ;
+    dcterms:source ex:paper .
+
+ex:trplLifetime a life:TimeQuantityValue ;
+    rdfs:label "9.8 ns"@en ;
+    qudt:unit unit:NanoSEC ;
+    qudt:numericValue "9.8"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:decayTimeObservation a life:TemporalObservation ;
+    rdfs:label "exciton decay time 4.2 ns"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:decayTimeProperty ;
+    life:hasTemporalQuantityResult ex:decayTime ;
+    dcterms:source ex:paper .
+
+ex:decayTime a life:TimeQuantityValue ;
+    rdfs:label "4.2 ns"@en ;
+    qudt:unit unit:NanoSEC ;
+    qudt:numericValue "4.2"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:carrierCoolingObservation a life:TemporalObservation ;
+    rdfs:label "carrier cooling time 0.6 ps"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:carrierCoolingTimeProperty ;
+    life:hasTemporalQuantityResult ex:carrierCoolingTime ;
+    dcterms:source ex:paper .
+
+ex:carrierCoolingTime a life:TimeQuantityValue ;
+    rdfs:label "0.6 ps"@en ;
+    qudt:unit unit:PicoSEC ;
+    qudt:numericValue "0.6"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:energyTransferObservation a life:TemporalObservation ;
+    rdfs:label "energy transfer time 3.1 ps"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:energyTransferTimeProperty ;
+    life:hasTemporalQuantityResult ex:energyTransferTime ;
+    dcterms:source ex:paper .
+
+ex:energyTransferTime a life:TimeQuantityValue ;
+    rdfs:label "3.1 ps"@en ;
+    qudt:unit unit:PicoSEC ;
+    qudt:numericValue "3.1"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:superfluorescenceLifetimeObservation a life:TemporalObservation ;
+    rdfs:label "superfluorescence lifetime 22 ps"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:superfluorescenceLifetimeProperty ;
+    life:hasTemporalQuantityResult ex:superfluorescenceLifetime ;
+    dcterms:source ex:paper .
+
+ex:superfluorescenceLifetime a life:TimeQuantityValue ;
+    rdfs:label "22 ps"@en ;
+    qudt:unit unit:PicoSEC ;
+    qudt:numericValue "22"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:superradianceLifetimeObservation a life:TemporalObservation ;
+    rdfs:label "superradiance lifetime 45 ps"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:superradianceLifetimeProperty ;
+    life:hasTemporalQuantityResult ex:superradianceLifetime ;
+    dcterms:source ex:paper .
+
+ex:superradianceLifetime a life:TimeQuantityValue ;
+    rdfs:label "45 ps"@en ;
+    qudt:unit unit:PicoSEC ;
+    qudt:numericValue "45"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+#################################################################
+# Transient absorption (Q32)
+#
+# The 5 ps is the delay at which the result was taken, not the result.
+#################################################################
+
+ex:transientAbsorptionProcess a matsci:CharacterizationProcess ;
+    rdfs:label "transient absorption"@en ;
+    obs:usesMethod matsci:Absorption ;
+    obs:hasInstrumentConfiguration ex:pumpProbeConfiguration ;
+    matsci:generatedObservation ex:transientAbsorptionObservation ;
+    dcterms:source ex:paper .
+
+ex:transientAbsorptionObservation a obs:QuantitativeObservation ;
+    rdfs:label "bleach amplitude at 5 ps delay"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty matsci:absorptionPeakWavelengthProperty ;
+    life:hasObservationDelay ex:pumpProbeDelay ;
+    obs:hasQuantityResult ex:bleachWavelength ;
+    dcterms:source ex:paper .
+
+ex:pumpProbeDelay a life:TimeQuantityValue ;
+    rdfs:label "5 ps"@en ;
+    qudt:unit unit:PicoSEC ;
+    qudt:numericValue "5"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+ex:bleachWavelength a qqval:QualifiedQuantityValue ;
+    rdfs:label "508 nm"@en ;
+    qudt:unit unit:NanoM ;
+    qudt:numericValue "508"^^xsd:decimal ;
+    qqval:epistemicQualifier qqval:Exact .
+
+#################################################################
+# Qualitative lifecycle state
+#################################################################
+
+ex:lifecycleStateObservation a life:QualitativeEntityLifecycleObservation ;
+    rdfs:label "sample state after storage: aged"@en ;
+    sosa:hasFeatureOfInterest ex:sample ;
+    sosa:observedProperty life:entityLifecycleStateProperty ;
+    life:hasEntityLifecycleStateResult life:agedEntityState ;
+    dcterms:source ex:paper .

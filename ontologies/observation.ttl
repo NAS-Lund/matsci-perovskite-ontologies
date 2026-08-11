@@ -34,12 +34,12 @@
         are open vocabularies. hasInputEntity, hasOutputEntity, hasObservation,
         producedByProcess, hasQuantityResult and hasQualitativeResult are meant
         to be subpropertied by domain ontologies wanting a narrower name."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.2.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.4.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.2.0" ;
+    owl:versionInfo "5.4.0" ;
     rdfs:seeAlso
         <http://www.w3.org/ns/prov#wasDerivedFrom> ,
         <http://purl.org/dc/terms/source> .
@@ -167,7 +167,12 @@ obs:ConditionFactor a owl:Class ;
     rdfs:comment
         "A dimension or aspect of a process's or observation's context being specified. Open vocabulary: domain ontologies mint further individuals as siblings; use skos:broader to relate a narrower factor to a broader one."@en ;
     skos:example
-        "atmosphere"@en , "humidity"@en , "temperature"@en , "time"@en .
+        "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en ;
+    skos:scopeNote
+        """A factor is imposed on a process or observation from outside. A
+        duration, elapsed time, delay or age is not: lifecycle gives each a
+        dedicated property. The one temporal factor is the instrument setting
+        -- see obs:time."""@en .
 
 #################################################################
 # Object properties
@@ -265,4 +270,94 @@ obs:producedByProcess a owl:ObjectProperty ;
 
 obs:time a owl:NamedIndividual, obs:ConditionFactor ;
     rdfs:label "time"@en ;
-    rdfs:comment "A temporal factor, including duration, elapsed time, delay time, entity age, storage time, aging time, exposure time, or process time."@en .
+    rdfs:comment "A temporal factor of an instrument configuration, such as pulse width or temporal resolution."@en ;
+    skos:scopeNote
+        """Narrower than the label suggests: a temporal setting of an
+        instrument, reached via obs:InstrumentConfiguration and
+        obs:hasSetting. A duration, elapsed time, delay, entity age, storage
+        time, aging time, exposure time or process time is not a condition but
+        a property of the process, entity or observation it belongs to --
+        see lifecycle's life:hasDuration, life:hasEntityAge and
+        life:hasObservationDelay.
+
+        obs:ConditionShape rejects a condition on obs:hasProcessCondition or
+        obs:hasObservationCondition whose factor is skos:broader* obs:time.
+        Narrower factors hung off this one inherit that restriction."""@en .
+
+#################################################################
+# Instrument configuration
+#
+# Instrument settings stated in methods sections (excitation wavelength,
+# repetition rate, numerical aperture, spectral resolution, accelerating
+# voltage, ...). Settings reuse the generic condition reification; the
+# configuration node bundles them per instrument so multi-instrument
+# processes stay unambiguous.
+#################################################################
+
+obs:InstrumentSettingFactor a owl:Class ;
+    rdfs:label "Instrument setting factor"@en ;
+    rdfs:comment
+        """A configurable parameter of the equipment used in a process or
+        observation, as opposed to an ambient condition of the sample or
+        environment. Open vocabulary: domain ontologies mint individuals."""@en ;
+    skos:example
+        "excitation wavelength"@en , "repetition rate"@en ,
+        "numerical aperture"@en , "spectral resolution"@en ,
+        "accelerating voltage"@en ;
+    rdfs:subClassOf obs:ConditionFactor .
+
+obs:InstrumentConfiguration a owl:Class ;
+    rdfs:label "Instrument configuration"@en ;
+    rdfs:comment
+        """Reified configuration of one piece of equipment as used in a
+        specific process: the bundle of instrument-setting conditions stated
+        for it (each an obs:Condition whose factor is an
+        obs:InstrumentSettingFactor)."""@en .
+
+obs:hasInstrumentConfiguration a owl:ObjectProperty ;
+    rdfs:label "has instrument configuration"@en ;
+    rdfs:comment
+        "Links a concrete process to the configuration of one instrument used in it."@en ;
+    rdfs:domain obs:Process ;
+    rdfs:range obs:InstrumentConfiguration .
+
+obs:configuredEquipment a owl:ObjectProperty ;
+    rdfs:label "configured equipment"@en ;
+    rdfs:comment
+        """The equipment this configuration applies to (an ssn:System,
+        sosa:Platform, or domain equipment individual). Range is left open;
+        domain layers narrow it."""@en ;
+    rdfs:domain obs:InstrumentConfiguration .
+
+obs:hasSetting a owl:ObjectProperty ;
+    rdfs:label "has setting"@en ;
+    rdfs:comment
+        "One setting of the configuration: a reified condition whose factor is an instrument-setting factor."@en ;
+    rdfs:domain obs:InstrumentConfiguration ;
+    rdfs:range obs:Condition .
+
+#################################################################
+# Reported (literature) values
+#
+# Values a document cites from prior literature must stay distinct from
+# this-work measurements; pairs with citation-metadata extraction of the
+# reference list.
+#################################################################
+
+obs:ReportedObservation a owl:Class ;
+    rdfs:label "Reported observation"@en ;
+    rdfs:comment
+        """An observation whose result is cited from prior literature or
+        another external source rather than measured in the work the document
+        describes. Type literature values as this class so they never blend
+        with this-work measurements."""@en ;
+    rdfs:subClassOf obs:Observation .
+
+obs:reportedIn a owl:ObjectProperty ;
+    rdfs:label "reported in"@en ;
+    rdfs:comment
+        """Links a reported observation to the bibliographic entity it is
+        taken from (e.g. a schema.org ScholarlyArticle citation node minted
+        from the reference list). Range is left open to avoid importing
+        bibliographic vocabularies here."""@en ;
+    rdfs:domain obs:ReportedObservation .

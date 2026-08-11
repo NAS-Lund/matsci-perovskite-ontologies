@@ -33,15 +33,28 @@
         Extension contract: life:LifecycleProcess, life:TimeDependentEffect and
         life:ObservableTemporalProperty are the primary extension points.
         life:EntityLifecycleState is an open vocabulary -- the fresh/aged/stored
-        trio is universal and domain ontologies add siblings. Temporal
-        condition factors are likewise open to skos:broader-linked
-        siblings."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle/6.1.0> ;
+        trio is universal and domain ontologies add siblings.
+
+        Temporal routes. A temporal fact takes exactly one route, determined by
+        what the fact is:
+
+          - stated extent of a process        -> life:hasDuration
+          - stated age of an entity           -> life:hasEntityAge
+          - stated delay of an observation    -> life:hasObservationDelay
+          - temporal instrument setting       -> obs:InstrumentConfiguration
+                                                 + obs:hasSetting
+          - measured temporal quantity        -> life:TemporalObservation
+                                                 + life:hasTemporalQuantityResult
+
+        A temporal fact is never a process condition: a duration is
+        constitutive of a process, not a condition imposed on it.
+        observation-shapes.ttl enforces this."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle/7.0.0> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ;
-    owl:versionInfo "6.1.0" .
+    owl:versionInfo "7.0.0" .
 
 #################################################################
 # Process taxonomy
@@ -82,7 +95,11 @@ life:AgingProcess a owl:Class ;
 life:StorageAgingProcess a owl:Class ;
     rdfs:label "Storage aging process"@en ;
     rdfs:comment "An aging process in which an entity evolves over time while being stored under specified conditions."@en ;
-    skos:example "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en , "storage duration"@en ;
+    skos:example "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en ;
+    skos:scopeNote
+        """The storage duration is not one of these conditions: attach it with
+        life:hasDuration on the process itself. The examples list the factors
+        that are genuinely imposed during storage."""@en ;
     rdfs:subClassOf life:AgingProcess,
                     life:StorageProcess .
 
@@ -192,6 +209,12 @@ life:QualitativeEntityLifecycleObservation a owl:Class ;
 life:ObservableProcessTemporalProperty a owl:Class ;
     rdfs:label "Observable process temporal property"@en ;
     rdfs:comment "A temporal property describing the duration or elapsed time of a process or process step."@en ;
+    skos:scopeNote
+        """For a process time that is measured -- in-situ monitoring of how
+        long a reaction took. A duration stated as a protocol parameter
+        ("stirred for 2 h") is not an observation: attach it with
+        life:hasDuration. An extension point; the collection declares no
+        individuals of this class."""@en ;
     rdfs:subClassOf life:ObservableTemporalProperty .
 
 life:ObservableEntityTemporalProperty a owl:Class ;
@@ -200,10 +223,10 @@ life:ObservableEntityTemporalProperty a owl:Class ;
         """A temporal property describing the age, temporal status, or
         time-dependent condition of an entity."""@en ;
     skos:scopeNote
-        """Covers quantitative individuals observed via life:TemporalObservation
-        (entityAgeProperty, agingTimeProperty) as well as the qualitative
-        entityLifecycleStateProperty: entity-scoping and result kind are
-        independent axes."""@en ;
+        """Entity-scoping and result kind are independent axes, so this class
+        spans both. Its one individual, entityLifecycleStateProperty, is
+        qualitative; a measured entity age may be minted here. A stated entity
+        age is not an observation -- use life:hasEntityAge."""@en ;
     rdfs:subClassOf life:ObservableTemporalProperty .
 
 life:ObservableTransientTemporalProperty a owl:Class ;
@@ -213,7 +236,13 @@ life:ObservableTransientTemporalProperty a owl:Class ;
 
 life:TimeConditionValue a owl:Class ;
     rdfs:label "Time condition value"@en ;
-    rdfs:comment "A quantitative condition value representing a temporal condition, such as storage duration, aging time, exposure duration, delay time, or entity age. It is also a time quantity value."@en ;
+    rdfs:comment "A quantitative condition value carrying a time, used for temporal instrument settings such as pulse width or temporal resolution. It is also a time quantity value."@en ;
+    skos:scopeNote
+        """For temporal instrument settings, reached via
+        obs:InstrumentConfiguration and obs:hasSetting. Storage duration,
+        aging time, exposure duration, measurement delay and entity age are not
+        conditions -- see life:hasDuration, life:hasObservationDelay and
+        life:hasEntityAge."""@en ;
     rdfs:subClassOf obs:QuantitativeConditionValue,
                     life:TimeQuantityValue .
 
@@ -224,6 +253,16 @@ life:TimeConditionValue a owl:Class ;
 life:hasDuration a owl:ObjectProperty ;
     rdfs:label "has duration"@en ;
     rdfs:comment "Links a process to a time quantity value representing its duration."@en ;
+    skos:scopeNote
+        """The route for the stated extent of a process: "stirred for 2 h",
+        "annealed 30 min", "stored 4-15 days". A duration is never a reified
+        obs:Condition.
+
+        Use life:hasEntityAge for an entity's age, life:hasObservationDelay for
+        the delay at which an observation was taken, and
+        life:hasTemporalQuantityResult when the time is a measured result
+        (carrier lifetime, decay constant) rather than a stated protocol
+        parameter."""@en ;
     rdfs:domain obs:Process ;
     rdfs:range life:TimeQuantityValue .
 
@@ -233,14 +272,20 @@ life:hasElapsedTime a owl:ObjectProperty ;
         """Links an entity, process, or observation to the time elapsed since a
         relevant reference event."""@en ;
     skos:scopeNote
-        """Deliberately left without rdfs:domain: rdfs:domain propagates through
-        rdfs:subPropertyOf, so a domain here would conflict with
+        """Carries no rdfs:domain: domain propagates through
+        rdfs:subPropertyOf, and a domain here would conflict with
         life:hasObservationDelay, whose domain is obs:Observation."""@en ;
     rdfs:range life:TimeQuantityValue .
 
 life:hasEntityAge a owl:ObjectProperty ;
     rdfs:label "has entity age"@en ;
     rdfs:comment "Links a concrete entity (sosa:FeatureOfInterest) to a time quantity value representing the time elapsed since its synthesis, fabrication, deposition, or another stated reference event."@en ;
+    skos:scopeNote
+        """The route for a stated entity age: "measured 3 days after
+        synthesis", "2-week-old film". Never a reified obs:Condition. Use
+        life:hasDuration when the time is the extent of a named process rather
+        than the age of an entity; name the reference event with
+        life:hasTemporalReferenceProcess."""@en ;
     rdfs:domain sosa:FeatureOfInterest ;
     rdfs:range life:TimeQuantityValue ;
     rdfs:subPropertyOf life:hasElapsedTime .
@@ -248,6 +293,15 @@ life:hasEntityAge a owl:ObjectProperty ;
 life:hasTemporalQuantityResult a owl:ObjectProperty ;
     rdfs:label "has temporal quantity result"@en ;
     rdfs:comment "Links a temporal observation to a time quantity value."@en ;
+    skos:scopeNote
+        """For a measured temporal quantity -- carrier lifetime, decay
+        constant, relaxation or coherence time, energy-transfer time -- where
+        the time is the outcome of the measurement. A stated protocol
+        parameter ("stirred 2 h", "aged 4-15 days") is not a measurement: use
+        life:hasDuration, life:hasEntityAge or life:hasObservationDelay.
+
+        The subject is a life:TemporalObservation carrying a
+        sosa:observedProperty, per the domain above."""@en ;
     rdfs:domain life:TemporalObservation ;
     rdfs:range life:TimeQuantityValue ;
     rdfs:subPropertyOf obs:hasQuantityResult .
@@ -262,6 +316,13 @@ life:hasEntityLifecycleStateResult a owl:ObjectProperty ;
 life:hasObservationDelay a owl:ObjectProperty ;
     rdfs:label "has observation delay"@en ;
     rdfs:comment "Links an observation to a time quantity value representing the relative delay at which the observation result was recorded (e.g. 5 ps after excitation). Always a relative elapsed time, never an absolute wall-clock timestamp."@en ;
+    skos:scopeNote
+        """The route for a stated measurement delay, including pump-probe
+        delay. Never a reified obs:Condition, and never a
+        life:TemporalObservation of a "delay time" property: the delay is the
+        coordinate at which the result was taken, not the result. What was
+        measured at that delay is the observation's own
+        obs:hasQuantityResult."""@en ;
     rdfs:domain obs:Observation ;
     rdfs:range life:TimeQuantityValue ;
     rdfs:subPropertyOf life:hasElapsedTime .
@@ -273,7 +334,12 @@ life:hasTemporalReferenceProcess a owl:ObjectProperty ;
 
 life:hasStorageCondition a owl:ObjectProperty ;
     rdfs:label "has storage condition"@en ;
-    rdfs:comment "Links a storage or aging process to a reified condition, such as atmosphere, pressure, humidity, temperature, or storage duration."@en ;
+    rdfs:comment "Links a storage or aging process to a reified condition, such as atmosphere, pressure, humidity, or temperature."@en ;
+    skos:scopeNote
+        """Conditions only -- factors imposed on the entity while it is stored.
+        The storage duration is not a condition: attach it to the process with
+        life:hasDuration. A temporal factor on this property is rejected by
+        observation-shapes.ttl."""@en ;
     rdfs:domain life:StorageProcess ;
     rdfs:range obs:Condition ;
     rdfs:subPropertyOf obs:hasProcessCondition .
@@ -296,9 +362,8 @@ life:precedes a owl:ObjectProperty, owl:TransitiveProperty ;
         """States that one process temporally precedes another, ending at or
         before the other begins."""@en ;
     skos:scopeNote
-        """Deliberately minimal, so lifecycle's temporal-order claim is backed
-        by vocabulary without importing OWL-Time; rdfs:seeAlso is the alignment
-        hook."""@en ;
+        """Minimal by design: process order without an OWL-Time import.
+        rdfs:seeAlso is the alignment hook."""@en ;
     rdfs:domain obs:Process ;
     rdfs:range obs:Process ;
     owl:inverseOf life:follows ;
@@ -310,62 +375,6 @@ life:follows a owl:ObjectProperty, owl:TransitiveProperty ;
     rdfs:domain obs:Process ;
     rdfs:range obs:Process ;
     rdfs:seeAlso <http://www.w3.org/2006/time#after> .
-
-#################################################################
-# Temporal condition factors
-#
-# Typed obs:ConditionFactor and linked via skos:broader.
-# The top-level "time" factor these chain up to is obs:time.
-#################################################################
-
-life:duration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "duration"@en ;
-    rdfs:comment "General temporal extent of a process or interval."@en ;
-    skos:broader obs:time .
-
-life:storageDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "storage duration"@en ;
-    rdfs:comment "Duration for which an entity is stored under specified conditions."@en ;
-    skos:broader life:duration .
-
-life:agingTime a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "aging time"@en ;
-    rdfs:comment "Elapsed time during which an entity ages under storage, exposure, operational, or other time-dependent conditions."@en ;
-    skos:broader life:duration .
-
-life:exposureDuration a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "exposure duration"@en ;
-    rdfs:comment "Duration for which an entity is exposed to an environmental, optical, thermal, chemical, or mechanical factor."@en ;
-    skos:broader life:duration .
-
-life:entityAge a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "entity age"@en ;
-    rdfs:comment "Elapsed time between an entity's creation (synthesis, fabrication, etc.) and a later process or observation."@en ;
-    skos:broader obs:time .
-
-life:measurementDelayTime a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "measurement delay time"@en ;
-    rdfs:comment "Delay time between a reference event and a measurement."@en ;
-    skos:broader obs:time .
-
-#################################################################
-# Temporal observable property vocabulary
-#
-# Domain-neutral individuals only. Domain-specific vocabulary is minted in
-# downstream domain ontologies and typed against these classes there.
-#################################################################
-
-life:storageDurationProperty a owl:NamedIndividual, life:ObservableProcessTemporalProperty ;
-    rdfs:label "storage duration"@en .
-
-life:agingTimeProperty a owl:NamedIndividual, life:ObservableEntityTemporalProperty ;
-    rdfs:label "aging time"@en .
-
-life:entityAgeProperty a owl:NamedIndividual, life:ObservableEntityTemporalProperty ;
-    rdfs:label "entity age"@en .
-
-life:exposureDurationProperty a owl:NamedIndividual, life:ObservableProcessTemporalProperty ;
-    rdfs:label "exposure duration"@en .
 
 #################################################################
 # Entity lifecycle state controlled vocabulary
