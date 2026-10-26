@@ -446,13 +446,6 @@ Four rules worth stating explicitly:
   raw text, so `"I"` for iodide fires on the pronoun and on roman numerals.
   `perovmat:I` therefore carries `skos:altLabel` only.
 
-## Design notes
-
-The dependency-graph rationale and expert-review verdicts behind the current
-layering live in `planning/modularization.md` of the OntoCast workspace that
-consumes these ontologies. That file sits outside this repository, so it is
-named by path rather than linked.
-
 ## Contributing
 
 Bump `owl:versionInfo` (and `owl:versionIRI` when present) in the ontology

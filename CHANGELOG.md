@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-09-13 — dimensionless unity
+
+### Added
+
+- **matsci-units 3.1.0** — `matsciunits:unity`, a dimensionless unit individual
+  (`qudt:symbol "1"`, notations `1` / `dimensionless` / `unitless`) for bare
+  ratios and fractions when the source states no unit token. Closes the
+  three-layer contradiction in which qqval SHACL requires `qudt:unit`, rule 8a
+  told the extractor to omit the IRI when no individual matched, and the
+  catalog had nothing dimensionless to link. Delimited against
+  `matsciunits:arbitraryUnit` (normalized intensities) and `unit:PERCENT`
+  (explicit percentages); `rdfs:seeAlso unit:UNITLESS` rather than
+  `owl:sameAs` because QUDT's symbol is the CJK ideograph U+4E00.
+  `arbitraryUnit`'s scope note now points bare ratios at `unity`.
+
+## 2026-08-28 — qqval declares its borrowed QUDT terms
+
+### Added
+
+- **qqval 2.3.0** — explicit subject-position declarations for the external
+  QUDT terms the module builds on: `qudt:QuantityValue` (`owl:Class`),
+  `qudt:numericValue` (`owl:DatatypeProperty`, `rdfs:range xsd:decimal`) and
+  `qudt:unit` (`owl:ObjectProperty`). Previously these were only *referenced*
+  (in `rdfs:subClassOf` / `owl:onProperty`) or mentioned in prose, so a
+  consumer inventorying catalog terms saw a qudt namespace with members but no
+  declaration for the canonical scalar property — OntoCast's term validator
+  concluded `qudt:numericValue` "does not exist in its ontology" and its
+  mandatory repair findings drove extraction runs to delete correct numeric
+  values or re-encode scalars as equal-bound ranges (the 2026-08-11 aging
+  benchmark: 38–64% of value nodes left with no number in any numeric slot,
+  while the qqval SHACL shapes *require* exactly that property). The range
+  declaration also grounds schema-driven literal retyping. Definitions remain
+  QUDT's (`rdfs:isDefinedBy`).
+
 ## 2026-08-07 — temporal routes
 
 A temporal fact takes one route, determined by what the fact is: process
@@ -305,14 +339,13 @@ returned nothing for Q12 on every extraction output in the benchmark corpus.
   (`TemporalObservation`, `Observable*TemporalProperty`,
   `hasTemporalQuantityResult`, `hasTemporalReferenceProcess`, …).
   `lifecycle` 5.0.0 → **6.0.0**; `lifecycle-shapes` 1.1.0 → **2.0.0**.
-  No redirects for old IRIs. Design notes: `planning/modularization.md` in the
-  consuming OntoCast workspace (outside this repository).
+  No redirects for old IRIs.
 
 ## 2026-07
 
 ### Changed (modularization — breaking)
 
-- Decoupled `qqval-ontology` and `observation-ontology`: observation no longer imports qqval; quantitative results are `qudt:QuantityValue`. Cross-module qqval-qualification policy moved to new `pergres-ontology` (imports qqval + observation + temporal; asserts `hasQuantityResult` range → `QualifiedQuantityValue` and `TimeQuantityValue ⊑ QualifiedQuantityValue`). `temporal-ontology` no longer imports qqval; keeps its substantive dependence on observation. Design notes: `planning/modularization.md` in the consuming OntoCast workspace (outside this repository).
+- Decoupled `qqval-ontology` and `observation-ontology`: observation no longer imports qqval; quantitative results are `qudt:QuantityValue`. Cross-module qqval-qualification policy moved to new `pergres-ontology` (imports qqval + observation + temporal; asserts `hasQuantityResult` range → `QualifiedQuantityValue` and `TimeQuantityValue ⊑ QualifiedQuantityValue`). `temporal-ontology` no longer imports qqval; keeps its substantive dependence on observation.
 - `qqval-ontology` 1.2.1 → **2.0.0**: renamed `ApproximateQuantityValue` → `QualifiedQuantityValue`; restructured `ApproximationQualifier` → `EpistemicQualifier` with only `Exact`/`Approximate` (dropped `Range`/`AtLeast`/`AtMost`/`WithUncertainty` — numeric form and uncertainty inferred from property presence); renamed `approximationQualifier` → `epistemicQualifier` (functional, cardinality 1); added `lowerBoundInclusive`/`upperBoundInclusive`; removed `owl:disjointWith` vs `QuantityRange` (SHACL `sh:not` retained).
 - `observation-ontology` 4.0.1 → **5.0.0**: dropped qqval import and qqval restrictions; `hasQuantityResult` range → `qudt:QuantityValue`; `QualitativeResult ⊑ sosa:Result`; deleted `observationSource` (use `dcterms:source`); clarified Phenomenon/PhysicalPhenomenon/Process comments; kept `obs:time` in place.
 - `temporal-ontology` 4.1.0 → **5.0.0**: dropped qqval import; `TimeQuantityValue ⊑ qudt:QuantityValue`; renamed `PostSynthesisProcess` → `PostCreationProcess`; renamed `hasObservationTimePoint` → `hasObservationDelay`.

@@ -33,11 +33,11 @@
         Approximate only). qqval:DistributionAssumption is open.
         qqval:QualifiedQuantityValue and qqval:QuantityRange are the extension
         points for domain-typed quantity values."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.2.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.3.0> ;
     owl:imports
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://qudt.org/3.1.4/vocab/unit> ;
-    owl:versionInfo "2.2.0" ;
+    owl:versionInfo "2.3.0" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
@@ -444,3 +444,40 @@ qqval:confidenceLevel a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:range  xsd:decimal ;
     rdfs:seeAlso qqval:distributionAssumption ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
+
+#################################################################
+# External term declarations (QUDT)
+#
+# qqval builds on QUDT: QualifiedQuantityValue subclasses
+# qudt:QuantityValue, restrictions reference qudt:unit, and the
+# documented scalar encoding is qudt:numericValue. Declaring the
+# borrowed terms here — subject-position, not merely referenced —
+# makes them first-class catalog terms: term validators know they
+# exist, and the rdfs:range on qudt:numericValue grounds literal
+# retyping. Definitions are qudt's; these declarations only mirror
+# them (see rdfs:isDefinedBy).
+#################################################################
+
+qudt:QuantityValue a owl:Class ;
+    rdfs:label "quantity value"@en ;
+    rdfs:comment
+        "A numeric value paired with a unit of measure (QUDT)."@en ;
+    rdfs:isDefinedBy <http://qudt.org/schema/qudt/> .
+
+qudt:numericValue a owl:DatatypeProperty ;
+    rdfs:label "numeric value"@en ;
+    rdfs:comment
+        """The canonical scalar carrier on a quantity value (QUDT). qqval's
+        exact-scalar encoding is qudt:numericValue plus qqval:epistemicQualifier
+        qqval:Exact; never encode a scalar as an equal lower/upper bound
+        pair."""@en ;
+    rdfs:domain qudt:QuantityValue ;
+    rdfs:range  xsd:decimal ;
+    rdfs:isDefinedBy <http://qudt.org/schema/qudt/> .
+
+qudt:unit a owl:ObjectProperty ;
+    rdfs:label "unit"@en ;
+    rdfs:comment
+        "Links a quantity value to its unit of measure individual (QUDT)."@en ;
+    rdfs:domain qudt:QuantityValue ;
+    rdfs:isDefinedBy <http://qudt.org/schema/qudt/> .

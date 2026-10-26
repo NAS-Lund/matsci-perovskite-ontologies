@@ -10,8 +10,8 @@
 
 <https://growgraph.dev/ontologies/matsci-units> a owl:Ontology ;
     rdfs:label "matsci-units (QUDT gap-fillers)"@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-units/3.0.0> ;
-    owl:versionInfo "3.0.0" ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-units/3.1.0> ;
+    owl:versionInfo "3.1.0" ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     owl:imports <https://growgraph.dev/ontologies/matsci-qudt-units> ;
@@ -157,6 +157,24 @@ matsciunits:milliamperePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qud
 # Dimensionless reporting conventions
 #################################################################
 
+matsciunits:unity a owl:NamedIndividual, qudt:Unit ;
+    rdfs:label "unity"@en ;
+    qudt:symbol "1" ;
+    skos:notation "1", "dimensionless", "unitless" ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M0H0T0D1> ;
+    rdfs:seeAlso unit:UNITLESS ;
+    rdfs:comment
+        """Dimensionless absolute ratio or fraction when the source states no
+        unit token (occupancy 0.85, a decimal efficiency). Carries conversion
+        multiplier 1."""@en ;
+    skos:scopeNote
+        """For bare dimensionless ratios and fractions. Not for normalized
+        intensities (use matsciunits:arbitraryUnit) or explicit percentages
+        (use unit:PERCENT). rdfs:seeAlso unit:UNITLESS rather than owl:sameAs:
+        the terms coincide in meaning but not in surface form — QUDT's
+        unit:UNITLESS carries the CJK ideograph U+4E00 as its symbol."""@en .
+
 matsciunits:arbitraryUnit a owl:NamedIndividual, qudt:Unit ;
     rdfs:label "arbitrary unit"@en ;
     qudt:symbol "a.u." ;
@@ -171,4 +189,5 @@ matsciunits:arbitraryUnit a owl:NamedIndividual, qudt:Unit ;
         """Not interconvertible with any other unit: two a.u. values are
         comparable only within the same figure or measurement. QUDT's
         unit:UNITLESS is not a substitute -- it means dimensionless-but-absolute
-        and its symbol is the CJK ideograph U+4E00."""@en .
+        and its symbol is the CJK ideograph U+4E00. Bare ratios and fractions
+        with no unit token in the source use matsciunits:unity instead."""@en .
