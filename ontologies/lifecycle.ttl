@@ -23,9 +23,7 @@
         category. Lifecycle processes use temporal quantities; that does not
         make every temporal class a lifecycle class. Specializes observation's
         Process / Observation / Phenomenon / QualitativeResult / Condition
-        model, and does not import qqval -- life:TimeQuantityValue is a
-        qudt:QuantityValue, and the optional tightening to
-        qqval:QualifiedQuantityValue is asserted by pergres.
+        model; life:TimeQuantityValue is a qudt:QuantityValue.
 
         Observed-property scope (process- vs entity-scoped) and result kind
         (quantitative vs qualitative) are independent axes.
@@ -49,12 +47,12 @@
         A temporal fact is never a process condition: a duration is
         constitutive of a process, not a condition imposed on it.
         observation-shapes.ttl enforces this."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle/7.0.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/lifecycle/7.0.1> ;
     owl:imports
         <https://growgraph.dev/ontologies/observation> ,
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ;
-    owl:versionInfo "7.0.0" .
+    owl:versionInfo "7.0.1" .
 
 #################################################################
 # Process taxonomy
@@ -131,9 +129,7 @@ life:TimeQuantityValue a owl:Class ;
     rdfs:label "Time quantity value"@en ;
     rdfs:comment
         """A quantity value representing a time, duration, elapsed time,
-        delay, lifetime, time scale, or entity age. Subclass of
-        qudt:QuantityValue. Optional further subclassing under
-        qqval:QualifiedQuantityValue is asserted by pergres."""@en ;
+        delay, lifetime, time scale, or entity age."""@en ;
     rdfs:subClassOf qudt:QuantityValue .
 
 life:TimeDependentEffect a owl:Class ;
@@ -334,7 +330,7 @@ life:hasTemporalReferenceProcess a owl:ObjectProperty ;
 
 life:hasStorageCondition a owl:ObjectProperty ;
     rdfs:label "has storage condition"@en ;
-    rdfs:comment "Links a storage or aging process to a reified condition, such as atmosphere, pressure, humidity, or temperature."@en ;
+    rdfs:comment "Links a storage process, including storage aging, to a reified condition imposed on the stored entity, such as atmosphere, humidity or temperature."@en ;
     skos:scopeNote
         """Conditions only -- factors imposed on the entity while it is stored.
         The storage duration is not a condition: attach it to the process with
@@ -379,19 +375,27 @@ life:follows a owl:ObjectProperty, owl:TransitiveProperty ;
 #################################################################
 # Entity lifecycle state controlled vocabulary
 #
-# Universal trio only. Domain-specific storage/aging states are minted as
-# siblings of this class in downstream domain ontologies.
+# Domain-independent states. Domain ontologies mint further states as
+# individuals of this class.
 #################################################################
 
 life:freshEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
     rdfs:label "fresh"@en ;
-    skos:altLabel "day 0"@en, "pristine"@en, "as-synthesized"@en .
+    skos:altLabel "day 0"@en, "pristine"@en, "as-synthesized"@en ;
+    rdfs:comment
+        "The state of an entity measured immediately after it was made, before any storage or aging."@en .
 
 life:agedEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
-    rdfs:label "aged"@en .
+    rdfs:label "aged"@en ;
+    rdfs:comment
+        "The state of an entity after an aging process, whatever the conditions it aged under."@en .
 
 life:storedEntityState a owl:NamedIndividual, life:EntityLifecycleState ;
-    rdfs:label "stored"@en .
+    rdfs:label "stored"@en ;
+    rdfs:comment
+        "The state of an entity that has been kept under storage conditions, without a claim that it has aged."@en .
 
 life:entityLifecycleStateProperty a owl:NamedIndividual, life:ObservableEntityTemporalProperty ;
-    rdfs:label "entity lifecycle state"@en .
+    rdfs:label "observed entity lifecycle state"@en ;
+    rdfs:comment
+        "The observable property whose result is an entity's lifecycle state, such as fresh, stored or aged."@en .

@@ -297,7 +297,7 @@ WHERE {
     ?process a ?processType .
     ?process obs:hasProcessCondition ?condition .
 
-    ?condition obs:conditionFactor matsci:temperature .
+    ?condition obs:conditionFactor obs:temperature .
     ?condition obs:conditionValue ?value .
 
     OPTIONAL { ?value qudt:numericValue ?temperature . }
@@ -328,7 +328,7 @@ WHERE {
     ?process a ?processType .
     ?process obs:hasProcessCondition ?condition .
 
-    ?condition obs:conditionFactor matsci:humidity .
+    ?condition obs:conditionFactor obs:humidity .
     ?condition obs:conditionValue ?value .
 
     ?value qudt:numericValue ?humidity .
@@ -350,7 +350,7 @@ WHERE {
     ?process a ?processType .
     ?process obs:hasProcessCondition ?condition .
 
-    ?condition obs:conditionFactor matsci:atmosphere .
+    ?condition obs:conditionFactor obs:atmosphere .
     ?condition obs:conditionValue ?atmosphere .
 }
 

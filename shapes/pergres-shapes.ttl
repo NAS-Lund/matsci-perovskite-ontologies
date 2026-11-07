@@ -24,8 +24,8 @@
         axioms: QuantitativeObservation results must be
         qqval:QualifiedQuantityValue, and TimeQuantityValue is treated as
         qqval-qualified. Aligns with pergres >= 1.0.0."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/pergres-shapes/1.1.0> ;
-    owl:versionInfo "1.1.0" .
+    owl:versionIRI <https://growgraph.dev/ontologies/pergres-shapes/1.1.1> ;
+    owl:versionInfo "1.1.1" .
 
 #################################################################
 # QuantitativeObservation — result must be qqval-qualified
@@ -34,9 +34,9 @@
 pergres:QuantitativeObservationShape a sh:NodeShape ;
     sh:targetClass obs:QuantitativeObservation ;
     rdfs:comment
-        """Tightens observation-shapes' qudt:QuantityValue check to
-        qqval:QualifiedQuantityValue. Load together with observation-shapes
-        and qqval-shapes."""@en ;
+        """Tightens observation-shapes' qudt:QuantityValue result check to
+        qqval:QualifiedQuantityValue. The only shape that requires qualified
+        results; load it with observation-shapes and qqval-shapes."""@en ;
     sh:property
         [ sh:path obs:hasQuantityResult ;
             sh:minCount 1 ;

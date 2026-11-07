@@ -10,13 +10,13 @@
 
 <https://growgraph.dev/ontologies/matsci-units> a owl:Ontology ;
     rdfs:label "matsci-units (QUDT gap-fillers)"@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/matsci-units/3.1.0> ;
-    owl:versionInfo "3.1.0" ;
+    owl:versionIRI <https://growgraph.dev/ontologies/matsci-units/3.2.0> ;
+    owl:versionInfo "3.2.0" ;
     dcterms:creator "growgraph.dev" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     owl:imports <https://growgraph.dev/ontologies/matsci-qudt-units> ;
     rdfs:comment
-        """Units the matsci corpus reports that QUDT does not define. QUDT
+        """Units this collection's corpus reports that QUDT does not define. QUDT
         stays canonical: units it already covers are used under their own QUDT
         IRIs, with no local alias and no owl:sameAs bridge."""@en ;
     skos:scopeNote
@@ -29,10 +29,10 @@
 
         The QUDT units this corpus does use are vendored in
         matsci-qudt-units.ttl. That file is the dependency to load, not QUDT
-        itself: OntoCast does not dereference owl:imports, so the import above
-        declares intent and resolves nothing on its own.
+        itself: tooling that does not dereference owl:imports gets nothing from
+        the import above, which declares intent only.
 
-        Scoped to matsci deliberately. Which units are missing is a property of
+        Scoped to this collection deliberately. Which units are missing is a property of
         what a corpus reports, so a sibling project covering different
         measurements mints its own module rather than growing this one."""@en .
 
@@ -53,10 +53,10 @@ matsciunits:millielectronvolt a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit
     qudt:unitForQuantityKind quantitykind:Energy ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L2I0M1H0T-2D0> ;
     qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
-    rdfs:comment
-        """0.001-fold of unit:EV. The working unit for exciton binding energies,
-        Urbach energies and band offsets. QUDT defines EV and its upward
-        multiples only."""@en .
+    rdfs:comment "One thousandth of an electronvolt, a unit of energy."@en ;
+    skos:scopeNote
+        """The working unit for exciton binding energies, Urbach energies and
+        band offsets. QUDT defines EV and its upward multiples only."""@en .
 
 #################################################################
 # Areal power density (illumination intensity)
@@ -74,8 +74,9 @@ matsciunits:milliwattPerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt:
     qudt:unitForQuantityKind quantitykind:PowerPerArea ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-3D0> ;
     qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
-    rdfs:comment
-        """Illumination intensity for photovoltaic characterization; standard
+    rdfs:comment "One milliwatt per square centimetre, a unit of areal power density (irradiance)."@en ;
+    skos:scopeNote
+        """Used for illumination intensity in photovoltaic characterization;
         AM1.5G one-sun illumination is 100 mW/cm². QUDT defines W/cm² but no
         milli-prefixed form."""@en .
 
@@ -89,12 +90,12 @@ matsciunits:sun a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
     qudt:unitForQuantityKind quantitykind:PowerPerArea ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-3D0> ;
     rdfs:comment
-        """Illumination expressed as multiples of AM1.5G one-sun intensity,
-        1 sun = 100 mW/cm² = 1000 W/m². Absent from QUDT."""@en ;
+        """A unit of irradiance equal to the AM1.5G one-sun reference
+        intensity: 1 sun = 100 mW/cm² = 1000 W/m²."""@en ;
     skos:scopeNote
         """A reporting convention rather than an SI unit: it presumes the AM1.5G
         reference spectrum. Record the spectrum on the observation when the
-        source states one."""@en .
+        source states one. Absent from QUDT."""@en .
 
 #################################################################
 # Areal energy density (excitation fluence)
@@ -112,9 +113,11 @@ matsciunits:microjoulePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt
     qudt:unitForQuantityKind quantitykind:EnergyPerArea ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-2D0> ;
     qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
-    rdfs:comment
-        """Excitation fluence in transient-absorption and superfluorescence
-        measurements. QUDT defines J/cm² but no micro-prefixed form."""@en .
+    rdfs:comment "One microjoule per square centimetre, a unit of areal energy density (fluence)."@en ;
+    skos:scopeNote
+        """Used for excitation fluence in transient-absorption and
+        superfluorescence measurements. QUDT defines J/cm² but no
+        micro-prefixed form."""@en .
 
 matsciunits:millijoulePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt:DerivedUnit ;
     rdfs:label "millijoule per square centimetre"@en ;
@@ -128,9 +131,10 @@ matsciunits:millijoulePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qudt
     qudt:unitForQuantityKind quantitykind:EnergyPerArea ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M1H0T-2D0> ;
     qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
-    rdfs:comment
-        """Excitation fluence at the higher end of the pulsed-laser range. QUDT
-        defines J/cm² but no milli-prefixed form."""@en .
+    rdfs:comment "One millijoule per square centimetre, a unit of areal energy density (fluence)."@en ;
+    skos:scopeNote
+        """Used for excitation fluence at the higher end of the pulsed-laser
+        range. QUDT defines J/cm² but no milli-prefixed form."""@en .
 
 #################################################################
 # Areal current density
@@ -148,10 +152,10 @@ matsciunits:milliamperePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qud
     qudt:unitForQuantityKind quantitykind:ElectricCurrentDensity ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E1L-2I0M0H0T0D0> ;
     qudt:applicableSystem <http://qudt.org/vocab/sou/SI> ;
-    rdfs:comment
-        """Current density for photovoltaic device reporting, the unit of
-        short-circuit current density (Jsc). QUDT defines A/cm² but no
-        milli-prefixed form."""@en .
+    rdfs:comment "One milliampere per square centimetre, a unit of areal current density."@en ;
+    skos:scopeNote
+        """The unit of short-circuit current density (Jsc) in photovoltaic
+        device reporting. QUDT defines A/cm² but no milli-prefixed form."""@en .
 
 #################################################################
 # Dimensionless reporting conventions
@@ -160,7 +164,7 @@ matsciunits:milliamperePerSquareCentimetre a owl:NamedIndividual, qudt:Unit, qud
 matsciunits:unity a owl:NamedIndividual, qudt:Unit ;
     rdfs:label "unity"@en ;
     qudt:symbol "1" ;
-    skos:notation "1", "dimensionless", "unitless" ;
+    skos:notation "dimensionless", "unitless" ;
     qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
     qudt:hasDimensionVector <http://qudt.org/vocab/dimensionvector/A0E0L0I0M0H0T0D1> ;
     rdfs:seeAlso unit:UNITLESS ;

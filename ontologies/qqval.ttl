@@ -33,11 +33,11 @@
         Approximate only). qqval:DistributionAssumption is open.
         qqval:QualifiedQuantityValue and qqval:QuantityRange are the extension
         points for domain-typed quantity values."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.3.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.3.1> ;
     owl:imports
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://qudt.org/3.1.4/vocab/unit> ;
-    owl:versionInfo "2.3.0" ;
+    owl:versionInfo "2.3.1" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
@@ -73,15 +73,14 @@ qqval:Exact a owl:NamedIndividual , qqval:EpistemicQualifier ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:Approximate a owl:NamedIndividual , qqval:EpistemicQualifier ;
-    rdfs:label "approximately"@en ;
+    rdfs:label "approximate"@en ;
     rdfs:comment
         """The reported value is a central estimate, not exact.
-        Expressed in source text as ∼, ~, ≈, ca., about, roughly,
-        or nominally."""@en ;
+        Expressed in source text as ∼, ~, ≈, ca., about or roughly."""@en ;
     skos:altLabel
         "∼"@en , "~"@en , "≈"@en ,
         "ca."@en , "about"@en , "roughly"@en ,
-        "nominally"@en , "around"@en , "near"@en ,
+        "approximately"@en , "around"@en , "near"@en ,
         "approximate value"@en , "order of magnitude"@en ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
@@ -111,6 +110,10 @@ qqval:DistributionAssumption a owl:Class ;
 
 qqval:Gaussian a owl:NamedIndividual, qqval:DistributionAssumption ;
     rdfs:label "Gaussian"@en ;
+    rdfs:comment
+        """The reported uncertainty assumes a normal distribution, so a ± value
+        is read as one standard deviation unless a confidence level says
+        otherwise."""@en ;
     skos:altLabel "normal distribution"@en , "1-sigma Gaussian"@en ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
@@ -264,14 +267,10 @@ qqval:QuantityRange a owl:Class ;
 #################################################################
 
 qqval:epistemicQualifier a owl:ObjectProperty , owl:FunctionalProperty ;
-    rdfs:label "epistemic qualifier"@en ;
+    rdfs:label "has epistemic qualifier"@en ;
     rdfs:comment
         """Links a QualifiedQuantityValue to exactly one EpistemicQualifier
         (Exact or Approximate). Declared owl:FunctionalProperty."""@en ;
-    skos:altLabel
-        "numeric qualifier"@en ,
-        "value qualifier"@en ,
-        "measurement qualifier"@en ;
     rdfs:domain qqval:QualifiedQuantityValue ;
     rdfs:range  qqval:EpistemicQualifier ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
@@ -299,7 +298,7 @@ qqval:hasUpperBound a owl:ObjectProperty ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> .
 
 qqval:distributionAssumption a owl:ObjectProperty ;
-    rdfs:label "distribution assumption"@en ;
+    rdfs:label "has distribution assumption"@en ;
     rdfs:comment
         """Links a QualifiedQuantityValue to the distribution assumption behind
         its reported uncertainty, such as qqval:Gaussian."""@en ;
@@ -386,7 +385,10 @@ qqval:numericUncertainty a owl:DatatypeProperty , owl:FunctionalProperty ;
     skos:scopeNote
         """Corresponds to the ± notation: "8.5 ± 0.5 nm" gives
         qudt:numericValue 8.5 and numericUncertainty 0.5. Use
-        qqval:numericRelativeUncertainty for percentage uncertainty. Declared
+        qqval:numericRelativeUncertainty for percentage uncertainty. Which
+        statistic the ± value is (standard deviation, standard error, interval
+        half-width) is stated by qqval:distributionAssumption and
+        qqval:confidenceLevel, not by this property. Declared
         owl:FunctionalProperty."""@en ;
     skos:altLabel
         "absolute uncertainty"@en ,
@@ -437,7 +439,6 @@ qqval:confidenceLevel a owl:DatatypeProperty , owl:FunctionalProperty ;
         must not be read as any particular confidence level. Declared
         owl:FunctionalProperty."""@en ;
     skos:altLabel
-        "confidence interval"@en ,
         "coverage probability"@en ,
         "sigma level"@en ;
     rdfs:domain qqval:QualifiedQuantityValue ;

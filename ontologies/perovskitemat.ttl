@@ -14,10 +14,13 @@
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment
         """Perovskite-specific ontology: composition sites, halide
-        perovskites, named compounds. Imports matsci only."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/1.6.0> ;
-    owl:imports <https://growgraph.dev/ontologies/matsci> ;
-    owl:versionInfo "1.6.0" .
+        perovskites, named compounds."""@en ;
+    owl:versionIRI <https://growgraph.dev/ontologies/perovskitemat/2.0.0> ;
+    owl:imports
+        <https://growgraph.dev/ontologies/matsci> ,
+        <https://growgraph.dev/ontologies/qqval> ,
+        <https://www.w3.org/ns/sosa/sosa.ttl> ;
+    owl:versionInfo "2.0.0" .
 
 #################################################################
 # Perovskite core
@@ -25,7 +28,10 @@
 
 perovmat:Perovskite a owl:Class ;
     rdfs:label "Perovskite"@en ;
-    rdfs:comment "Perovskite material concept."@en ;
+    rdfs:comment
+        """A material with the ABX3 perovskite structure -- corner-sharing BX6
+        octahedra with A cations in the cavities -- or a lower-dimensional
+        framework derived from it."""@en ;
     rdfs:subClassOf matsci:Material .
 
 
@@ -152,6 +158,10 @@ perovmat:occupancyFraction a owl:ObjectProperty ;
 perovmat:AllInorganicPerovskite a owl:Class ;
     rdfs:label "All-inorganic perovskite"@en ;
     rdfs:comment "Perovskite whose A-site is occupied exclusively by an inorganic component."@en ;
+    skos:scopeNote
+        """Defined by an all-values restriction, so under the open-world
+        assumption a reasoner never infers membership from component
+        assertions: state it. A mixed organic/inorganic A-site is hybrid."""@en ;
     owl:equivalentClass [
         a owl:Class ;
         owl:intersectionOf (
@@ -159,6 +169,10 @@ perovmat:AllInorganicPerovskite a owl:Class ;
             [ a owl:Restriction ;
                 owl:onProperty perovmat:hasASiteComponent ;
                 owl:someValuesFrom perovmat:InorganicASiteComponent
+            ]
+            [ a owl:Restriction ;
+                owl:onProperty perovmat:hasASiteComponent ;
+                owl:allValuesFrom perovmat:InorganicASiteComponent
             ]
         )
     ] .
@@ -284,22 +298,22 @@ perovmat:FormamidiniumPerovskite a owl:Class ;
 
 perovmat:ThreeDimensionalPerovskite a owl:Class ;
     rdfs:label "Three-dimensional perovskite"@en ;
-    rdfs:comment "Perovskite with a three-dimensional framework connectivity."@en ;
+    rdfs:comment "Perovskite whose corner-sharing BX6 octahedra extend in three dimensions. Framework dimensionality, independent of particle morphology."@en ;
     rdfs:subClassOf perovmat:Perovskite .
 
 perovmat:TwoDimensionalPerovskite a owl:Class ;
     rdfs:label "Two-dimensional perovskite"@en ;
-    rdfs:comment "Perovskite with a two-dimensional layered framework."@en ;
+    rdfs:comment "Perovskite whose octahedra form layers separated by large organic cations, as in Ruddlesden-Popper phases. Framework dimensionality, independent of particle morphology."@en ;
     rdfs:subClassOf perovmat:Perovskite .
 
 perovmat:OneDimensionalPerovskite a owl:Class ;
     rdfs:label "One-dimensional perovskite"@en ;
-    rdfs:comment "Perovskite with a one-dimensional framework connectivity."@en ;
+    rdfs:comment "Perovskite whose octahedra form chains. Framework dimensionality, independent of particle morphology."@en ;
     rdfs:subClassOf perovmat:Perovskite .
 
 perovmat:ZeroDimensionalPerovskite a owl:Class ;
     rdfs:label "Zero-dimensional perovskite"@en ;
-    rdfs:comment "Perovskite with isolated structural units and no extended higher-dimensional framework."@en ;
+    rdfs:comment "Perovskite-related material of isolated BX6 octahedra, as in Cs4PbBr6. Framework dimensionality, independent of particle morphology."@en ;
     rdfs:subClassOf perovmat:Perovskite .
 
 [] a owl:AllDisjointClasses ;
@@ -316,65 +330,84 @@ perovmat:ZeroDimensionalPerovskite a owl:Class ;
 
 perovmat:PerovskitePhase a owl:Class ;
     rdfs:label "Perovskite phase"@en ;
-    rdfs:comment "Phase vocabulary specific to perovskite materials."@en .
+    rdfs:comment
+        """A crystallographic phase of a perovskite-forming compound, named by
+        a Greek letter. Which structure a letter denotes depends on the
+        compound, so a phase is read together with its material."""@en .
 
 perovmat:AlphaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
     rdfs:label "alpha phase"@en ;
-    skos:altLabel "α-phase"@en, "α phase"@en .
+    skos:altLabel "α-phase"@en, "α phase"@en ;
+    rdfs:comment
+        "The high-temperature phase of a perovskite compound, typically cubic; for FAPbI3 and CsPbI3 the black, photoactive phase."@en .
 
 perovmat:BetaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
     rdfs:label "beta phase"@en ;
-    skos:altLabel "β-phase"@en, "β phase"@en .
+    skos:altLabel "β-phase"@en, "β phase"@en ;
+    rdfs:comment
+        "A lower-symmetry perovskite phase, typically tetragonal, reached from the alpha phase on cooling."@en .
 
 perovmat:GammaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
     rdfs:label "gamma phase"@en ;
-    skos:altLabel "γ-phase"@en, "γ phase"@en .
+    skos:altLabel "γ-phase"@en, "γ phase"@en ;
+    rdfs:comment
+        "A lower-symmetry perovskite phase, typically orthorhombic, reached from the beta phase on cooling."@en .
 
 perovmat:DeltaPhase a owl:NamedIndividual, perovmat:PerovskitePhase ;
     rdfs:label "delta phase"@en ;
-    skos:altLabel "δ-phase"@en, "δ phase"@en, "yellow phase"@en .
+    skos:altLabel "δ-phase"@en, "δ phase"@en, "yellow phase"@en ;
+    rdfs:comment
+        "A non-perovskite polymorph of a perovskite-forming compound, such as yellow hexagonal FAPbI3 or orthorhombic CsPbI3; it is not photoactive."@en .
 
 #################################################################
 # Perovskite component individuals
 #################################################################
 
 perovmat:Cs a owl:NamedIndividual, perovmat:InorganicASiteComponent ;
-    rdfs:label "Cs"@en ;
-    skos:altLabel "cesium"@en, "caesium"@en ;
+    rdfs:label "caesium"@en ;
+    skos:altLabel "cesium"@en, "caesium cation"@en ;
+    rdfs:comment "The caesium cation as an inorganic A-site component."@en ;
     skos:notation "Cs" .
 
 perovmat:FA a owl:NamedIndividual, perovmat:OrganicASiteComponent ;
-    rdfs:label "FA"@en ;
-    skos:altLabel "formamidinium"@en ;
+    rdfs:label "formamidinium"@en ;
+    skos:altLabel "formamidinium cation"@en ;
+    rdfs:comment "The formamidinium cation, CH(NH2)2+, as an organic A-site component."@en ;
     skos:notation "FA" .
 
 perovmat:MA a owl:NamedIndividual, perovmat:OrganicASiteComponent ;
-    rdfs:label "MA"@en ;
-    skos:altLabel "methylammonium"@en ;
+    rdfs:label "methylammonium"@en ;
+    skos:altLabel "methylammonium cation"@en ;
+    rdfs:comment "The methylammonium cation, CH3NH3+, as an organic A-site component."@en ;
     skos:notation "MA" .
 
 perovmat:Pb a owl:NamedIndividual, perovmat:BSiteComponent ;
-    rdfs:label "Pb"@en ;
-    skos:altLabel "lead"@en ;
+    rdfs:label "lead"@en ;
+    skos:altLabel "lead(II)"@en ;
+    rdfs:comment "Divalent lead as a B-site component."@en ;
     skos:notation "Pb" .
 
 perovmat:Sn a owl:NamedIndividual, perovmat:BSiteComponent ;
-    rdfs:label "Sn"@en ;
-    skos:altLabel "tin"@en ;
+    rdfs:label "tin"@en ;
+    skos:altLabel "tin(II)"@en ;
+    rdfs:comment "Divalent tin as a B-site component, the usual replacement for lead."@en ;
     skos:notation "Sn" .
 
 perovmat:Br a owl:NamedIndividual, perovmat:HalideComponent ;
-    rdfs:label "Br"@en ;
-    skos:altLabel "bromide"@en, "bromine"@en ;
+    rdfs:label "bromide"@en ;
+    skos:altLabel "bromine"@en ;
+    rdfs:comment "The bromide anion as an X-site halide component."@en ;
     skos:notation "Br" .
 
 perovmat:I a owl:NamedIndividual, perovmat:HalideComponent ;
-    rdfs:label "I"@en ;
-    skos:altLabel "iodide"@en, "iodine"@en .
+    rdfs:label "iodide"@en ;
+    skos:altLabel "iodine"@en ;
+    rdfs:comment "The iodide anion as an X-site halide component."@en .
 
 perovmat:Cl a owl:NamedIndividual, perovmat:HalideComponent ;
-    rdfs:label "Cl"@en ;
-    skos:altLabel "chloride"@en, "chlorine"@en ;
+    rdfs:label "chloride"@en ;
+    skos:altLabel "chlorine"@en ;
+    rdfs:comment "The chloride anion as an X-site halide component."@en ;
     skos:notation "Cl" .
 
 [] a owl:AllDifferent ;
@@ -383,8 +416,10 @@ perovmat:Cl a owl:NamedIndividual, perovmat:HalideComponent ;
 #################################################################
 # Example material individuals
 # CsPbBr3, MAPbCl3, and FAPbI3 are typed with their applicable
-# family classes. The reasoner will infer further classifications
-# (e.g. AllInorganic, Hybrid) from the component assertions.
+# family classes. A reasoner infers the existential families (hybrid,
+# lead halide, caesium, ...) from the component assertions; all-inorganic
+# is stated, since an all-values restriction is never inferred under the
+# open-world assumption.
 #################################################################
 
 perovmat:CsPbBr3 a
@@ -394,6 +429,7 @@ perovmat:CsPbBr3 a
     rdfs:label "CsPbBr3"@en ;
     skos:altLabel "cesium lead bromide"@en ;
     skos:notation "CsPbBr3" ;
+    rdfs:comment "Caesium lead bromide, an all-inorganic lead halide perovskite."@en ;
     perovmat:hasASiteComponent perovmat:Cs ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:Br .
@@ -405,6 +441,7 @@ perovmat:MAPbCl3 a
     rdfs:label "MAPbCl3"@en ;
     skos:altLabel "methylammonium lead chloride"@en ;
     skos:notation "MAPbCl3" ;
+    rdfs:comment "Methylammonium lead chloride, a hybrid organic-inorganic lead halide perovskite."@en ;
     perovmat:hasASiteComponent perovmat:MA ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:Cl .
@@ -416,6 +453,7 @@ perovmat:FAPbI3 a
     rdfs:label "FAPbI3"@en ;
     skos:altLabel "formamidinium lead iodide"@en ;
     skos:notation "FAPbI3" ;
+    rdfs:comment "Formamidinium lead iodide, a hybrid organic-inorganic lead halide perovskite."@en ;
     perovmat:hasASiteComponent perovmat:FA ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:I .
