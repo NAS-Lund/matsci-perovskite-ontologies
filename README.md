@@ -14,19 +14,20 @@ External dependencies (SOSA, BFO, SSN, and QUDT's schema facade) are omitted.
 
 ```mermaid
 graph TD
-    perov["perovskitemat<br/>1.6.0"]
-    matsci["matsci<br/>6.0.0"]
+    perov["perovskitemat<br/>2.0.0"]
+    matsci["matsci<br/>7.0.0"]
     pergres["pergres<br/>1.3.0"]
-    life["lifecycle<br/>7.0.0"]
-    units["matsci-units<br/>3.0.0"]
+    life["lifecycle<br/>7.0.1"]
+    units["matsci-units<br/>3.2.0"]
 
     subgraph base["base layer"]
-        obs["observation<br/>5.4.0"]
-        qqval["qqval<br/>2.2.0"]
-        qudtunits["matsci-qudt-units<br/>1.1.0"]
+        obs["observation<br/>5.5.0"]
+        qqval["qqval<br/>2.3.1"]
+        qudtunits["matsci-qudt-units<br/>1.1.1"]
     end
 
     perov --> matsci
+    perov --> qqval
     matsci --> life
     matsci --> obs
     matsci --> qqval
@@ -57,7 +58,7 @@ on the same line are independent of each other):
 2. `lifecycle` (→ observation), `matsci-units` (→ matsci-qudt-units)
 3. `pergres` (→ qqval, observation, lifecycle)
 4. `matsci` (→ qqval, observation, lifecycle)
-5. `perovskitemat`
+5. `perovskitemat` (→ matsci, qqval)
 
 `lifecycle` specializes observation only (not qqval). Cross-module
 qqval-qualification policy lives exclusively in `pergres`.
@@ -71,7 +72,7 @@ qqval-qualification policy lives exclusively in `pergres`.
 | **File** | [`qqval.ttl`](ontologies/qqval.ttl) |
 | **Shapes** | [`qqval-shapes.ttl`](shapes/qqval-shapes.ttl) |
 | **Prefix** | `qqval:` → `https://growgraph.dev/ontologies/qqval#` |
-| **Version** | 2.2.0 |
+| **Version** | 2.3.1 |
 
 Reusable vocabulary for quantitative values whose numeric component carries
 an epistemic qualifier (`Exact` / `Approximate`). Numeric form (scalar,
@@ -88,12 +89,19 @@ QUDT schema facade and QUDT's unit vocabulary (not `matsci-units` or
 | **File** | [`observation.ttl`](ontologies/observation.ttl) |
 | **Shapes** | [`observation-shapes.ttl`](shapes/observation-shapes.ttl) |
 | **Prefix** | `obs:` → `https://growgraph.dev/ontologies/observation#` |
-| **Version** | 5.4.0 |
+| **Version** | 5.5.0 |
 
 Domain-independent scaffolding for processes, observations, phenomena, and
 conditions. Grounded in SOSA/BFO. Quantitative results are
 `qudt:QuantityValue`; optional qqval tightening is in `pergres`.
 Does not import qqval. Provenance: use `dcterms:source` to an RDF resource.
+
+It also holds the domain-independent condition factors `obs:temperature`,
+`obs:humidity` and `obs:atmosphere`. Their values are domain vocabulary: matsci,
+for instance, mints the atmospheres `matsci:air`, `matsci:vacuum` and
+`matsci:nitrogenAtmosphere`. `obs:time` is the
+temporal instrument setting (an `obs:InstrumentSettingFactor`), the broader
+factor of every temporal setting.
 
 Two reified patterns extend the condition machinery: instrument
 configurations (`obs:InstrumentConfiguration` bundling `obs:Condition`
@@ -109,7 +117,7 @@ from this-work measurements).
 | **File** | [`lifecycle.ttl`](ontologies/lifecycle.ttl) |
 | **Shapes** | [`lifecycle-shapes.ttl`](shapes/lifecycle-shapes.ttl) |
 | **Prefix** | `life:` → `https://growgraph.dev/ontologies/lifecycle#` |
-| **Version** | 7.0.0 |
+| **Version** | 7.0.1 |
 
 Domain-independent module with two orthogonal concerns under one namespace:
 
@@ -118,7 +126,9 @@ Domain-independent module with two orthogonal concerns under one namespace:
   `ObservableTemporalProperty`, `TimeQuantityValue`, …)
 - **Entity lifecycle** — post-creation processes (storage, exposure,
   operation, aging) and categorical entity state (`LifecycleProcess`,
-  `EntityLifecycleState`, `QualitativeEntityLifecycleObservation`)
+  `EntityLifecycleState`, `QualitativeEntityLifecycleObservation`); the
+  domain-independent states are fresh, stored and aged; a domain ontology
+  mints narrower ones (matsci: air-aged, vacuum-aged)
 
 Specializes `observation`. `life:TimeQuantityValue` is a bare
 `qudt:QuantityValue`; optional subclassing under
@@ -179,7 +189,9 @@ modules:
 That is the whole point: `observation` and `lifecycle` keep permissive
 `qudt:QuantityValue` results so they remain usable without `qqval`, and the
 strict policy is quarantined in one opt-in module. `qqval` and `observation`
-therefore never reference each other.
+therefore never reference each other. The same holds for the shapes:
+`observation-shapes.ttl` checks for a `qudt:QuantityValue` result, and
+`pergres-shapes.ttl` is the only shapes graph that requires a qualified one.
 
 Because the axioms target `observation` / `lifecycle` terms, the module binds
 **data, not schema**, and nothing in this collection imports it: a module that
@@ -200,7 +212,7 @@ pipeline only because `pergres.ttl` is indexed as an ontology in its own right;
 | **File** | [`matsci-units.ttl`](ontologies/matsci-units.ttl) |
 | **Shapes** | — (named individuals only; no constraints to mirror) |
 | **Prefix** | `matsciunits:` → `https://growgraph.dev/ontologies/matsci-units#` |
-| **Version** | 3.0.0 |
+| **Version** | 3.2.0 |
 
 Units the matsci corpus reports that **QUDT does not define**. QUDT is the
 canonical source for units here: units it already defines are used under their own QUDT
@@ -209,7 +221,7 @@ unit vocabulary and does not restate one.
 
 QUDT mints prefixed units as individual terms rather than deriving them
 compositionally, so the milli/micro forms of its compound units are simply
-absent. Seven terms, each verified missing from QUDT 2.1 *and* 3.1.4:
+absent. Eight terms, each verified missing from QUDT 2.1 *and* 3.1.4:
 
 | Term | Symbol | Why the corpus needs it |
 |---|---|---|
@@ -220,6 +232,7 @@ absent. Seven terms, each verified missing from QUDT 2.1 *and* 3.1.4:
 | `millijoulePerSquareCentimetre` | mJ/cm² | excitation fluence, upper range |
 | `sun` | sun | illumination as AM1.5G multiples |
 | `arbitraryUnit` | a.u. | normalized intensity with no absolute scale |
+| `unity` | 1 | bare dimensionless ratios and fractions with no unit token |
 
 `unit:UNITLESS` is not a substitute for `a.u.`: it means
 dimensionless-*but-absolute*, and its QUDT symbol is the CJK ideograph U+4E00.
@@ -245,9 +258,9 @@ corpus measures* — a sibling project reporting different quantities adds its o
 | **Generator** | [`scripts/build_qudt_subset.py`](scripts/build_qudt_subset.py) |
 | **Shapes** | — (vendored third-party terms; nothing to constrain) |
 | **Prefix** | `unit:`, `quantitykind:` → QUDT's own namespaces (mints none of its own) |
-| **Version** | 1.1.0 (from QUDT 3.1.4) |
+| **Version** | 1.1.1 (from QUDT 3.1.4) |
 
-The matsci projection of QUDT: **72 units** this corpus reports plus the **32
+The matsci projection of QUDT: **73 units** this corpus reports plus the **32
 quantity kinds** they belong to. Terms keep their QUDT IRIs and definitions —
 nothing is aliased, renamed, or re-minted.
 
@@ -288,7 +301,7 @@ nothing, and any term kept without a label, so the curation stays auditable.
 | **File** | [`matsci.ttl`](ontologies/matsci.ttl) |
 | **Shapes** | [`matsci-shapes.ttl`](shapes/matsci-shapes.ttl) |
 | **Prefix** | `matsci:` → `https://growgraph.dev/ontologies/matsci#` |
-| **Version** | 6.0.0 |
+| **Version** | 7.0.0 |
 
 General materials-science vocabulary (materials, samples, synthesis,
 characterization, morphology, properties). Imports `observation`, `lifecycle`
@@ -308,28 +321,34 @@ individuals extracted data cites.
 | | |
 |---|---|
 | **File** | [`perovskitemat.ttl`](ontologies/perovskitemat.ttl) |
-| **Shapes** | — (no shapes graph yet) |
+| **Shapes** | [`perovskitemat-shapes.ttl`](shapes/perovskitemat-shapes.ttl) |
 | **Prefix** | `perovmat:` → `https://growgraph.dev/ontologies/perovskitemat#` |
-| **Version** | 1.6.0 |
+| **Version** | 2.0.0 |
 
 Perovskite-specific classes and individuals (composition sites, halide
-perovskites, named compounds). Imports `matsci` only; the `qqval` and `sosa`
-terms it references (`perovmat:occupancyFraction` ranges over
+perovskites, named compounds). Imports `matsci`, and `qqval` and SOSA directly
+for the terms it references itself (`perovmat:occupancyFraction` ranges over
 `qqval:QualifiedQuantityValue`, `perovmat:PerovskiteSample` subclasses
-`sosa:Sample`) arrive through matsci's own imports, since `owl:imports` is
-transitive.
+`sosa:Sample`).
+
+Its framework-dimensionality classes (`ThreeDimensionalPerovskite`, …) describe
+the octahedral network of the crystal; `matsci:dimensionalityProperty`
+("morphological dimensionality") describes the particle. A nanoplatelet of a
+3D perovskite is 2D in morphology. All-inorganic is defined by an all-values
+restriction, so it is stated rather than inferred; a mixed organic/inorganic
+A-site is hybrid.
 
 ## Validation
 
 `qqval-shapes.ttl`, `observation-shapes.ttl`, `lifecycle-shapes.ttl`,
-`pergres-shapes.ttl`, and `matsci-shapes.ttl` are SHACL shapes graphs that
+`pergres-shapes.ttl`, `matsci-shapes.ttl` and `perovskitemat-shapes.ttl` are
+SHACL shapes graphs that
 mirror the OWL cardinality/qualifier restrictions declared in the
 corresponding ontology (plus, for `matsci-shapes.ttl`, a small curated
 closed-world type-sanity net), for closed-world validation of extracted
 data. `matsci-units` has no shapes graph: it declares named individuals only,
 so there are no constraints to mirror, and `matsci-qudt-units` vendors
-third-party terms verbatim. `perovskitemat` has none yet — its restrictions
-are currently checked only open-world, by a reasoner.
+third-party terms verbatim.
 
 Validate a data graph with [`pyshacl`](https://github.com/RDFLib/pySHACL). It
 takes one shapes graph and one data graph, so concatenate each set first
@@ -362,12 +381,14 @@ qqval-qualification policy only if it lists `pergres.ttl` and
 uv run --with rdflib --with pyshacl python scripts/check_competency.py
 ```
 
-Four assertions:
+Six assertions:
 
 | Check | Guards against |
 |---|---|
 | every competency query returns ≥ 1 row against [`fixtures/exemplar.ttl`](fixtures/exemplar.ttl) | a query answering nothing because the data took another route |
-| no `obs:ConditionFactor` shares an `rdfs:label` with an observable property | two routes indistinguishable to label- and embedding-based retrieval |
+| no two terms share an `rdfs:label`, and no two members of one value list share a name or synonym | terms indistinguishable to label- and embedding-based retrieval |
+| no `rdfs:label` or `skos:notation` is a single character | lexical matches on pronouns, roman numerals and digits |
+| a module, its shapes and its annotations name only itself and the modules it imports | a general module coming to depend on a specialised one, or on a transitive import |
 | `fixtures/exemplar.ttl` conforms to every shapes graph | the exemplar drifting out of conformance as shapes tighten |
 | [`fixtures/negative-temporal-condition.ttl`](fixtures/negative-temporal-condition.ttl) is **rejected** | the temporal-route rule regressing |
 
@@ -434,7 +455,8 @@ annotations, so these are not stylistic preferences:
 Four rules worth stating explicitly:
 
 - **Two terms that mean different things must not share an `rdfs:label`** —
-  most sharply, an `obs:ConditionFactor` and an observable-property individual.
+  including a class and the property that points at it, and most sharply an
+  `obs:ConditionFactor` and an observable-property individual.
   A shared label leaves the IRI suffix as the only distinguishing feature,
   which neither the dense nor the lexical lane reads.
   `scripts/check_competency.py` asserts this.

@@ -51,6 +51,15 @@ ex:cspbbr3 a perovmat:ThreeDimensionalPerovskite ;
     perovmat:hasBSiteComponent perovmat:Pb ;
     perovmat:hasXSiteComponent perovmat:Br .
 
+# A mixed-cation composition: one inorganic and one organic A-site component.
+# It is hybrid, not all-inorganic, and must stay consistent under a reasoner.
+ex:csfapbi3 a perovmat:ThreeDimensionalPerovskite ,
+        perovmat:HybridOrganicInorganicPerovskite ;
+    rdfs:label "Cs0.05FA0.95PbI3"@en ;
+    perovmat:hasASiteComponent perovmat:Cs , perovmat:FA ;
+    perovmat:hasBSiteComponent perovmat:Pb ;
+    perovmat:hasXSiteComponent perovmat:I .
+
 ex:sample a perovmat:PerovskiteSample ;
     rdfs:label "CsPbBr3 nanocrystal superlattice"@en ;
     matsci:describesMaterial ex:cspbbr3 ;
@@ -154,7 +163,7 @@ ex:synthesisDuration a life:TimeQuantityValue ;
 
 ex:synthesisTemperature a obs:Condition ;
     rdfs:label "170 C"@en ;
-    obs:conditionFactor matsci:temperature ;
+    obs:conditionFactor obs:temperature ;
     obs:conditionValue ex:synthesisTemperatureValue .
 
 ex:synthesisTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
@@ -165,7 +174,7 @@ ex:synthesisTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQ
 
 ex:synthesisHumidity a obs:Condition ;
     rdfs:label "relative humidity 15%"@en ;
-    obs:conditionFactor matsci:humidity ;
+    obs:conditionFactor obs:humidity ;
     obs:conditionValue ex:synthesisHumidityValue .
 
 ex:synthesisHumidityValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
@@ -176,7 +185,7 @@ ex:synthesisHumidityValue a obs:QuantitativeConditionValue , qqval:QualifiedQuan
 
 ex:synthesisAtmosphere a obs:Condition ;
     rdfs:label "nitrogen atmosphere"@en ;
-    obs:conditionFactor matsci:atmosphere ;
+    obs:conditionFactor obs:atmosphere ;
     obs:conditionValue ex:nitrogenValue .
 
 ex:nitrogenValue a obs:QualitativeConditionValue ;
@@ -207,7 +216,7 @@ ex:evaporationDuration a life:TimeQuantityValue ;
 
 ex:assemblyTemperature a obs:Condition ;
     rdfs:label "room temperature"@en ;
-    obs:conditionFactor matsci:temperature ;
+    obs:conditionFactor obs:temperature ;
     obs:conditionValue ex:assemblyTemperatureValue .
 
 ex:assemblyTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
@@ -246,7 +255,7 @@ ex:agingDuration a life:TimeQuantityValue ;
 
 ex:storageTemperature a obs:Condition ;
     rdfs:label "10 C"@en ;
-    obs:conditionFactor matsci:temperature ;
+    obs:conditionFactor obs:temperature ;
     obs:conditionValue ex:storageTemperatureValue .
 
 ex:storageTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
@@ -257,7 +266,7 @@ ex:storageTemperatureValue a obs:QuantitativeConditionValue , qqval:QualifiedQua
 
 ex:storageHumidity a obs:Condition ;
     rdfs:label "relative humidity 30%"@en ;
-    obs:conditionFactor matsci:humidity ;
+    obs:conditionFactor obs:humidity ;
     obs:conditionValue ex:storageHumidityValue .
 
 ex:storageHumidityValue a obs:QuantitativeConditionValue , qqval:QualifiedQuantityValue ;
@@ -268,7 +277,7 @@ ex:storageHumidityValue a obs:QuantitativeConditionValue , qqval:QualifiedQuanti
 
 ex:storageAtmosphere a obs:Condition ;
     rdfs:label "nitrogen glovebox"@en ;
-    obs:conditionFactor matsci:atmosphere ;
+    obs:conditionFactor obs:atmosphere ;
     obs:conditionValue ex:nitrogenValue .
 
 ex:agingEffect a life:AgingEffect ;

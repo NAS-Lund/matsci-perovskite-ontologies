@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-07 — layering and annotation consistency
+
+A module now refers, in its terms, its shapes and its prose, only to itself
+and the modules it imports, and the acceptance gate checks this.
+
+### Added
+
+- **observation 5.5.0** — the domain-independent condition factors
+  `obs:temperature`, `obs:humidity` and `obs:atmosphere`, moved down from
+  matsci; their values stay domain vocabulary. Comments on
+  `QuantitativeObservation`, `QualitativeObservation`, `producedByProcess`,
+  `conditionFactor`, `conditionValue`.
+- **matsci 7.0.0** — `matsci:usedEquipment`, the parent of
+  `usedProcessingEquipment` and `usedCharacterizationEquipment`. Values for
+  `DimensionalityValue` (0D–3D) and `SuperlatticeSymmetryValue` (simple cubic,
+  fcc, bcc, hcp). Comments on every class and property and on non-obvious
+  individuals, including the atmosphere values and the air-aged and
+  vacuum-aged states.
+- **perovskitemat 2.0.0** — comments on phases, site components and example
+  compounds; direct `owl:imports` of qqval and SOSA.
+- **Acceptance gate** — label uniqueness across all terms and within value
+  lists, single-character label/notation check, and a layering check.
+  `fixtures/exemplar.ttl` gains a mixed-cation (Cs/FA) perovskite.
+
+### Changed
+
+- **observation-shapes 2.5.0** — a quantitative observation needs a
+  `qudt:QuantityValue` result; the qualified-value requirement is
+  `pergres-shapes`' alone. Messages no longer name lifecycle terms.
+- **perovskitemat 2.0.0 (breaking)** — `AllInorganicPerovskite` adds an
+  all-values restriction on the A-site, so a mixed organic/inorganic A-site is
+  hybrid only; before, it fell in both disjoint classes and was inconsistent.
+  Site components are labelled by ion name (`bromide`, `caesium`, …), symbols
+  kept as notations.
+- **observation 5.5.0** — `obs:time` is an `obs:InstrumentSettingFactor`
+  labelled "temporal instrument setting". Prose no longer names pergres,
+  qqval or lifecycle.
+- Relational labels for properties that shared a label with their class:
+  `obs:conditionFactor`, `obs:conditionValue`, `qqval:epistemicQualifier`,
+  `qqval:distributionAssumption`; `life:entityLifecycleStateProperty` is
+  "observed entity lifecycle state".
+- **lifecycle 7.0.1** — comments on the fresh, aged and stored states.
+- **qqval 2.3.1** — `Approximate` labelled "approximate" and no longer lists
+  "nominally"; `confidenceLevel` drops the synonym "confidence interval";
+  `Gaussian` gains a comment.
+- **matsci 7.0.0** — `usedProcessingEquipment` ranges over
+  `ProcessingEquipment` and no longer subsumes characterization equipment.
+  Label "morphological dimensionality" for `dimensionalityProperty`,
+  "photoluminescence lifetime" for `lifetimeProperty`. Dropped synonyms that
+  named another quantity or a broader technique ("PL peak energy",
+  "anti-solvent reprecipitation") and the notation "FRET".
+- **matsci-units 3.2.0** — comments define each unit, usage moved to
+  `skos:scopeNote`; `unity` drops the notation "1".
+- **matsci-qudt-units 1.1.1** — regenerated; the generator now lists
+  `unit:KiloV`, so the file is reproducible.
+
+### Removed
+
+- **matsci 7.0.0 (breaking)** — `matsci:temperature`, `humidity` and
+  `atmosphere` (use the `obs:` factors above); `matsci:hot_injection`,
+  renamed `matsci:hotInjection`.
+
 ## 2026-09-13 — dimensionless unity
 
 ### Added

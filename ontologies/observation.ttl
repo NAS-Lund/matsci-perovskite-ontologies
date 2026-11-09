@@ -18,10 +18,7 @@
         phenomena and conditions, grounded in SOSA and BFO. Quantitative
         results are qudt:QuantityValue."""@en ;
     skos:scopeNote
-        """Optional tightening to qqval-qualified results is asserted by
-        pergres, not here.
-
-        Extraction convention: a result not extracted from source is expressed
+        """Extraction convention: a result not extracted from source is expressed
         by omitting the hasQuantityResult / hasQualitativeResult triple, never
         by asserting a placeholder value.
 
@@ -34,12 +31,12 @@
         are open vocabularies. hasInputEntity, hasOutputEntity, hasObservation,
         producedByProcess, hasQuantityResult and hasQualitativeResult are meant
         to be subpropertied by domain ontologies wanting a narrower name."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.4.0> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/observation/5.5.0> ;
     owl:imports
         <https://www.w3.org/ns/sosa/sosa.ttl> ,
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://purl.obolibrary.org/obo/bfo.owl> ;
-    owl:versionInfo "5.4.0" ;
+    owl:versionInfo "5.5.0" ;
     rdfs:seeAlso
         <http://www.w3.org/ns/prov#wasDerivedFrom> ,
         <http://purl.org/dc/terms/source> .
@@ -102,6 +99,9 @@ obs:Observation a owl:Class ;
 
 obs:QuantitativeObservation a owl:Class ;
     rdfs:label "Quantitative observation"@en ;
+    rdfs:comment
+        """An observation whose result is a numeric quantity with a unit, such
+        as a measured temperature, wavelength or lifetime."""@en ;
     rdfs:subClassOf
         obs:Observation ,
         [ a owl:Restriction ;
@@ -115,6 +115,9 @@ obs:QuantitativeObservation a owl:Class ;
 
 obs:QualitativeObservation a owl:Class ;
     rdfs:label "Qualitative observation"@en ;
+    rdfs:comment
+        """An observation whose result is a categorical value from a controlled
+        vocabulary, such as a shape, phase or state, rather than a number."""@en ;
     rdfs:subClassOf
         obs:Observation ,
         [ a owl:Restriction ;
@@ -170,9 +173,9 @@ obs:ConditionFactor a owl:Class ;
         "atmosphere"@en , "humidity"@en , "temperature"@en , "pressure"@en ;
     skos:scopeNote
         """A factor is imposed on a process or observation from outside. A
-        duration, elapsed time, delay or age is not: lifecycle gives each a
-        dedicated property. The one temporal factor is the instrument setting
-        -- see obs:time."""@en .
+        duration, elapsed time, delay or age is not a condition: it is a
+        property of the process, entity or observation it belongs to. The one
+        temporal factor is an instrument setting -- see obs:time."""@en .
 
 #################################################################
 # Object properties
@@ -190,10 +193,8 @@ obs:hasObservation a owl:ObjectProperty ;
 obs:hasQuantityResult a owl:ObjectProperty ;
     rdfs:label "has quantity result"@en ;
     rdfs:comment
-        """Links a quantitative observation to a quantity result.
-        Range is qudt:QuantityValue. Consumers that require
-        qqval-qualified results import pergres, which tightens
-        this range to qqval:QualifiedQuantityValue."""@en ;
+        """Links a quantitative observation to its numeric result, a
+        qudt:QuantityValue carrying a value and a unit."""@en ;
     rdfs:domain obs:QuantitativeObservation ;
     rdfs:range qudt:QuantityValue ;
     rdfs:subPropertyOf sosa:hasResult .
@@ -218,12 +219,16 @@ obs:hasProcessCondition a owl:ObjectProperty ;
     rdfs:range obs:Condition .
 
 obs:conditionFactor a owl:ObjectProperty ;
-    rdfs:label "condition factor"@en ;
+    rdfs:label "has condition factor"@en ;
+    rdfs:comment
+        "Links a reified condition to the factor it sets, such as temperature or atmosphere."@en ;
     rdfs:domain obs:Condition ;
     rdfs:range obs:ConditionFactor .
 
 obs:conditionValue a owl:ObjectProperty ;
-    rdfs:label "condition value"@en ;
+    rdfs:label "has condition value"@en ;
+    rdfs:comment
+        "Links a reified condition to the value its factor takes, quantitative or categorical."@en ;
     rdfs:domain obs:Condition ;
     rdfs:range obs:ConditionValue .
 
@@ -256,33 +261,35 @@ obs:hasOutputEntity a owl:ObjectProperty ;
 
 obs:producedByProcess a owl:ObjectProperty ;
     rdfs:label "produced by process"@en ;
+    rdfs:comment
+        "Links a concrete feature of interest to the process that produced it; inverse of obs:hasOutputEntity."@en ;
     rdfs:domain sosa:FeatureOfInterest ;
     rdfs:range obs:Process ;
     owl:inverseOf obs:hasOutputEntity .
 
 #################################################################
-# Generic condition-factor vocabulary
+# Generic condition factors
 #
-# "time" lives here so any domain-neutral consumer can hang narrower
-# temporal factors off it via skos:broader without importing
-# lifecycle's full process taxonomy.
+# Ambient factors that apply in any domain. Their values are domain
+# vocabulary: a domain ontology mints the qualitative values it needs
+# (which atmospheres, for instance) and adds sibling or narrower factors
+# with skos:broader.
 #################################################################
 
-obs:time a owl:NamedIndividual, obs:ConditionFactor ;
-    rdfs:label "time"@en ;
-    rdfs:comment "A temporal factor of an instrument configuration, such as pulse width or temporal resolution."@en ;
-    skos:scopeNote
-        """Narrower than the label suggests: a temporal setting of an
-        instrument, reached via obs:InstrumentConfiguration and
-        obs:hasSetting. A duration, elapsed time, delay, entity age, storage
-        time, aging time, exposure time or process time is not a condition but
-        a property of the process, entity or observation it belongs to --
-        see lifecycle's life:hasDuration, life:hasEntityAge and
-        life:hasObservationDelay.
+obs:temperature a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "temperature"@en ;
+    rdfs:comment
+        "The temperature imposed on a process or observation, such as a reaction, annealing, storage or measurement temperature."@en .
 
-        obs:ConditionShape rejects a condition on obs:hasProcessCondition or
-        obs:hasObservationCondition whose factor is skos:broader* obs:time.
-        Narrower factors hung off this one inherit that restriction."""@en .
+obs:humidity a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "humidity"@en ;
+    rdfs:comment
+        "The water-vapour content of the surrounding gas, usually stated as relative humidity in percent."@en .
+
+obs:atmosphere a owl:NamedIndividual, obs:ConditionFactor ;
+    rdfs:label "atmosphere"@en ;
+    rdfs:comment
+        "The gas environment surrounding a sample or process; its value is categorical, minted by the domain ontology."@en .
 
 #################################################################
 # Instrument configuration
@@ -305,6 +312,18 @@ obs:InstrumentSettingFactor a owl:Class ;
         "numerical aperture"@en , "spectral resolution"@en ,
         "accelerating voltage"@en ;
     rdfs:subClassOf obs:ConditionFactor .
+
+obs:time a owl:NamedIndividual, obs:InstrumentSettingFactor ;
+    rdfs:label "temporal instrument setting"@en ;
+    skos:altLabel "time setting"@en ;
+    rdfs:comment
+        "A temporal setting of an instrument, such as pulse width or temporal resolution; the broader factor for every temporal instrument setting."@en ;
+    skos:scopeNote
+        """Reached via obs:InstrumentConfiguration and obs:hasSetting. A
+        duration, elapsed time, delay or age is never a condition.
+        obs:NoTemporalProcessConditionConstraint rejects a condition on
+        obs:hasProcessCondition or obs:hasObservationCondition whose factor is
+        skos:broader* obs:time; narrower factors inherit that restriction."""@en .
 
 obs:InstrumentConfiguration a owl:Class ;
     rdfs:label "Instrument configuration"@en ;
