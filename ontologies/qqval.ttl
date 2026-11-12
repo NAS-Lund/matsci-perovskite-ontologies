@@ -2,6 +2,7 @@
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix qqval:   <https://growgraph.dev/ontologies/qqval#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix schema:  <https://schema.org/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix om:      <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
@@ -33,11 +34,11 @@
         Approximate only). qqval:DistributionAssumption is open.
         qqval:QualifiedQuantityValue and qqval:QuantityRange are the extension
         points for domain-typed quantity values."""@en ;
-    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.3.1> ;
+    owl:versionIRI <https://growgraph.dev/ontologies/qqval/2.4.0> ;
     owl:imports
         <http://qudt.org/3.1.4/schema/facade/qudt> ,
         <http://qudt.org/3.1.4/vocab/unit> ;
-    owl:versionInfo "2.3.1" ;
+    owl:versionInfo "2.4.0" ;
     rdfs:seeAlso
         <http://www.ontology-of-units-of-measure.org/resource/om-2/> .
 
@@ -232,6 +233,7 @@ qqval:QuantityRange a owl:Class ;
         """At least one bound must be present. Use qqval:QualifiedQuantityValue
         instead for compact, unit-homogeneous ranges, where bounds are plain
         decimals on a single node."""@en ;
+    rdfs:subClassOf schema:StructuredValue ;
     rdfs:seeAlso qqval:QualifiedQuantityValue ;
     rdfs:isDefinedBy <https://growgraph.dev/ontologies/qqval> ;
     # At most one lower bound node

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-11 — ranges are structured values
+
+### Changed
+
+- **qqval 2.4.0** — `qqval:QuantityRange` is a `schema:StructuredValue`. A
+  tool that recognises structured values now treats a range as one: it
+  belongs to the statement that carries it.
+
 ## 2026-11-07 — layering and annotation consistency
 
 A module now refers, in its terms, its shapes and its prose, only to itself
